@@ -1,0 +1,243 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* --------------------------------------------------------------------------
+   Base surface
+   Background / foreground / card / border are defined ONCE here and shared
+   by every palette. A palette only overrides `--accent` /
+   `--accent-foreground`, so switching palette never disturbs the surface
+   fill — which is what the comment in the original file intended, but the
+   selectors below were not actually enforcing it.
+   -------------------------------------------------------------------------- */
+
+:root {
+  --background: #ffffff;
+  --foreground: #18181b;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --border-color: rgba(228, 228, 231, 0.6);
+
+  /* Default accent (espresso). Every palette overrides these two. */
+  --accent: #c4a484;
+  --accent-foreground: #ffffff;
+
+  /* Accent-tinted state tokens used by focus rings and subtle highlights.
+     Kept in HSL so a palette can override them with a single hue shift if
+     it ever needs to; the defaults derive from the espresso accent. */
+  --accent-muted: rgba(196, 164, 132, 0.12);
+  --accent-ring: rgba(196, 164, 132, 0.5);
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #f4f4f5;
+  --card-bg: rgba(0, 0, 0, 0.8);
+  --border-color: rgba(255, 255, 255, 0.1);
+
+  --accent: #c4a484;
+  --accent-foreground: #12100e;
+
+  --accent-muted: rgba(196, 164, 132, 0.18);
+  --accent-ring: rgba(196, 164, 132, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   Palettes
+   Each palette ONLY overrides the accent pair (and the derived ring/muted
+   tokens so focus rings and tints stay coherent). Surface colors are
+   inherited from :root / .dark above and are never touched here.
+
+   `.dark` class comes first in the compound selector so the specificity is
+   unambiguous across browsers (`.dark[data-color-theme="..."]` is
+   equivalent for a single class, but writing it this way makes the
+   dependency explicit).
+   -------------------------------------------------------------------------- */
+
+/* Emerald Reserve */
+[data-color-theme="emerald"] {
+  --accent: #2d5a27;
+  --accent-foreground: #ffffff;
+  --accent-muted: rgba(45, 90, 39, 0.12);
+  --accent-ring: rgba(45, 90, 39, 0.5);
+}
+.dark[data-color-theme="emerald"] {
+  --accent: #438a3a;
+  --accent-foreground: #0b130b;
+  --accent-muted: rgba(67, 138, 58, 0.2);
+  --accent-ring: rgba(67, 138, 58, 0.55);
+}
+
+/* Rosewood & Brass */
+[data-color-theme="rosewood"] {
+  --accent: #9e4747;
+  --accent-foreground: #ffffff;
+  --accent-muted: rgba(158, 71, 71, 0.12);
+  --accent-ring: rgba(158, 71, 71, 0.5);
+}
+.dark[data-color-theme="rosewood"] {
+  --accent: #c86565;
+  --accent-foreground: #1a0f0f;
+  --accent-muted: rgba(200, 101, 101, 0.2);
+  --accent-ring: rgba(200, 101, 101, 0.55);
+}
+
+/* Noir Champagne */
+[data-color-theme="champagne"] {
+  --accent: #d4af37;
+  --accent-foreground: #09090b;
+  --accent-muted: rgba(212, 175, 55, 0.12);
+  --accent-ring: rgba(212, 175, 55, 0.5);
+}
+.dark[data-color-theme="champagne"] {
+  --accent: #d4af37;
+  --accent-foreground: #050505;
+  --accent-muted: rgba(212, 175, 55, 0.2);
+  --accent-ring: rgba(212, 175, 55, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   Tailwind theme tokens
+   Exposed as `cafe-bg`, `cafe-fg`, `cafe-accent`, `cafe-card`,
+   `cafe-border`, plus radius utilities. The `--color-cafe-accent-*` pair
+   lets components use `bg-cafe-accent` / `text-cafe-accent-fg` directly
+   instead of importing the hex.
+   -------------------------------------------------------------------------- */
+
+@theme {
+  --color-cafe-bg: var(--background);
+  --color-cafe-fg: var(--foreground);
+  --color-cafe-accent: var(--accent);
+  --color-cafe-accent-fg: var(--accent-foreground);
+  --color-cafe-accent-muted: var(--accent-muted);
+  --color-cafe-accent-ring: var(--accent-ring);
+  --color-cafe-card: var(--card-bg);
+  --color-cafe-border: var(--border-color);
+
+  --radius-card: 2.5rem;
+  --radius-button: 1.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Base document
+   -------------------------------------------------------------------------- */
+
+html {
+  /* Prevents layout shift when the theme toggles between a page that has a
+     scrollbar and one that doesn't (matters on the admin dashboard, where
+     switching tabs can shorten the page). */
+  scrollbar-gutter: stable;
+  /* Matches the transition below so a theme flip doesn't flash the old
+     background under a scrolling viewport. */
+  background-color: var(--background);
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* --------------------------------------------------------------------------
+   Focus visibility
+   A single consistent ring token for keyboard users. Components that need a
+   different ring can override with `focus-visible:ring-<color>`; this is the
+   fallback so plain `<button>` / `<a>` never fall through to the browser
+   default. `:focus-visible` (not `:focus`) so mouse clicks don't paint it.
+   -------------------------------------------------------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion
+   Respect the OS preference globally. `prefers-reduced-motion` is also
+   checked per-component (framer-motion's `useReducedMotion`), but the CSS
+   fallback catches plain transitions the JS layer doesn't touch.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Scrollbar utilities
+   `.no-scrollbar` hides the scrollbar entirely (used on horizontal chip
+   rows); `.custom-scrollbar` styles a thin, accent-tinted track (used on the
+   admin dashboard's main content column). Firefox needs the standard
+   `scrollbar-width` / `scrollbar-color` properties; WebKit needs the
+   `::-webkit-scrollbar-*` pseudo-elements.
+   -------------------------------------------------------------------------- */
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-ring) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--accent-ring);
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Selection
+   Uses the accent so text selection matches the current palette instead of
+   the browser default (Chrome's light blue, Safari's translucent gray).
+   -------------------------------------------------------------------------- */
+
+::selection {
+  background-color: var(--accent-muted);
+  color: var(--foreground);
+}
+
+/* --------------------------------------------------------------------------
+   Print
+   The dashboard and storefront are both dark-mode-capable; a dark
+   background on paper wastes toner and is often unreadable. Force the base
+   surface to white in print and drop the transition so the print dialog
+   doesn't capture a half-applied theme flip.
+   -------------------------------------------------------------------------- */
+
+@media print {
+  :root,
+  .dark {
+    --background: #ffffff;
+    --foreground: #18181b;
+    --card-bg: rgba(255, 255, 255, 1);
+    --border-color: rgba(228, 228, 231, 1);
+  }
+
+  body {
+    transition: none;
+  }
+}

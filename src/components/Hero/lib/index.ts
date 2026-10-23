@@ -1,0 +1,1 @@
+export { buildHeroMotion } from "./motion";
