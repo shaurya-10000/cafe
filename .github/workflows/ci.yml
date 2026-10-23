@@ -40,7 +40,8 @@ jobs:
         STRIPE_SECRET_KEY: "sk_test_placeholder"
         STRIPE_WEBHOOK_SECRET: "whsec_placeholder"
         PUSH_WEBHOOK_SECRET: "placeholder"
-        NEXT_PUBLIC_VAPID_PUBLIC_KEY: "placeholder"
+        # A valid-format 65-byte VAPID public key for CI purposes
+        NEXT_PUBLIC_VAPID_PUBLIC_KEY: "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U"
         VAPID_PRIVATE_KEY: "placeholder"
         VAPID_SUBJECT: "mailto:test@example.com"
 
