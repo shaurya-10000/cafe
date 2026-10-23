@@ -33,8 +33,16 @@ jobs:
       env:
         NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
         NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder"
+        SUPABASE_SERVICE_ROLE_KEY: "placeholder"
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_placeholder"
         CLERK_SECRET_KEY: "sk_test_placeholder"
+        CLERK_WEBHOOK_SIGNING_SECRET: "whsec_placeholder"
+        STRIPE_SECRET_KEY: "sk_test_placeholder"
+        STRIPE_WEBHOOK_SECRET: "whsec_placeholder"
+        PUSH_WEBHOOK_SECRET: "placeholder"
+        NEXT_PUBLIC_VAPID_PUBLIC_KEY: "placeholder"
+        VAPID_PRIVATE_KEY: "placeholder"
+        VAPID_SUBJECT: "mailto:test@example.com"
 
     - name: Test
       run: npm run test:run
