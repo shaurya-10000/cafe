@@ -49,7 +49,6 @@ export function useChatComposer({
   send,
 }: UseChatComposerOptions) {
   const [input, setInput] = useState("");
-  const [lastSentText, setLastSentText] = useState<string | null>(null);
 
   const sendMessage = useCallback(
     async (customMessage?: string) => {
@@ -63,7 +62,6 @@ export function useChatComposer({
 
         if (result !== null) {
           setInput("");
-          setLastSentText(text);
 
           if (result.status === "ready") {
             setSlotHint(null);
@@ -88,7 +86,6 @@ export function useChatComposer({
         sessions.find((session) => session.id === activeChatId)?.messages ?? [];
 
       setInput("");
-      setLastSentText(text);
       setSlotHint(null);
 
       await send({ chatId: activeChatId, text, history });
@@ -108,11 +105,6 @@ export function useChatComposer({
       send,
     ],
   );
-
-  const retry = useCallback(() => {
-    if (!lastSentText || loading) return;
-    void sendMessage(lastSentText);
-  }, [lastSentText, loading, sendMessage]);
 
   const handleInputChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -138,9 +130,7 @@ export function useChatComposer({
 
   return {
     input,
-    lastSentText,
     sendMessage,
-    retry,
     handleInputChange,
     handleInputKeyDown,
   };

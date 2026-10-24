@@ -1,7 +1,8 @@
 export { ChatMessageItem } from "./ChatMessageItem";
 export { ActionCard } from "./ActionCard";
 export { MarkdownMessage } from "./MarkdownMessage";
-export { MessageToolbar } from "./MessageToolbar";
+export { BotAvatar } from "./BotAvatar";
+export { MessageMenu } from "./MessageMenu";
 export { SuggestedPromptButton } from "./SuggestedPromptButton";
 export { ConfirmationDialog } from "./ConfirmationDialog";
 export { WidgetHeader } from "./WidgetHeader";

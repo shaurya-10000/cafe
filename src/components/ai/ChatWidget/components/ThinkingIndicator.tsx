@@ -1,19 +1,19 @@
-import { Sparkles } from "lucide-react";
-
 import { cn } from "@/lib/utils";
+
+import { BotAvatar } from "./BotAvatar";
 
 export function ThinkingIndicator({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <div
+      role="status"
       aria-live="polite"
       className={cn(
-        "flex items-center gap-2 pl-10",
-        "font-mono text-xs text-cafe-fg/50",
+        "flex items-center gap-2 sm:gap-3",
         !reducedMotion && "animate-pulse",
       )}
     >
-      <Sparkles size={12} className="text-cafe-accent" aria-hidden="true" />
-      <span>Thinking&hellip;</span>
+      <BotAvatar />
+      <span className="font-mono text-xs text-cafe-fg/50">Thinking&hellip;</span>
     </div>
   );
 }

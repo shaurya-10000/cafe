@@ -1,5 +1,5 @@
 import type { ChangeEvent, KeyboardEvent } from "react";
-import { Loader2, RotateCcw, Send } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 
 import { MAX_MESSAGE_LENGTH } from "@/lib/ai/constants";
 import { FOCUS_RING } from "@/components/ai/styles";
@@ -13,13 +13,11 @@ interface ComposerProps {
   cooldownSeconds: number;
   hasPendingAction: boolean;
   slotHint: string | null;
-  showRetry: boolean;
   reducedMotion: boolean;
   accentGradientClassName: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
   onSend: () => void;
-  onRetry: () => void;
   onCancelPending: () => void;
 }
 
@@ -31,13 +29,11 @@ export function Composer({
   cooldownSeconds,
   hasPendingAction,
   slotHint,
-  showRetry,
   reducedMotion,
   accentGradientClassName,
   onChange,
   onKeyDown,
   onSend,
-  onRetry,
   onCancelPending,
 }: ComposerProps) {
   const hasText = input.trim().length > 0;
@@ -78,22 +74,6 @@ export function Composer({
         >
           {slotHint}
         </p>
-      )}
-
-      {showRetry && !hasText && !hasPendingAction && (
-        <button
-          type="button"
-          onClick={onRetry}
-          className={cn(
-            "mb-2 flex min-h-10 items-center gap-1.5 rounded-full px-3 py-1.5",
-            "text-[10px] font-black uppercase tracking-widest",
-            "text-cafe-accent hover:bg-cafe-accent/10",
-            FOCUS_RING,
-          )}
-        >
-          <RotateCcw size={12} aria-hidden="true" />
-          <span>Retry last message</span>
-        </button>
       )}
 
       <div

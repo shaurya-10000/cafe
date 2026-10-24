@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useId, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
@@ -190,6 +197,16 @@ export default function ChatWidget({
     setSlotHint(null);
   }, [pending]);
 
+  // Retry re-sends a message's own text. A ref keeps the callback identity
+  // stable, so typing in the composer does not re-render every bubble.
+  const sendMessageRef = useRef(composer.sendMessage);
+  useEffect(() => {
+    sendMessageRef.current = composer.sendMessage;
+  });
+  const handleRetry = useCallback((text: string) => {
+    void sendMessageRef.current(text);
+  }, []);
+
   if (!mounted) return null;
 
   // Prefer the state-derived prompt; the transient `slotHint` covers the
@@ -284,6 +301,8 @@ export default function ChatWidget({
                   onCopy={handleCopy}
                   onSpeak={speak}
                   onExecuteAction={dispatchAction}
+                  retryEnabled={!loading && rateLimit.canSend && pending.pendingState === null}
+                  onRetry={handleRetry}
                 />
               </div>
             </div>
@@ -296,13 +315,11 @@ export default function ChatWidget({
               cooldownSeconds={rateLimit.cooldownSeconds}
               hasPendingAction={pending.pendingState !== null}
               slotHint={activeSlotHint}
-              showRetry={composer.lastSentText !== null && !loading}
               reducedMotion={reducedMotion}
               accentGradientClassName={accentGradientClassName}
               onChange={composer.handleInputChange}
               onKeyDown={composer.handleInputKeyDown}
               onSend={() => void composer.sendMessage()}
-              onRetry={composer.retry}
               onCancelPending={handleCancelPending}
             />
 
