@@ -70,6 +70,6 @@ export const EVENT_PREFILL_MENU = "cafe_prefill_menu";
 export const EVENT_ADD_TO_CART = "cafe_add_to_cart";
 
 export const FULL_MENU_PATH = "/menu";
-export const MENU_PDF_HREF = "/menu.pdf";
-export const MENU_PDF_FILENAME = "Cafe_Cafe_Menu.pdf";
-export const MENU_PDF_SIZE_LABEL = "2.4 MB";
+export const MENU_PDF_HREF = "/images/cafe-menu.pdf";
+export const MENU_PDF_FILENAME = "cafe-menu.pdf";
+export const MENU_PDF_SIZE_LABEL = "587 KB";
