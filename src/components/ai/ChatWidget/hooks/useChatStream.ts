@@ -11,7 +11,6 @@ import {
   buildRequestHeaders,
   createClientRequestId,
   errorDev,
-  fetchChatTitle,
   getBackpressureMessage,
   isAbortError,
   readChatStream,
@@ -20,6 +19,7 @@ import {
   warnDev,
 } from "../lib";
 import { historyPayload } from "@/lib/ai/history";
+import { resolveChatTitle } from "../lib/title";
 import type { BackpressureStatus } from "../types";
 
 type Persistence = Pick<
@@ -87,21 +87,20 @@ export function useChatStream({
       chatId: string,
       firstMessage: string,
       clientRequestId: string,
-      requestId: number,
     ) => {
       titleAbortRef.current?.abort();
       const controller = new AbortController();
       titleAbortRef.current = controller;
 
       try {
-        const title = await fetchChatTitle({
+        const title = await resolveChatTitle({
           endpoint: titleEndpoint,
           firstMessage,
           clientRequestId,
           signal: controller.signal,
         });
 
-        if (!title || requestId !== requestIdRef.current) return;
+        if (!title) return;
 
         updateSession(chatId, (session) => ({ ...session, title }));
 
@@ -170,7 +169,7 @@ export function useChatStream({
 
       const isFirstUserMessage = !history.some((m) => m.role === "user");
       if (isFirstUserMessage) {
-        void generateTitle(chatId, text, clientRequestId, requestId);
+        void generateTitle(chatId, text, clientRequestId);
       }
 
       streamAbortRef.current?.abort();
