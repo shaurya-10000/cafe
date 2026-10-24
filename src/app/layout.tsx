@@ -47,6 +47,9 @@ const inter = Inter({
   preload: true,
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://cafe-ruddy-pi.vercel.app";
+
 export const metadata: Metadata = {
   title: {
     default: "Cafe",
@@ -55,10 +58,20 @@ export const metadata: Metadata = {
   description:
     "Elevate your business with Cafe's real-time AI orchestration and custom digital dashboards.",
   applicationName: "Cafe",
-  // Metadata is intentionally minimal. Per-page overrides use the `title`
-  // template above. No `metadataBase` — none of the pages emit absolute
-  // URLs yet (no og:image, no canonical), so setting one would be a lie.
-  // Add it when the first absolute-URL metadata field is added.
+  // Absolute base for the Open Graph / Twitter image URLs Next generates.
+  metadataBase: new URL(SITE_URL),
+  // icon.svg and apple-icon.tsx are picked up by file convention. This adds
+  // a PNG for browsers and crawlers that don't support SVG favicons.
+  icons: {
+    icon: [{ url: "/pwa/48", sizes: "48x48", type: "image/png" }],
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Cafe",
+    url: "/",
+    locale: "en_US",
+  },
+  twitter: { card: "summary_large_image" },
   robots: {
     // Prevents preview/staging deployments from being indexed if the app
     // is ever stood up on a public hostname before launch. Flip to
