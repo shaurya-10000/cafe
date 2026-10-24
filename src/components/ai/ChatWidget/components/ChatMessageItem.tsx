@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo } from "react";
-import { Copy, RotateCcw, Volume2 } from "lucide-react";
+import { Copy, RotateCcw } from "lucide-react";
 
 import type { Message } from "@/components/ai/types";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ import { ActionCard } from "./ActionCard";
 import { BotAvatar } from "./BotAvatar";
 import { MarkdownMessage } from "./MarkdownMessage";
 import { MessageMenu, type MessageMenuAction } from "./MessageMenu";
+import { MessageToolbar } from "./MessageToolbar";
 
 interface ChatMessageItemProps {
   readonly message: Message;
@@ -44,49 +45,45 @@ export const ChatMessageItem = memo(function ChatMessageItem({
     if (action) onExecuteAction(action);
   }, [action, onExecuteAction]);
 
-  const menuActions = useMemo<readonly MessageMenuAction[]>(() => {
-    if (!text) return [];
+  // Only the user's own prompts get the dots menu; replies keep the toolbar.
+  const promptActions = useMemo<readonly MessageMenuAction[]>(() => {
+    if (!isUser || !text) return [];
 
     const items: MessageMenuAction[] = [
       { id: "copy", label: "Copy", icon: Copy, onSelect: handleCopy },
     ];
-
-    if (isUser) {
-      if (canRetry) {
-        items.push({ id: "retry", label: "Retry", icon: RotateCcw, onSelect: handleRetry });
-      }
-    } else {
+    if (canRetry) {
       items.push({
-        id: "speak",
-        label: isSpeaking ? "Stop listening" : "Listen",
-        icon: Volume2,
-        onSelect: handleSpeak,
+        id: "retry",
+        label: "Retry",
+        icon: RotateCcw,
+        onSelect: handleRetry,
       });
     }
-
     return items;
-  }, [text, isUser, canRetry, isSpeaking, handleCopy, handleSpeak, handleRetry]);
+  }, [isUser, text, canRetry, handleCopy, handleRetry]);
 
   // An assistant bubble with nothing in it yet (stream not started) renders nothing.
   if (!text && !action && !isUser) return null;
 
-  const menu =
-    menuActions.length > 0 ? (
-      <MessageMenu actions={menuActions} confirmed={isCopied} className="mt-0.5" />
-    ) : null;
-
   return (
     <div
       className={cn(
-        "group flex items-start gap-2 sm:gap-3",
+        "flex items-start gap-2 sm:gap-3",
         isUser ? "justify-end" : "justify-start",
       )}
     >
       {!isUser && <BotAvatar className="mt-0.5" />}
 
-      {isUser && menu}
+      {promptActions.length > 0 && (
+        <MessageMenu
+          actions={promptActions}
+          confirmed={isCopied}
+          className="mt-0.5"
+        />
+      )}
 
-      <div className="relative min-w-0 max-w-[88%] space-y-2 sm:max-w-[85%]">
+      <div className="group relative min-w-0 max-w-[88%] space-y-2 sm:max-w-[85%]">
         <div
           className={cn(
             "break-words p-3 text-[13px] leading-relaxed sm:p-4 sm:text-xs",
@@ -111,9 +108,16 @@ export const ChatMessageItem = memo(function ChatMessageItem({
             onExecute={handleExecute}
           />
         )}
-      </div>
 
-      {!isUser && menu}
+        {!isUser && text && (
+          <MessageToolbar
+            isCopied={isCopied}
+            isSpeaking={isSpeaking}
+            onCopy={handleCopy}
+            onSpeak={handleSpeak}
+          />
+        )}
+      </div>
     </div>
   );
 });

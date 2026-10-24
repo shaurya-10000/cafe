@@ -18,7 +18,7 @@ interface MessageMenuProps {
 
 function Dots() {
   return (
-    <span aria-hidden="true" className="flex items-center gap-[3px]">
+    <span aria-hidden="true" className="flex flex-col items-center gap-[3px]">
       <span className="h-[3px] w-[3px] rounded-full bg-current" />
       <span className="h-[3px] w-[3px] rounded-full bg-current" />
       <span className="h-[3px] w-[3px] rounded-full bg-current" />
