@@ -60,9 +60,9 @@ export const SUBTITLE_RULE = "mx-auto mt-6 block h-px w-8 bg-cafe-fg/10";
 export const ACTIONS =
   "flex w-full flex-col items-center justify-center gap-4 sm:flex-row";
 
-export const BUTTON_SIZE = "w-full rounded-full sm:w-60";
+export const BUTTON_SIZE = "h-16 w-full rounded-full sm:w-60";
 export const BUTTON_LABEL =
-  "text-[10px] font-bold uppercase tracking-[0.25em]";
+  "text-[10px] font-bold uppercase leading-none tracking-[0.25em]";
 
 export interface SlideButtonStyle {
   readonly root: string;
@@ -106,7 +106,8 @@ export const SLIDE_BUTTONS: Record<"primary" | "accent", SlideButtonStyle> = {
   },
 };
 
-export const SLIDE_BUTTON_BASE = "group relative overflow-hidden py-5";
+export const SLIDE_BUTTON_BASE =
+  "group relative inline-flex items-center justify-center overflow-hidden";
 
 export const SLIDE_FILL = cn(
   "translate-y-full group-hover:translate-y-0",
@@ -124,7 +125,7 @@ export const SLIDE_OVERLAY_LABEL = cn(
 );
 
 export const SECONDARY_BUTTON = cn(
-  "border border-cafe-border py-5",
+  "inline-flex items-center justify-center border border-cafe-border",
   "text-cafe-fg/80",
   "backdrop-blur-md",
   "transition-[color,border-color,background-color] duration-500",

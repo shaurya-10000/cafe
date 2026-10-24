@@ -34,14 +34,10 @@ interface ButtonLabelProps {
 
 function ButtonLabel({ icon, children }: ButtonLabelProps) {
   return (
-    <>
-      {icon ? (
-        <>
-          <span aria-hidden="true">{icon}</span>{" "}
-        </>
-      ) : null}
-      {children}
-    </>
+    <span className="inline-flex items-center gap-2">
+      {icon ? <span aria-hidden="true">{icon}</span> : null}
+      <span>{children}</span>
+    </span>
   );
 }
 
