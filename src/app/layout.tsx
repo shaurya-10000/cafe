@@ -59,10 +59,6 @@ export const metadata: Metadata = {
   // template above. No `metadataBase` — none of the pages emit absolute
   // URLs yet (no og:image, no canonical), so setting one would be a lie.
   // Add it when the first absolute-URL metadata field is added.
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-  },
   robots: {
     // Prevents preview/staging deployments from being indexed if the app
     // is ever stood up on a public hostname before launch. Flip to
