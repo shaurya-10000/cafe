@@ -12,7 +12,7 @@ export function LocationImage({ name, imageUrl, priority }: LocationImageProps) 
   const [failed, setFailed] = useState(false);
 
   return (
-    <div className="relative h-48 w-full overflow-hidden rounded-3xl border border-[#EAE9E4] bg-[#F5F5F1] dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="relative h-64 w-full overflow-hidden rounded-3xl border border-[#EAE9E4] bg-[#F5F5F1] md:h-80 dark:border-zinc-800 dark:bg-zinc-900">
       {imageUrl && !failed ? (
         <Image
           src={imageUrl}
