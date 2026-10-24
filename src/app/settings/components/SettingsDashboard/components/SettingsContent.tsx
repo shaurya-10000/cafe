@@ -12,11 +12,9 @@ interface SettingsContentProps {
 function TabView({ tab }: { readonly tab: SettingsTab }) {
   switch (tab) {
     case "profile":
-      return <AccountSettings activeTab="profile" />;
+      return <AccountSettings />;
     case "appearance":
       return <ThemeSettings />;
-    case "security":
-      return <AccountSettings activeTab="security" />;
     default:
       return null;
   }
@@ -28,7 +26,7 @@ export function SettingsContent({
 }: SettingsContentProps) {
   return (
     <div className="custom-scrollbar flex-1 overflow-y-auto">
-      <div className="mx-auto max-w-4xl p-8 lg:p-16">
+      <div className="mx-auto max-w-4xl p-5 lg:p-10">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={activeTab} {...getTabPanelMotion(reducedMotion)}>
             <TabView tab={activeTab} />

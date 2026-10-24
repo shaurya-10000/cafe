@@ -1,10 +1,9 @@
-import { Palette, ShieldCheck, User } from "lucide-react";
+import { Palette, User } from "lucide-react";
 import type { MenuItem } from "./types";
 
 export const MENU_ITEMS: readonly MenuItem[] = [
   { id: "profile", label: "Account", icon: User },
   { id: "appearance", label: "Appearance", icon: Palette },
-  { id: "security", label: "Privacy", icon: ShieldCheck },
 ];
 
 export const SIGN_OUT_REDIRECT_URL = "/";
