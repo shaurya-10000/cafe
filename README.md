@@ -63,7 +63,6 @@
 | :--- | :--- |
 | **Live app** | [cafe-ruddy-pi.vercel.app](https://cafe-ruddy-pi.vercel.app) |
 | **Walkthrough video** | [YOUR_VIDEO_URL](https://YOUR_VIDEO_URL) |
-| **Admin demo access** | _Add demo credentials here, or remove this row._ |
 
 <!-- TODO: replace with a thumbnail of your video. The link below should point to your video. -->
 [![Watch the 3-minute walkthrough](docs/assets/video-thumbnail.png)](https://YOUR_VIDEO_URL)
