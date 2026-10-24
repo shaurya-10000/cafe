@@ -61,7 +61,7 @@ export default function SettingsDashboard() {
   if (!isLoaded) return <SettingsLoading />;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-cafe-bg font-sans text-cafe-fg">
+    <div className="app-shell flex h-screen overflow-hidden bg-cafe-bg font-sans text-cafe-fg">
       <SidebarBackdrop
         isOpen={isOpen}
         reducedMotion={reducedMotion}

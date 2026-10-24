@@ -242,3 +242,12 @@ body {
   }
 }
 
+/* >>> app-shell-scroll */
+/* Full-screen dashboards scroll inside their own container, so drop the
+   page-level scrollbar and its reserved gutter. */
+html:has(.app-shell),
+html:has(.app-shell) body {
+  overflow: hidden;
+  scrollbar-gutter: auto;
+}
+/* <<< app-shell-scroll */

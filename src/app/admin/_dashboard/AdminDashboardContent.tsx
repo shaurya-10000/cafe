@@ -55,7 +55,7 @@ export default function AdminDashboardContent() {
   }, [signOut]);
 
   return (
-    <div className="relative flex h-screen overflow-hidden bg-cafe-bg font-sans text-cafe-fg transition-colors duration-300">
+    <div className="relative app-shell flex h-screen overflow-hidden bg-cafe-bg font-sans text-cafe-fg transition-colors duration-300">
       <SidebarOverlay isOpen={sidebar.isOpen} onClose={closeSidebar} />
 
       <AdminSidebar

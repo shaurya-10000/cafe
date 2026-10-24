@@ -2,7 +2,7 @@ import { joinClasses } from "./lib/joinClasses";
 import type { BadgeTone } from "./types";
 
 export const ROOT_CLASS =
-  "relative flex h-screen overflow-hidden bg-cafe-bg font-sans text-cafe-fg transition-colors duration-300";
+  "relative app-shell flex h-screen overflow-hidden bg-cafe-bg font-sans text-cafe-fg transition-colors duration-300";
 
 export const OVERLAY_CLASS =
   "fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm dark:bg-black/80";
