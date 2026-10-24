@@ -41,17 +41,22 @@ export const ChatMessageItem = memo(function ChatMessageItem({
   if (!text && !action && !isUser) return null;
 
   return (
-    <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
+    <div
+      className={cn(
+        "flex gap-2 sm:gap-3",
+        isUser ? "justify-end" : "justify-start",
+      )}
+    >
       {!isUser && (
         <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cafe-accent/20 bg-cafe-accent/10 text-cafe-accent">
           <Bot size={14} aria-hidden="true" />
         </div>
       )}
 
-      <div className="group relative max-w-[85%] space-y-2">
+      <div className="group relative min-w-0 max-w-[88%] space-y-2 sm:max-w-[85%]">
         <div
           className={cn(
-            "p-4 text-xs leading-relaxed",
+            "break-words p-3 text-[13px] leading-relaxed sm:p-4 sm:text-xs",
             isUser
               ? cn(
                   accentGradientClassName,

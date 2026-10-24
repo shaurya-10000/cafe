@@ -23,12 +23,14 @@ export function EmptyState({
   onSelectPrompt,
 }: EmptyStateProps) {
   return (
-    <div className="flex h-full flex-col items-center justify-center px-4 py-8 text-center">
+    // min-h-full (not h-full) so content scrolls instead of clipping when the
+    // on-screen keyboard shrinks the viewport.
+    <div className="flex min-h-full flex-col items-center justify-center px-2 py-6 text-center sm:px-4 sm:py-8">
       <span
         aria-hidden="true"
         className={cn(
           accentGradientClassName,
-          "mb-4 flex h-12 w-12 items-center justify-center",
+          "mb-3 flex h-12 w-12 shrink-0 items-center justify-center sm:mb-4",
           "rounded-2xl text-white shadow-xl",
         )}
       >
@@ -44,7 +46,7 @@ export function EmptyState({
         {title}
       </h3>
 
-      <p className="mb-6 max-w-xs text-xs font-medium text-cafe-fg/50">
+      <p className="mb-5 max-w-xs text-xs font-medium text-cafe-fg/50 sm:mb-6">
         {subtitle}
       </p>
 

@@ -84,6 +84,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   // `maximumScale` deliberately not set — locking pinch-zoom is an
   // accessibility regression, and Next.js doesn't enable it by default.
   //

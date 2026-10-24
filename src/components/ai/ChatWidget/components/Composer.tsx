@@ -53,8 +53,11 @@ export function Composer({
   return (
     <div
       className={cn(
-        "z-30 shrink-0 border-t border-cafe-border",
-        "bg-cafe-bg p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]",
+        "z-30 shrink-0 border-t border-cafe-border bg-cafe-bg",
+        "shadow-[0_-10px_40px_rgba(0,0,0,0.02)]",
+        // Mobile: compact, and clear of the home indicator.
+        "px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
+        "sm:p-6",
       )}
     >
       {cooldownSeconds > 0 && (
@@ -82,7 +85,7 @@ export function Composer({
           type="button"
           onClick={onRetry}
           className={cn(
-            "mb-2 flex items-center gap-1.5 rounded-full px-3 py-1.5",
+            "mb-2 flex min-h-10 items-center gap-1.5 rounded-full px-3 py-1.5",
             "text-[10px] font-black uppercase tracking-widest",
             "text-cafe-accent hover:bg-cafe-accent/10",
             FOCUS_RING,
@@ -113,10 +116,14 @@ export function Composer({
           onKeyDown={onKeyDown}
           disabled={!canSend || loading}
           maxLength={MAX_MESSAGE_LENGTH}
+          autoComplete="off"
+          enterKeyHint="send"
           aria-label="Type a message"
           placeholder={placeholder}
           className={cn(
-            "w-full bg-transparent px-4 py-3.5 text-xs text-cafe-fg",
+            "min-w-0 flex-1 bg-transparent px-4 py-3.5 text-cafe-fg",
+            // 16px on mobile prevents iOS Safari's focus-zoom.
+            "text-base sm:text-xs",
             "placeholder:text-cafe-fg/30 focus:outline-none",
             "disabled:opacity-50",
           )}
@@ -128,7 +135,7 @@ export function Composer({
           disabled={!sendEnabled}
           aria-label="Send message"
           className={cn(
-            "mr-2 flex h-9 w-9 shrink-0 items-center justify-center",
+            "mr-2 flex h-11 w-11 shrink-0 items-center justify-center sm:h-9 sm:w-9",
             "rounded-xl transition",
             sendEnabled
               ? cn(
@@ -143,12 +150,12 @@ export function Composer({
         >
           {loading ? (
             <Loader2
-              size={14}
+              size={16}
               className={cn(!reducedMotion && "animate-spin")}
               aria-hidden="true"
             />
           ) : (
-            <Send size={14} aria-hidden="true" />
+            <Send size={16} aria-hidden="true" />
           )}
         </button>
       </div>
@@ -158,7 +165,7 @@ export function Composer({
           type="button"
           onClick={onCancelPending}
           className={cn(
-            "mt-2 text-[10px] font-black uppercase tracking-widest",
+            "mt-2 min-h-10 text-[10px] font-black uppercase tracking-widest",
             "text-cafe-fg/40 hover:text-cafe-fg/70",
             FOCUS_RING,
           )}

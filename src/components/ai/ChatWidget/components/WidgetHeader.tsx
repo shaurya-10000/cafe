@@ -15,6 +15,12 @@ interface WidgetHeaderProps {
   onClose: () => void;
 }
 
+/** Shared 40px square hit area for icon-only header buttons. */
+const ICON_BUTTON = cn(
+  "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
+  "transition-colors",
+);
+
 export function WidgetHeader({
   title,
   headingId,
@@ -27,11 +33,14 @@ export function WidgetHeader({
   return (
     <header
       className={cn(
-        "z-10 flex shrink-0 items-center justify-between",
-        "border-b border-cafe-border bg-cafe-bg p-6",
+        "z-10 flex shrink-0 items-center justify-between gap-2",
+        "border-b border-cafe-border bg-cafe-bg",
+        // Mobile: compact, and clear of notches / status bars.
+        "px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]",
+        "sm:p-6",
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
         <button
           type="button"
           onClick={onToggleSidebar}
@@ -39,9 +48,8 @@ export function WidgetHeader({
           aria-expanded={isSidebarOpen}
           aria-controls={HISTORY_SIDEBAR_ID}
           className={cn(
-            "-ml-2 rounded-full p-2",
-            "text-cafe-fg/60 transition-colors",
-            "hover:bg-cafe-fg/5 hover:text-cafe-fg",
+            ICON_BUTTON,
+            "text-cafe-fg/60 hover:bg-cafe-fg/5 hover:text-cafe-fg",
             FOCUS_RING,
           )}
         >
@@ -56,7 +64,7 @@ export function WidgetHeader({
           aria-hidden="true"
           className={cn(
             accentGradientClassName,
-            "rounded-xl p-2 text-white shadow-xl",
+            "hidden shrink-0 rounded-xl p-2 text-white shadow-xl sm:inline-flex",
           )}
         >
           <Sparkles size={20} />
@@ -65,28 +73,29 @@ export function WidgetHeader({
         <h2
           id={headingId}
           className={cn(
-            "max-w-[200px] truncate text-xl font-black italic uppercase",
-            "tracking-tighter text-cafe-fg",
+            "min-w-0 flex-1 truncate text-base font-black italic uppercase",
+            "tracking-tighter text-cafe-fg sm:text-xl",
           )}
         >
           {title}
         </h2>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
         <button
           type="button"
           onClick={onNewChat}
+          aria-label="New chat"
           className={cn(
-            "flex items-center gap-1.5 rounded-full px-3 py-1.5",
+            "flex h-10 min-w-10 items-center justify-center gap-1.5 rounded-full",
+            "px-2.5 sm:px-3",
             "text-[10px] font-black uppercase tracking-widest",
-            "text-cafe-accent transition-colors",
-            "hover:bg-cafe-accent/10",
+            "text-cafe-accent transition-colors hover:bg-cafe-accent/10",
             FOCUS_RING,
           )}
         >
-          <Plus size={14} aria-hidden="true" />
-          <span>New Chat</span>
+          <Plus size={18} aria-hidden="true" />
+          <span className="hidden sm:inline">New Chat</span>
         </button>
 
         <button
@@ -94,9 +103,8 @@ export function WidgetHeader({
           onClick={onClose}
           aria-label="Close chat"
           className={cn(
-            "rounded-full p-2 transition-colors",
-            "text-cafe-fg",
-            "hover:bg-cafe-fg/5",
+            ICON_BUTTON,
+            "text-cafe-fg hover:bg-cafe-fg/5",
             FOCUS_RING,
           )}
         >

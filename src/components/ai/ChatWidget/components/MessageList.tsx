@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 
 import type { Message, SuggestedPrompt } from "@/components/ai/types";
+import { cn } from "@/lib/utils";
 import type { ActionPayload } from "@/types/action";
 
 import { ChatMessageItem } from "./ChatMessageItem";
@@ -45,7 +46,14 @@ export function MessageList({
   const isEmpty = !messages || messages.length === 0;
 
   return (
-    <div className="sidebar-scroll flex-1 space-y-4 overflow-y-auto p-6">
+    <div
+      className={cn(
+        "sidebar-scroll min-h-0 flex-1 space-y-3 overflow-y-auto",
+        // Keep scroll gestures inside the chat instead of the page behind it.
+        "overscroll-contain",
+        "p-3 sm:space-y-4 sm:p-6",
+      )}
+    >
       {isEmpty && (
         <EmptyState
           title={emptyStateTitle}

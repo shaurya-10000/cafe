@@ -225,7 +225,7 @@ export default function ChatWidget({
             exit={{ x: reducedMotion ? 0 : "-100%" }}
             transition={reducedMotion ? { duration: 0 } : DIALOG_SPRING}
             className={cn(
-              "fixed left-0 top-0 z-[9999] flex h-full w-full max-w-lg flex-col",
+              "fixed inset-y-0 left-0 z-[9999] flex h-dvh w-full flex-col sm:max-w-lg",
               "border-r border-cafe-border bg-cafe-bg shadow-2xl",
               "outline-none",
             )}
@@ -241,6 +241,17 @@ export default function ChatWidget({
             />
 
             <div className="relative flex min-h-0 flex-1 overflow-hidden">
+              {isSidebarOpen && (
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  aria-label="Close chat history"
+                  onClick={handleToggleSidebar}
+                  className="absolute inset-0 z-10 bg-black/40 sm:hidden"
+                />
+              )}
+
+              <div className="absolute inset-y-0 left-0 z-20 flex sm:static sm:z-auto">
               <HistoryPanel isOpen={isSidebarOpen} reducedMotion={reducedMotion}>
                 <ChatSidebar
                   sessions={sortedSessions}
@@ -254,8 +265,9 @@ export default function ChatWidget({
                   onOpenMenu={menu.openMenu}
                 />
               </HistoryPanel>
+              </div>
 
-              <div className="flex h-full flex-1 flex-col overflow-hidden">
+              <div className="flex h-full min-w-0 flex-1 flex-col overflow-hidden">
                 <MessageList
                   messages={activeChat?.messages}
                   loading={loading}

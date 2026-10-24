@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 import { FOCUS_RING } from "../styles";
 
 export const ASIDE_CLASS = cn(
-  "flex h-full w-[220px] shrink-0 flex-col overflow-hidden",
-  "border-r border-cafe-border bg-cafe-fg/[0.03]",
+  "flex h-full w-[min(220px,80vw)] shrink-0 flex-col overflow-hidden",
+  "border-r border-cafe-border bg-cafe-bg shadow-xl sm:bg-cafe-fg/[0.03] sm:shadow-none",
 );
 
 export const SCROLL_AREA_CLASS =
@@ -42,7 +42,7 @@ export const SELECT_BUTTON_CLASS = cn(
 );
 
 export const MENU_TRIGGER_CLASS = cn(
-  "mr-1 rounded p-1 text-cafe-fg/40 opacity-0 transition",
+  "mr-1 rounded p-2 text-cafe-fg/40 opacity-100 transition sm:p-1 sm:opacity-0",
   "group-hover:opacity-100 focus-visible:opacity-100",
   "hover:bg-cafe-fg/10 hover:text-cafe-fg",
   FOCUS_RING,
