@@ -120,13 +120,9 @@ export function startAiRequest(ctx: AiRequestContext): AiRequestHandle {
 }
 
 export function extractActionTypeForLog(text: string): string | undefined {
-  const match = /\[ACTION_DATA:([\s\S]*?)\]/.exec(text);
-  if (!match) return undefined;
-  try {
-    const parsed: unknown = JSON.parse(match[1]);
-    if (parsed && typeof parsed === "object" && "type" in parsed && typeof (parsed as { type: unknown }).type === "string") {
-      return (parsed as { type: string }).type;
-    }
-  } catch {}
-  return undefined;
+  // Read only the leading "type" value. Parsing the whole tag would need its
+  // closing bracket, and payloads containing arrays (multi-item ADD_TO_CART)
+  // have `]` characters before the tag actually ends.
+  const match = /\[ACTION_DATA:\s*\{\s*"type"\s*:\s*"([A-Z_]+)"/.exec(text);
+  return match?.[1];
 }
