@@ -8,7 +8,7 @@ interface CarouselArrowsProps {
 }
 
 const ARROW_CLASSES =
-  "absolute top-1/2 z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-[#EAE9E4] bg-white/90 text-zinc-900 shadow-xl backdrop-blur-md transition-all hover:scale-110 hover:border-cafe-accent hover:text-cafe-accent dark:border-zinc-800 dark:bg-zinc-900/90 dark:text-zinc-100";
+  "pointer-events-auto absolute top-1/2 z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-[#EAE9E4] bg-white/90 text-zinc-900 shadow-xl backdrop-blur-md transition-all hover:scale-110 hover:border-cafe-accent hover:text-cafe-accent dark:border-zinc-800 dark:bg-zinc-900/90 dark:text-zinc-100";
 
 export function CarouselArrows({ onStep }: CarouselArrowsProps) {
   return (

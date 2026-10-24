@@ -29,28 +29,27 @@ export function LocationCarousel({
 
   return (
     <div className="relative">
-      <AnimatePresence mode="wait" initial={false}>
-        <LocationSlide
-          key={activeLocation.id}
-          location={activeLocation}
-          isPriority={activeIndex === 0}
-          hasSiblings={hasSiblings}
-          panel={panel}
-          onSwipe={onStep}
-        />
-      </AnimatePresence>
+      <div className="relative z-10">
+        <AnimatePresence mode="wait" initial={false}>
+          <LocationSlide
+            key={activeLocation.id}
+            location={activeLocation}
+            isPriority={activeIndex === 0}
+            hasSiblings={hasSiblings}
+            panel={panel}
+            onSwipe={onStep}
+          />
+        </AnimatePresence>
+      </div>
 
       {hasSiblings && (
         <>
           {/* 
-            The wrapper is now full height (inset-0) and centers the arrows 
-            vertically based on the entire content block. 
-            On large screens, it pushes them out to the margins (-left-16).
+            The wrapper is pointer-events-none, so clicks pass through.
+            <CarouselArrows> will have pointer-events-auto on the buttons themselves.
           */}
-          <div className="pointer-events-none absolute inset-0 z-30 hidden md:block">
-            <div className="relative h-full w-full pointer-events-auto">
-              <CarouselArrows onStep={onStep} />
-            </div>
+          <div className="pointer-events-none absolute inset-0 z-20 w-full">
+            <CarouselArrows onStep={onStep} />
           </div>
 
           <CarouselDots
