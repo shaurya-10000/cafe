@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Gift, Loader2 } from "lucide-react";
 import { getFadeMotion } from "../lib/motion";
 import type { GameRewardConfig } from "../types";
+import { ScratchCard } from "./ScratchCard";
 
 interface UnclaimedCouponViewProps {
   readonly isLoggedIn: boolean;
@@ -34,6 +35,12 @@ export function UnclaimedCouponView({
   onSignIn,
   reducedMotion,
 }: UnclaimedCouponViewProps) {
+  const mode = !isLoggedIn
+    ? "locked"
+    : isClaimable && !configLoading && !isClaiming
+      ? "ready"
+      : "disabled";
+
   return (
     <motion.div
       key="unclaimed"
@@ -50,34 +57,51 @@ export function UnclaimedCouponView({
         </h3>
         <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 md:text-sm">
           {isLoggedIn
-            ? "Claim your coupon below."
-            : "Sign in to claim your welcome coupon."}
+            ? "Scratch the card to reveal and claim your coupon."
+            : "Sign in to scratch and claim your welcome coupon."}
         </p>
-        {isLoggedIn && config && (
-          <p className="text-sm font-black text-cafe-accent">
-            {config.discount_value} off
-          </p>
-        )}
       </div>
 
-      <button
-        type="button"
-        onClick={isLoggedIn ? onClaim : onSignIn}
-        disabled={isLoggedIn && (!isClaimable || isClaiming)}
-        className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-900 px-10 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2 dark:bg-zinc-100 dark:text-black"
+      <ScratchCard
+        mode={mode}
+        isClaiming={isClaiming}
+        onReveal={onClaim}
+        onLockedPress={onSignIn}
+        fallbackLabel={
+          isLoggedIn ? "Prefer not to scratch? Reveal instead" : "Sign in to claim"
+        }
       >
-        {isClaiming ? (
+        {isLoggedIn && config ? (
           <>
-            <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-            Claiming&hellip;
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cafe-accent">
+              You won
+            </span>
+            <span className="text-6xl font-black tracking-tight sm:text-7xl text-zinc-900 dark:text-zinc-100">
+              {config.discount_value}
+            </span>
+            <span className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+              off your order
+            </span>
           </>
         ) : (
           <>
-            <Gift size={16} aria-hidden="true" />
-            {isLoggedIn ? "Claim Coupon" : "Sign In to Claim"}
+            <Gift size={28} className="text-cafe-accent" aria-hidden="true" />
+            <span className="text-xs font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+              Your welcome reward
+            </span>
           </>
         )}
-      </button>
+      </ScratchCard>
+
+      {isClaiming && (
+        <p
+          role="status"
+          className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cafe-accent"
+        >
+          <Loader2 size={14} className="animate-spin" aria-hidden="true" />
+          Claiming&hellip;
+        </p>
+      )}
     </motion.div>
   );
 }
