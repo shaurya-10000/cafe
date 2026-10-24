@@ -42,7 +42,17 @@ export function LocationCarousel({
 
       {hasSiblings && (
         <>
-          <CarouselArrows onStep={onStep} />
+          {/* 
+            The wrapper is now full height (inset-0) and centers the arrows 
+            vertically based on the entire content block. 
+            On large screens, it pushes them out to the margins (-left-16).
+          */}
+          <div className="pointer-events-none absolute inset-0 z-30 hidden md:block">
+            <div className="relative h-full w-full pointer-events-auto">
+              <CarouselArrows onStep={onStep} />
+            </div>
+          </div>
+
           <CarouselDots
             locations={locations}
             activeIndex={activeIndex}
