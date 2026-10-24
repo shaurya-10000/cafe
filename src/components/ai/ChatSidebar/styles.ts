@@ -8,7 +8,7 @@ export const ASIDE_CLASS = cn(
 );
 
 export const SCROLL_AREA_CLASS =
-  "sidebar-scroll flex-1 space-y-1 overflow-y-auto p-3";
+  "flex-1 space-y-1 overflow-y-auto p-3 text-cafe-fg [scrollbar-width:thin] [scrollbar-color:color-mix(in_srgb,currentColor_30%,transparent)_transparent]";
 
 export const HEADING_CLASS =
   "block px-2 py-1 text-[9px] font-black uppercase tracking-widest text-cafe-fg/40";

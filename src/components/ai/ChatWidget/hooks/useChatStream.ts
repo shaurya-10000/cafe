@@ -50,7 +50,6 @@ export interface SendParams {
  * that arrives after a newer send (or after the widget closed) is dropped.
  */
 export function useChatStream({
-  isOpen,
   apiEndpoint,
   titleEndpoint,
   userId,
@@ -73,14 +72,10 @@ export function useChatStream({
     titleAbortRef.current = null;
   }, []);
 
-  // Abort in-flight work on unmount and whenever the widget closes.
+  // Abort in-flight work on unmount only. Closing the widget deliberately
+  // does not abort: a reply that is still streaming finishes in the background.
   useEffect(() => abortAll, [abortAll]);
 
-  useEffect(() => {
-    if (isOpen) return;
-    abortAll();
-    setLoading(false);
-  }, [isOpen, abortAll]);
 
   const generateTitle = useCallback(
     async (

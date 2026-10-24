@@ -48,7 +48,8 @@ export function MessageList({
   return (
     <div
       className={cn(
-        "sidebar-scroll min-h-0 flex-1 space-y-3 overflow-y-auto",
+        "min-h-0 flex-1 space-y-3 overflow-y-auto text-cafe-fg",
+        "[scrollbar-width:thin] [scrollbar-color:color-mix(in_srgb,currentColor_30%,transparent)_transparent]",
         // Keep scroll gestures inside the chat instead of the page behind it.
         "overscroll-contain",
         "p-3 sm:space-y-4 sm:p-6",
