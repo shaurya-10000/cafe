@@ -34,7 +34,7 @@ export function ClerkAccountPanel() {
       <UserProfile
         routing="hash"
         appearance={{
-          baseTheme: isDark ? dark : undefined,
+          theme: isDark ? dark : undefined,
           variables: {
             borderRadius: "0.875rem",
             colorBackground: isDark ? "#18181b" : "#ffffff",
