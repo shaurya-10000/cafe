@@ -328,7 +328,7 @@ async function buildCustomerContext(): Promise<CustomerContext> {
   const services = catalog.filter((c) => c.item_type === "service");
 
   const renderItem = (c: CatalogRow) =>
-    `- ${c.name} (${c.category}) — ${formatMoney(c.numeric_price)}${c.is_popular ? " — popular" : ""}${c.in_stock === false ? " — SOLD OUT" : ""}${c.description ? ` — ${c.description.slice(0, 120)}` : ""}`;
+    `- ${c.name} (${c.category}) — ${formatMoney(c.numeric_price)} | id: ${c.id}${c.is_popular ? " — popular" : ""}${c.in_stock === false ? " — SOLD OUT" : ""}${c.description ? ` — ${c.description.slice(0, 120)}` : ""}`;
 
   const catalogBlock = `
 Items marked SOLD OUT cannot be ordered right now: do not offer them or add them to the cart.

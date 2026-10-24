@@ -31,14 +31,14 @@ const ReservationDataSchema = z.object({
 });
 const ReservationActionDataSchema = z.object({ bookingId: UuidishString.optional() });
 const CartLineItemSchema = z.object({
-  itemId: UuidishString.optional(),
+  itemId: UuidishString.optional().catch(undefined),
   itemName: z.string().trim().max(200).optional(),
   itemPrice: PriceNumber.optional(),
   quantity: QuantityInt.optional(),
 });
 const CartDataSchema = z.object({
   items: z.array(CartLineItemSchema).max(50).optional(),
-  itemId: UuidishString.optional(),
+  itemId: UuidishString.optional().catch(undefined),
   itemName: z.string().trim().max(200).optional(),
   itemPrice: PriceNumber.optional(),
   quantity: QuantityInt.optional(),
