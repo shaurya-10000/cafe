@@ -1,8 +1,8 @@
-/** Matches the Tailwind `w-44` class on the menu. */
-export const MENU_WIDTH_PX = 176;
+/** Matches the Tailwind `w-32` class on the menu. */
+export const MENU_WIDTH_PX = 128;
 
-/** Matches the `min-h-10` class on each item. */
-export const ITEM_HEIGHT_PX = 40;
+/** Matches the `min-h-8` class on each item. */
+export const ITEM_HEIGHT_PX = 32;
 
 /** Vertical padding of the menu panel (`p-1` on both sides). */
 export const MENU_PADDING_PX = 8;
