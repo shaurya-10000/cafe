@@ -869,6 +869,19 @@ export async function POST(req: Request) {
       });
 
       const upstreamStatus = getUpstreamStatus(upstreamErr);
+      if (upstreamStatus === 429) {
+        console.warn("[chat] upstream rate limited (429) after retries");
+        return new Response(
+          "The assistant has reached its usage limit for the moment. Please try again shortly.",
+          {
+            status: 429,
+            headers: {
+              "Retry-After": "30",
+              "Content-Type": "text/plain; charset=utf-8",
+            },
+          },
+        );
+      }
       if (upstreamStatus === 503) {
         return new Response(
           "The assistant is temporarily overloaded. Please try again in a few seconds.",

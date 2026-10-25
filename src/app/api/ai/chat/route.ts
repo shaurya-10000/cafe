@@ -638,6 +638,13 @@ export async function POST(req: Request) {
 
     const systemInstruction = buildSystemInstruction(ctx);
 
+    if (userId && requestedChatId && !persistChatId) {
+      console.warn("[chat] reply will not be saved to history", {
+        requestId: clientRequestId,
+        hasServiceRole,
+      });
+    }
+
     if (!ai) {
       startAiRequest({
         surface: "customer",
@@ -694,6 +701,19 @@ export async function POST(req: Request) {
       });
 
       const upstreamStatus = getUpstreamStatus(upstreamErr);
+      if (upstreamStatus === 429) {
+        console.warn("[chat] upstream rate limited (429) after retries");
+        return new Response(
+          "The assistant has reached its usage limit for the moment. Please try again shortly.",
+          {
+            status: 429,
+            headers: {
+              "Retry-After": "30",
+              "Content-Type": "text/plain; charset=utf-8",
+            },
+          },
+        );
+      }
       if (upstreamStatus === 503) {
         return new Response(
           "The assistant is temporarily overloaded. Please try again in a few seconds.",
@@ -719,6 +739,7 @@ export async function POST(req: Request) {
     let accumulatedForActionDetection = "";
     let responseChars = 0;
     let actionType: string | undefined;
+    let clientGone = false;
 
     const readableStream = new ReadableStream({
       async start(controller) {
@@ -733,7 +754,15 @@ export async function POST(req: Request) {
                 accumulatedForActionDetection,
               );
             }
-            controller.enqueue(encoder.encode(chunk.text));
+            if (!clientGone) {
+              try {
+                controller.enqueue(encoder.encode(chunk.text));
+              } catch {
+                // The client left (closed the chat or navigated away). Keep reading so
+                // the full reply is still saved to history.
+                clientGone = true;
+              }
+            }
           }
         } catch (streamErr) {
           const isIdleTimeout =
@@ -779,7 +808,11 @@ export async function POST(req: Request) {
               rawText: accumulatedForActionDetection,
             });
           }
-          controller.close();
+          try {
+            controller.close();
+          } catch {
+            // Already closed: the client disconnected.
+          }
         }
       },
     });

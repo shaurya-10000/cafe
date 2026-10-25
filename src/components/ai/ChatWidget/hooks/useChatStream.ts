@@ -19,6 +19,7 @@ import {
   warnDev,
 } from "../lib";
 import { historyPayload } from "@/lib/ai/history";
+import { ChatRequestError, readErrorBody } from "../lib/stream";
 import { resolveChatTitle } from "../lib/title";
 import type { BackpressureStatus } from "../types";
 
@@ -122,7 +123,7 @@ export function useChatStream({
         resolveRetryAfterSeconds(res.headers.get("Retry-After"), status),
       );
 
-      const bodyText = await res.text().catch(() => "");
+      const bodyText = await readErrorBody(res);
       if (requestId !== requestIdRef.current) return;
 
       updateMessageByIndex(chatId, assistantIndex, {
@@ -223,7 +224,7 @@ export function useChatStream({
 
         updateMessageByIndex(chatId, assistantIndex, {
           text:
-            error instanceof Error && error.message.trim()
+            error instanceof ChatRequestError && error.message.trim()
               ? error.message
               : MESSAGES.connectFailed,
           action: undefined,
