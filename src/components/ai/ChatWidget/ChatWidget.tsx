@@ -199,15 +199,11 @@ export default function ChatWidget({
     setSlotHint(null);
   }, [pending]);
 
-  // Retry re-sends a message's own text. A ref keeps the callback identity
-  // stable, so typing in the composer does not re-render every bubble.
+  // Always points at the latest sendMessage, so stable callbacks can call it.
   const sendMessageRef = useRef(composer.sendMessage);
   useEffect(() => {
     sendMessageRef.current = composer.sendMessage;
   });
-  const handleRetry = useCallback((text: string) => {
-    void sendMessageRef.current(text);
-  }, []);
 
   // After a rate-limit cooldown ends, offer to re-send the last prompt.
   const lastUserText = useMemo(
@@ -327,8 +323,6 @@ if (!mounted) return null;
                   onCopy={handleCopy}
                   onSpeak={speak}
                   onExecuteAction={dispatchAction}
-                  retryEnabled={!loading && rateLimit.canSend && pending.pendingState === null}
-                  onRetry={handleRetry}
                 />
               </div>
             </div>
