@@ -51,7 +51,7 @@ export function buildBadgeClassName(
   const palette = isActive
     ? "bg-cafe-accent-fg text-cafe-accent"
     : tone === "red"
-      ? "bg-red-500 text-white"
+      ? "bg-cafe-favorite text-white"
       : "bg-cafe-accent text-cafe-accent-fg";
 
   return joinClasses(
