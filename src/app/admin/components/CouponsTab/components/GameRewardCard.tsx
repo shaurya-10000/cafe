@@ -15,14 +15,14 @@ export const GameRewardCard = memo(function GameRewardCard({
   const { reward, loading, saving, error, justSaved, edit, save } = state;
 
   return (
-    <div className="space-y-5 rounded-3xl border border-cafe-border bg-cafe-card p-6 text-cafe-fg shadow-xl">
-      <div className="flex items-center justify-between border-b border-cafe-border pb-4">
+    <div className="space-y-5 rounded-3xl border border-cafe-border bg-cafe-card p-5 text-cafe-fg shadow-xl sm:p-6">
+      <div className="flex flex-col gap-3 border-b border-cafe-border pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#C5A059]/20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#C5A059]/20">
             <Gamepad2 className="text-[#C5A059]" size={20} aria-hidden="true" />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-cafe-fg">
               Games &amp; Rewards Configuration
               <Sparkles size={14} className="text-[#C5A059]" aria-hidden="true" />
@@ -37,7 +37,7 @@ export const GameRewardCard = memo(function GameRewardCard({
         {justSaved && (
           <span
             role="status"
-            className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400"
+            className="self-start rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400 sm:self-auto"
           >
             Saved Successfully
           </span>

@@ -54,6 +54,8 @@ export const RewardForm = memo(function RewardForm({
         <Field label="Promo Code" labelClassName={REWARD_LABEL_CLASS}>
           <input
             type="text"
+            autoCapitalize="characters"
+            autoComplete="off"
             className={cx(REWARD_INPUT_CLASS, "uppercase tracking-wider")}
             value={reward.promo_code}
             onChange={(event) =>
@@ -74,60 +76,54 @@ export const RewardForm = memo(function RewardForm({
         </Field>
       </div>
 
-      <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-3">
-        <Field
-          label="Description"
-          labelClassName={REWARD_LABEL_CLASS}
-          className="sm:col-span-2"
+      <Field label="Description" labelClassName={REWARD_LABEL_CLASS}>
+        <input
+          type="text"
+          className={REWARD_INPUT_CLASS}
+          value={reward.description}
+          onChange={(event) => onChange({ description: event.target.value })}
+          placeholder="Welcome Scratch Card Reward"
+        />
+      </Field>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <button
+          type="button"
+          onClick={() => onChange({ is_active: !reward.is_active })}
+          aria-pressed={reward.is_active}
+          className={cx(
+            "flex items-center justify-between gap-4 rounded-xl border p-3 text-[10px] font-black uppercase tracking-widest transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] sm:min-w-[200px]",
+            reward.is_active
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-500"
+              : "border-cafe-border bg-cafe-fg/5 text-gray-500",
+          )}
         >
-          <input
-            type="text"
-            className={REWARD_INPUT_CLASS}
-            value={reward.description}
-            onChange={(event) => onChange({ description: event.target.value })}
-            placeholder="Welcome Scratch Card Reward"
-          />
-        </Field>
+          <span>{reward.is_active ? "Game Active" : "Game Paused"}</span>
 
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => onChange({ is_active: !reward.is_active })}
-            aria-pressed={reward.is_active}
-            className={cx(
-              "flex flex-1 items-center justify-between rounded-xl border p-2.5 text-[10px] font-black uppercase tracking-widest transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059]",
-              reward.is_active
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-500"
-                : "border-cafe-border bg-cafe-fg/5 text-gray-500",
-            )}
-          >
-            <span>{reward.is_active ? "Game Active" : "Game Paused"}</span>
+          {reward.is_active ? (
+            <ToggleRight size={22} aria-hidden="true" />
+          ) : (
+            <ToggleLeft size={22} aria-hidden="true" />
+          )}
+        </button>
 
-            {reward.is_active ? (
-              <ToggleRight size={22} aria-hidden="true" />
-            ) : (
-              <ToggleLeft size={22} aria-hidden="true" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={onSave}
-            disabled={saving}
-            aria-busy={saving}
-            className="flex shrink-0 items-center gap-2 rounded-xl bg-[#C5A059] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-[#A67C00] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] focus-visible:ring-offset-2"
-          >
-            {saving ? (
-              <Loader2 size={12} className="animate-spin" aria-hidden="true" />
-            ) : (
-              <Save size={12} aria-hidden="true" />
-            )}
-            Save Game
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={saving}
+          aria-busy={saving}
+          className="flex items-center justify-center gap-2 rounded-xl bg-[#C5A059] px-5 py-3.5 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-[#A67C00] active:scale-95 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] focus-visible:ring-offset-2"
+        >
+          {saving ? (
+            <Loader2 size={12} className="animate-spin" aria-hidden="true" />
+          ) : (
+            <Save size={12} aria-hidden="true" />
+          )}
+          Save Game
+        </button>
       </div>
 
-      <p className="text-[9px] font-bold uppercase tracking-widest text-gray-500">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
         Changes here only affect new claims &mdash; customers who already
         scratched and won keep the terms they were shown at the time.
       </p>

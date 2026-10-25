@@ -59,9 +59,9 @@ export function CouponFormModal({
       role="dialog"
       aria-modal="true"
       aria-label={isEditing ? "Edit coupon" : "New coupon"}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-md sm:items-center sm:p-4"
     >
-      <div className="max-h-[90vh] w-full max-w-lg space-y-5 overflow-y-auto rounded-3xl border border-zinc-200 bg-white p-8 shadow-2xl dark:border-white/5 dark:bg-zinc-950">
+      <div className="max-h-[92vh] w-full max-w-lg space-y-5 overflow-y-auto rounded-t-3xl border border-zinc-200 bg-white p-5 pb-8 shadow-2xl dark:border-white/5 dark:bg-zinc-950 sm:rounded-3xl sm:p-8">
         <h3 className="text-sm font-black uppercase tracking-tight text-zinc-900 dark:text-zinc-100">
           {isEditing ? "Edit Coupon" : "New Coupon"}
         </h3>
@@ -79,6 +79,8 @@ export function CouponFormModal({
           <input
             className={cx(MODAL_INPUT_CLASS, "uppercase tracking-widest")}
             placeholder="SAVE20"
+            autoCapitalize="characters"
+            autoComplete="off"
             value={values.code}
             onChange={(event) =>
               onFieldChange("code", event.target.value.toUpperCase())
@@ -115,6 +117,7 @@ export function CouponFormModal({
         >
           <input
             type="number"
+            inputMode="decimal"
             min={0}
             max={isPercentage ? 100 : undefined}
             step={0.01}
@@ -126,13 +129,14 @@ export function CouponFormModal({
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field
             label={`Min Order (${CURRENCY_SYMBOL})`}
             labelClassName={MODAL_LABEL_CLASS}
           >
             <input
               type="number"
+              inputMode="decimal"
               min={0}
               step={0.01}
               className={MODAL_INPUT_CLASS}
@@ -152,6 +156,7 @@ export function CouponFormModal({
           >
             <input
               type="number"
+              inputMode="decimal"
               min={0}
               step={0.01}
               placeholder="Unlimited"
@@ -173,6 +178,7 @@ export function CouponFormModal({
         >
           <input
             type="number"
+            inputMode="numeric"
             min={1}
             step={1}
             placeholder="Unlimited"
@@ -187,7 +193,7 @@ export function CouponFormModal({
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Starts At" labelClassName={MODAL_LABEL_CLASS}>
             <input
               type="datetime-local"
@@ -216,6 +222,7 @@ export function CouponFormModal({
             type="button"
             onClick={() => onFieldChange("is_active", !values.is_active)}
             aria-pressed={values.is_active}
+            aria-label="Coupon active"
             className={cx(
               "relative h-7 w-12 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059]",
               values.is_active ? "bg-[#C5A059]" : "bg-zinc-300 dark:bg-zinc-700",
@@ -235,7 +242,7 @@ export function CouponFormModal({
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-xl border border-zinc-200 p-3 text-[10px] font-black uppercase tracking-widest transition-colors hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] dark:border-white/10 dark:hover:bg-white/5"
+            className="flex-1 rounded-xl border border-zinc-200 p-3.5 text-[10px] font-black uppercase tracking-widest transition-colors hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] dark:border-white/10 dark:hover:bg-white/5"
           >
             Cancel
           </button>
@@ -245,7 +252,7 @@ export function CouponFormModal({
             onClick={onSubmit}
             disabled={submitting}
             aria-busy={submitting}
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#C5A059] p-3 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-[#A67C00] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] focus-visible:ring-offset-2"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#C5A059] p-3.5 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-[#A67C00] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] focus-visible:ring-offset-2"
           >
             {submitting && (
               <Loader2 size={12} className="animate-spin" aria-hidden="true" />

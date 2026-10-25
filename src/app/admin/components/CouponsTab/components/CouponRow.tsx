@@ -75,11 +75,11 @@ export const CouponRow = memo(function CouponRow({
   return (
     <div
       className={cx(
-        "flex flex-col justify-between gap-4 rounded-2xl border p-5 sm:flex-row sm:items-center",
+        "flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-5",
         styles.container,
       )}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex min-w-0 items-start gap-4">
         <div
           aria-hidden="true"
           className={cx(
@@ -90,11 +90,11 @@ export const CouponRow = memo(function CouponRow({
           <Tag size={16} className={styles.icon} />
         </div>
 
-        <div>
+        <div className="min-w-0">
           <div className="mb-1 flex flex-wrap items-center gap-2">
             <span
               className={cx(
-                "font-mono text-sm font-black tracking-tight",
+                "break-all font-mono text-sm font-black tracking-tight",
                 styles.code,
               )}
             >
@@ -104,17 +104,17 @@ export const CouponRow = memo(function CouponRow({
             <StatusBadge coupon={coupon} />
           </div>
 
-          <p className={cx("text-[10px] font-bold", styles.summary)}>
+          <p className={cx("text-[11px] font-bold", styles.summary)}>
             {formatDiscountSummary(coupon)}
           </p>
 
-          <p className="mt-0.5 text-[9px] font-bold text-zinc-400">
+          <p className="mt-0.5 text-[10px] font-bold text-zinc-400">
             {formatUsageSummary(coupon)}
           </p>
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center justify-end gap-1 border-t border-zinc-100 pt-3 dark:border-white/5 sm:gap-2 sm:border-0 sm:pt-0">
         <button
           type="button"
           onClick={() => onToggle(coupon)}
@@ -138,7 +138,8 @@ export const CouponRow = memo(function CouponRow({
           type="button"
           onClick={() => onEdit(coupon)}
           aria-label={`Edit coupon ${coupon.code}`}
-          className="rounded-xl p-2.5 text-zinc-400 transition-colors hover:bg-blue-50 hover:text-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-blue-950/20"
+          title="Edit"
+          className="rounded-xl p-3 text-zinc-400 transition-colors hover:bg-[#C5A059]/10 hover:text-[#C5A059] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059]"
         >
           <Pencil size={16} aria-hidden="true" />
         </button>
@@ -147,7 +148,8 @@ export const CouponRow = memo(function CouponRow({
           type="button"
           onClick={() => onDelete(coupon)}
           aria-label={`Delete coupon ${coupon.code}`}
-          className="rounded-xl p-2.5 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:hover:bg-red-950/20"
+          title="Delete"
+          className="rounded-xl p-3 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:hover:bg-red-950/20"
         >
           <Trash2 size={16} aria-hidden="true" />
         </button>
