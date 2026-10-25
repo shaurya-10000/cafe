@@ -45,6 +45,8 @@ export function getStatusIconWrapperStyle(status: BookingStatus): string {
   switch (status) {
     case "confirmed":
       return "bg-green-500/10 border-green-500/20 text-green-500";
+    case "completed":
+      return "bg-cafe-fg/5 border-cafe-border text-gray-500";
     case "cancelled":
       return "bg-red-500/10 border-red-500/20 text-red-500";
     default:

@@ -1,28 +1,28 @@
 import { getStatusBadgeStyle, getStatusIconWrapperStyle } from "./lib/status";
 import type { BookingStatus } from "./types";
 
-export const LIST_ROOT_CLASS = "space-y-6 pb-20";
-export const LIST_CLASS = "space-y-6";
+export const LIST_ROOT_CLASS = "space-y-8 pb-20";
+export const LIST_CLASS = "space-y-4 sm:space-y-6";
 
 export const CARD_CLASS =
-  "group flex list-none flex-col gap-6 rounded-[2.5rem] border border-cafe-border bg-cafe-card p-6 shadow-2xl transition-all hover:border-cafe-accent/30 lg:p-8";
+  "group flex list-none flex-col gap-5 rounded-3xl border border-cafe-border bg-cafe-card p-5 shadow-2xl transition-all hover:border-cafe-accent/30 sm:gap-6 sm:rounded-[2.5rem] sm:p-6 lg:p-8";
 export const CARD_TOP_ROW_CLASS =
   "flex flex-col justify-between gap-6 lg:flex-row lg:items-center";
 
-export const SUMMARY_CLASS = "flex items-center gap-5 lg:gap-7";
+export const SUMMARY_CLASS = "flex min-w-0 items-center gap-4 lg:gap-7";
 
 export function buildStatusIconClass(status: BookingStatus): string {
-  return `flex h-14 w-14 items-center justify-center rounded-2xl border transition-all lg:h-16 lg:w-16 ${getStatusIconWrapperStyle(status)}`;
+  return `flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border transition-all sm:h-14 sm:w-14 lg:h-16 lg:w-16 ${getStatusIconWrapperStyle(status)}`;
 }
 
-export const ID_CLASS = "font-mono text-[9px] font-bold text-gray-500";
+export const ID_CLASS = "font-mono text-[10px] font-bold text-gray-500";
 
 export function buildStatusBadgeClass(status: BookingStatus): string {
-  return `rounded-full border px-2.5 py-1 text-[8px] font-black uppercase tracking-widest transition-colors ${getStatusBadgeStyle(status)}`;
+  return `rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-widest transition-colors ${getStatusBadgeStyle(status)}`;
 }
 
 export const LOCATION_CLASS =
-  "flex items-center gap-1 rounded-full border border-cafe-border px-2.5 py-1 text-[8px] font-black uppercase tracking-widest text-gray-500";
+  "flex items-center gap-1 rounded-full border border-cafe-border px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-gray-500";
 export const DATE_CLASS =
   "text-lg font-bold tracking-tight text-cafe-fg lg:text-xl";
 
@@ -43,7 +43,7 @@ export function buildStepDotClass(isActive: boolean): string {
 }
 
 export function buildStepLabelClass(isActive: boolean): string {
-  return `absolute top-5 whitespace-nowrap text-[7px] font-black uppercase tracking-widest transition-colors duration-500 ${
+  return `absolute top-5 whitespace-nowrap text-[8px] font-black uppercase tracking-widest transition-colors duration-500 ${
     isActive ? "text-cafe-fg" : "text-gray-500"
   }`;
 }
@@ -62,12 +62,12 @@ export const NOTE_CLASS =
   "flex items-start gap-2.5 rounded-xl border border-cafe-border bg-cafe-fg/[0.02] px-4 py-3";
 
 export const SKELETON_CARD_CLASS =
-  "flex animate-pulse items-center gap-5 rounded-[2.5rem] border border-cafe-border bg-cafe-card p-6 lg:p-8";
+  "flex animate-pulse items-center gap-5 rounded-3xl border border-cafe-border bg-cafe-card p-5 sm:rounded-[2.5rem] sm:p-6 lg:p-8";
 
 export const ERROR_STATE_CLASS =
-  "space-y-3 rounded-[3rem] border border-red-500/30 bg-red-500/5 py-20 text-center";
+  "space-y-3 rounded-3xl border border-red-500/30 bg-red-500/5 py-20 text-center sm:rounded-[3rem]";
 export const EMPTY_STATE_CLASS =
-  "rounded-[3rem] border border-dashed border-cafe-border py-32 text-center";
+  "rounded-3xl border border-dashed border-cafe-border py-20 text-center sm:rounded-[3rem] sm:py-32";
 
 export const CANCEL_ERROR_CLASS =
   "flex items-center gap-2 rounded-2xl border border-red-500/10 bg-red-500/5 px-4 py-3 text-xs font-bold text-red-500";

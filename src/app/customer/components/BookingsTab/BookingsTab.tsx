@@ -1,7 +1,10 @@
 "use client";
 
+import { useMemo } from "react";
+
 import {
   BookingCard,
+  BookingSection,
   CancelErrorBanner,
   EmptyState,
   ErrorState,
@@ -9,8 +12,9 @@ import {
 } from "./components";
 import { useBookingCancellation, useCancelBookingEvent } from "./hooks";
 import { normalizeBookingDisplay } from "./lib/display";
-import { LIST_CLASS, LIST_ROOT_CLASS } from "./styles";
-import type { BookingsTabProps } from "./types";
+import { groupBookings } from "./lib/group";
+import { LIST_ROOT_CLASS } from "./styles";
+import type { BookingsTabProps, DisplayBooking } from "./types";
 
 /**
  * Customer bookings list with cancel (button + AI-driven event). The parent
@@ -27,28 +31,46 @@ export function BookingsTab({
 
   useCancelBookingEvent(performCancel);
 
+  const { upcoming, past } = useMemo(
+    () =>
+      groupBookings(
+        bookings.map((raw, index) => ({
+          raw,
+          booking: normalizeBookingDisplay(raw, `booking-${index}`),
+        })),
+      ),
+    [bookings],
+  );
+
   if (error) return <ErrorState message={error} />;
   if (isLoading) return <LoadingState />;
   if (bookings.length === 0) return <EmptyState />;
+
+  const renderCards = (items: DisplayBooking[]) =>
+    items.map((booking, index) => (
+      <BookingCard
+        key={booking.id || index}
+        booking={booking}
+        isCancelling={cancellingIds.has(booking.id)}
+        onRequestCancel={requestCancel}
+      />
+    ));
 
   return (
     <div className={LIST_ROOT_CLASS}>
       {cancelError && <CancelErrorBanner message={cancelError} />}
 
-      <ul className={LIST_CLASS}>
-        {bookings.map((raw, index) => {
-          const booking = normalizeBookingDisplay(raw, `booking-${index}`);
+      {upcoming.length > 0 && (
+        <BookingSection title="Upcoming" count={upcoming.length}>
+          {renderCards(upcoming)}
+        </BookingSection>
+      )}
 
-          return (
-            <BookingCard
-              key={booking.id || index}
-              booking={booking}
-              isCancelling={cancellingIds.has(booking.id)}
-              onRequestCancel={requestCancel}
-            />
-          );
-        })}
-      </ul>
+      {past.length > 0 && (
+        <BookingSection title="Past" count={past.length}>
+          {renderCards(past)}
+        </BookingSection>
+      )}
     </div>
   );
 }

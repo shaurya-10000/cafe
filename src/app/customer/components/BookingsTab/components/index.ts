@@ -1,4 +1,5 @@
 export { BookingCard } from "./BookingCard";
+export { BookingSection } from "./BookingSection";
 export { BookingSummary } from "./BookingSummary";
 export { BookingProgress } from "./BookingProgress";
 export { BookingActions } from "./BookingActions";

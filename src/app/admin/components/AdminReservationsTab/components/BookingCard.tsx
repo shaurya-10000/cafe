@@ -42,37 +42,47 @@ export const BookingCard = memo(function BookingCard({
       data-testid="admin-booking-card"
       data-booking-id={id}
       data-status={status}
-      className="space-y-4 rounded-[2rem] border border-cafe-border bg-cafe-card p-6 transition-all hover:border-cafe-fg/10"
+      className="space-y-4 rounded-3xl border border-cafe-border bg-cafe-card p-5 transition-all hover:border-cafe-fg/10 sm:rounded-[2rem] sm:p-6"
     >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <div
             aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-xl bg-cafe-fg/5 text-gray-500"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cafe-fg/5 text-gray-500"
           >
             <User size={14} />
           </div>
 
-          <div>
-            <h4 className="text-sm font-bold tracking-tight text-cafe-fg">
+          <div className="min-w-0">
+            <h4
+              className="truncate text-sm font-bold tracking-tight text-cafe-fg"
+              title={guestName}
+            >
               {guestName}
             </h4>
 
-            <p className="font-mono text-[9px] text-gray-500">{guestEmail}</p>
+            <p
+              className="truncate font-mono text-[10px] text-gray-500"
+              title={guestEmail}
+            >
+              {guestEmail}
+            </p>
           </div>
         </div>
 
-        <StatusBadge status={status} />
+        <div className="shrink-0">
+          <StatusBadge status={status} />
+        </div>
       </div>
 
       {locationName && (
-        <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500">
+        <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500">
           <MapPin size={12} aria-hidden="true" /> {locationName}
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-2 rounded-xl border border-cafe-border bg-cafe-fg/[0.02] p-3 text-[10px] font-bold text-gray-500">
-        <div className="flex items-center gap-1.5">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2 rounded-xl border border-cafe-border bg-cafe-fg/[0.02] p-3 text-[11px] font-bold text-gray-500 sm:grid-cols-3">
+        <div className="col-span-2 flex items-center gap-1.5 sm:col-span-1">
           <Calendar size={12} aria-hidden="true" /> {dateLabel}
         </div>
 
@@ -81,21 +91,23 @@ export const BookingCard = memo(function BookingCard({
         </div>
 
         <div className="flex items-center gap-1.5">
-          <Users size={12} aria-hidden="true" /> {partySize} Guests
+          <Users size={12} aria-hidden="true" /> {partySize}{" "}
+          {partySize === 1 ? "Guest" : "Guests"}
         </div>
       </div>
 
       {specialRequests && (
-        <p className="rounded-lg border border-cafe-border bg-cafe-fg/[0.03] p-2 text-[10px] text-gray-500">
-          <span className="block text-[8px] font-black uppercase tracking-wider text-gray-500">
-            Requests:
+        <p className="rounded-lg border border-cafe-border bg-cafe-fg/[0.03] p-3 text-[11px] text-gray-500">
+          <span className="mb-0.5 block text-[9px] font-black uppercase tracking-wider text-gray-500">
+            Requests
           </span>
           {specialRequests}
         </p>
       )}
 
-      <div className="flex items-center gap-2 border-t border-cafe-border pt-2">
+      <div className="flex flex-col gap-2 border-t border-cafe-border pt-3 sm:flex-row sm:items-center">
         <ActionButtons
+          guestName={guestName}
           status={status}
           isUpdating={isUpdating}
           onAction={(action) => void onAction(id, status, action)}

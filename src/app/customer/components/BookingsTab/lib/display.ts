@@ -1,3 +1,5 @@
+import { formatBookingDate, formatBookingTime } from "@/lib/bookingFormat";
+
 import { NO_DATE_LABEL, NO_TIME_LABEL } from "../constants";
 import type { DisplayBooking, RawBookingLike } from "../types";
 import { normalizeStatus } from "./status";
@@ -14,8 +16,14 @@ export function normalizeBookingDisplay(
   return {
     id: raw.id ?? fallbackId,
     status,
-    dateLabel: raw.booking_date || raw.reservation_date || NO_DATE_LABEL,
-    timeLabel: raw.booking_time || raw.reservation_time || NO_TIME_LABEL,
+    dateLabel: formatBookingDate(
+      raw.booking_date || raw.reservation_date,
+      NO_DATE_LABEL,
+    ),
+    timeLabel: formatBookingTime(
+      raw.booking_time || raw.reservation_time,
+      NO_TIME_LABEL,
+    ),
     partySize:
       typeof partySize === "number" && Number.isFinite(partySize)
         ? partySize

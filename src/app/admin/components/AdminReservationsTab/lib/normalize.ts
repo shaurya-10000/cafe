@@ -1,6 +1,11 @@
-import { NO_DATE_LABEL } from "../constants";
+import { NO_DATE_LABEL, NO_TIME_LABEL } from "../constants";
 import type { AdminDisplayBooking, RawAdminBooking } from "../types";
-import { formatBookingTime, formatGuestEmail, formatGuestName } from "./format";
+import {
+  formatBookingDate,
+  formatBookingTime,
+  formatGuestEmail,
+  formatGuestName,
+} from "./format";
 import { normalizeAdminStatus } from "./status";
 
 export function normalizeAdminBooking(raw: RawAdminBooking): AdminDisplayBooking {
@@ -11,8 +16,8 @@ export function normalizeAdminBooking(raw: RawAdminBooking): AdminDisplayBooking
     id: raw.id,
     guestName: formatGuestName(raw.user_name),
     guestEmail: formatGuestEmail(raw.user_email),
-    dateLabel: raw.booking_date || NO_DATE_LABEL,
-    timeLabel: formatBookingTime(raw.booking_time),
+    dateLabel: formatBookingDate(raw.booking_date, NO_DATE_LABEL),
+    timeLabel: formatBookingTime(raw.booking_time, NO_TIME_LABEL),
     partySize:
       typeof raw.party_size === "number" && Number.isFinite(raw.party_size)
         ? raw.party_size
