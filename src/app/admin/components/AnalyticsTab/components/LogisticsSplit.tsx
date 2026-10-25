@@ -21,7 +21,7 @@ export const LogisticsSplit = memo(function LogisticsSplit({
   const hasData = total > 0;
 
   return (
-    <div className="flex flex-col justify-between rounded-[2.5rem] border border-cafe-border bg-cafe-card p-8 lg:col-span-4">
+    <div className="flex min-w-0 flex-col justify-between rounded-3xl border border-cafe-border bg-cafe-card p-5 sm:rounded-[2.5rem] sm:p-8 lg:col-span-4">
       <div>
         <h3 className="font-bold text-cafe-fg">Logistics Split</h3>
 

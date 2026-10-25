@@ -30,7 +30,7 @@ export function AnalyticsTab({
   const pie = usePieSummary(pieData);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 pb-20">
+    <div className="mx-auto w-full min-w-0 max-w-7xl space-y-4 pb-20 sm:space-y-6">
       <AnalyticsHeader
         timeRange={timeRange}
         onTimeRangeChange={setTimeRange}
@@ -39,7 +39,7 @@ export function AnalyticsTab({
 
       <MetricsGrid data={filteredAnalyticsData} formatMoney={formatMoney} />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-12">
         <RevenueChart
           points={filteredAnalyticsData.filtered}
           theme={theme}

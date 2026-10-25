@@ -17,7 +17,7 @@ export const TimeRangeSelector = memo(function TimeRangeSelector({
     <div
       role="group"
       aria-label="Time range"
-      className="flex rounded-xl border border-cafe-border bg-cafe-fg/5 p-1"
+      className="flex w-full rounded-xl border border-cafe-border bg-cafe-fg/5 p-1 sm:w-auto"
     >
       {TIME_RANGES.map((range) => {
         const isActive = value === range;
@@ -29,7 +29,7 @@ export const TimeRangeSelector = memo(function TimeRangeSelector({
             aria-pressed={isActive}
             onClick={() => onChange(range)}
             className={cx(
-              "rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent",
+              "flex-1 rounded-lg px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent sm:flex-none sm:px-4",
               isActive
                 ? "bg-cafe-accent text-cafe-accent-fg shadow-lg shadow-cafe-accent/20"
                 : "text-gray-500 hover:text-cafe-fg",

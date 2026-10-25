@@ -17,7 +17,7 @@ export const AnalyticsHeader = memo(function AnalyticsHeader({
   onOpenAssistant,
 }: AnalyticsHeaderProps) {
   return (
-    <div className="flex flex-col items-start justify-between gap-4 rounded-[2rem] border border-cafe-border bg-cafe-fg/[0.02] p-6 md:flex-row md:items-center">
+    <div className="flex flex-col items-start justify-between gap-4 rounded-3xl border border-cafe-border bg-cafe-fg/[0.02] p-4 sm:rounded-[2rem] sm:p-6 md:flex-row md:items-center">
       <div>
         <h2 className="text-2xl font-bold tracking-tighter text-cafe-fg">
           Performance Engine
@@ -28,12 +28,12 @@ export const AnalyticsHeader = memo(function AnalyticsHeader({
         </p>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center md:w-auto">
         {onOpenAssistant && (
           <button
             type="button"
             onClick={onOpenAssistant}
-            className="flex items-center gap-2 rounded-xl bg-cafe-accent px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-cafe-accent-fg shadow-lg shadow-cafe-accent/20 transition-all hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-cafe-accent px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-cafe-accent-fg shadow-lg shadow-cafe-accent/20 transition-all hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2 sm:w-auto"
           >
             <Sparkles size={14} aria-hidden="true" />
             Ask Analytics AI

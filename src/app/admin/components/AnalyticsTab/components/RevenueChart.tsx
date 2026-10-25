@@ -35,8 +35,8 @@ export const RevenueChart = memo(function RevenueChart({
   const gradientId = `revenue-gradient-${useId().replace(/:/g, "")}`;
 
   return (
-    <div className="rounded-[2.5rem] border border-cafe-border bg-cafe-card p-8 lg:col-span-8">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="min-w-0 rounded-3xl border border-cafe-border bg-cafe-card p-5 sm:rounded-[2.5rem] sm:p-8 lg:col-span-8">
+      <div className="mb-5 flex items-center justify-between sm:mb-8">
         <span className="text-[10px] font-black uppercase tracking-widest text-cafe-accent">
           Revenue Trajectory
         </span>
@@ -47,7 +47,7 @@ export const RevenueChart = memo(function RevenueChart({
         />
       </div>
 
-      <div className="h-[350px]">
+      <div className="h-[260px] sm:h-[350px]">
         {points.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={points}>
