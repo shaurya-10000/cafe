@@ -12,7 +12,7 @@ export function LoadingPanel() {
   return (
     <div className="flex items-center justify-center py-16">
       <Loader2
-        className="animate-spin text-blue-500"
+        className="animate-spin text-cafe-accent"
         size={28}
         aria-hidden="true"
       />

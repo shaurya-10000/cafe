@@ -20,7 +20,7 @@ export const ReservationsHeader = memo(function ReservationsHeader({
       </div>
 
       {pendingCount > 0 && (
-        <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-blue-400">
+        <span className="rounded-full border border-cafe-accent/20 bg-cafe-accent/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-cafe-accent">
           {pendingCount} Pending
         </span>
       )}

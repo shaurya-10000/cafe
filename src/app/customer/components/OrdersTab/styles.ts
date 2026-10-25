@@ -23,7 +23,7 @@ export const EMPTY_TEXT_CLASS =
   "text-[10px] font-black uppercase tracking-widest text-gray-500";
 
 export const CARD_CLASS =
-  "group flex flex-col gap-8 rounded-[2.5rem] border border-cafe-border bg-cafe-card p-6 shadow-2xl transition-all hover:border-blue-500/30 lg:p-8";
+  "group flex flex-col gap-8 rounded-[2.5rem] border border-cafe-border bg-cafe-card p-6 shadow-2xl transition-all hover:border-cafe-accent/30 lg:p-8";
 export const CARD_TOP_ROW_CLASS =
   "flex flex-col justify-between gap-6 lg:flex-row lg:items-center";
 
@@ -50,14 +50,14 @@ export const PROGRESS_WRAPPER_CLASS = "w-full max-w-md flex-1 px-4 py-2";
 export const PROGRESS_TRACK_CLASS =
   "relative mb-6 h-1 rounded-full bg-cafe-fg/10";
 export const PROGRESS_FILL_CLASS =
-  "absolute left-0 top-0 h-full rounded-full bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.5)]";
+  "absolute left-0 top-0 h-full rounded-full bg-cafe-accent shadow-[0_0_15px_var(--accent-ring)]";
 export const PROGRESS_DOTS_CLASS =
   "absolute top-1/2 flex w-full -translate-y-1/2 justify-between";
 
 export function buildStepDotClass(isActive: boolean): string {
   return `h-2.5 w-2.5 rounded-full border-2 transition-all duration-700 ${
     isActive
-      ? "scale-125 border-blue-600 bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]"
+      ? "scale-125 border-cafe-accent bg-cafe-accent shadow-[0_0_8px_var(--accent-ring)]"
       : "border-cafe-border bg-cafe-card"
   }`;
 }
@@ -76,20 +76,20 @@ export const TOTAL_VALUE_CLASS =
   "font-mono text-2xl font-bold leading-none text-cafe-fg";
 
 export const RATE_BUTTON_CLASS =
-  "flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-4 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-blue-500 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2";
+  "flex items-center gap-2 rounded-2xl bg-cafe-accent px-5 py-4 text-[10px] font-black uppercase tracking-widest text-cafe-accent-fg transition-all hover:brightness-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2";
 export const DETAILS_BUTTON_CLASS =
   "cursor-not-allowed rounded-2xl border border-cafe-border bg-cafe-fg/5 p-4 text-gray-400 dark:text-gray-600";
 
 export const ITEMS_ROW_CLASS =
   "flex flex-wrap gap-2 border-t border-cafe-border pt-6";
 export const ITEM_CHIP_CLASS =
-  "group/item flex items-center gap-2.5 rounded-xl border border-cafe-border bg-cafe-fg/[0.03] px-3 py-1.5 transition-colors hover:border-blue-500/20";
+  "group/item flex items-center gap-2.5 rounded-xl border border-cafe-border bg-cafe-fg/[0.03] px-3 py-1.5 transition-colors hover:border-cafe-accent/20";
 export const ITEM_ICON_CLASS =
-  "text-gray-500 transition-colors group-hover/item:text-blue-500";
+  "text-gray-500 transition-colors group-hover/item:text-cafe-accent";
 export const ITEM_NAME_CLASS =
   "text-[10px] font-bold text-gray-500 transition-colors group-hover/item:text-cafe-fg";
 export const ITEM_QTY_CLASS =
-  "min-w-[20px] rounded-md bg-blue-600/10 px-1.5 py-0.5 text-center text-[10px] font-black text-blue-600";
+  "min-w-[20px] rounded-md bg-cafe-accent/10 px-1.5 py-0.5 text-center text-[10px] font-black text-cafe-accent";
 
 export const SCHEDULED_MARKER_CLASS =
   "flex items-center gap-2 text-[10px] font-bold text-gray-500";

@@ -25,9 +25,9 @@ export function ProductForm({ form, submitting, onSubmit }: ProductFormProps) {
     <div className="sticky top-8 rounded-[2.5rem] border border-cafe-border bg-cafe-card p-6 md:p-8">
       <h2 className="mb-8 flex items-center gap-3 text-xl font-semibold text-cafe-fg">
         {isEditing ? (
-          <Edit3 size={22} className="text-blue-400" aria-hidden="true" />
+          <Edit3 size={22} className="text-cafe-accent" aria-hidden="true" />
         ) : (
-          <PlusCircle size={22} className="text-blue-500" aria-hidden="true" />
+          <PlusCircle size={22} className="text-cafe-accent" aria-hidden="true" />
         )}
 
         {isEditing ? "Update Item" : "New Item"}

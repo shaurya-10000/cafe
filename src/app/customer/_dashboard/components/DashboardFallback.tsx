@@ -7,7 +7,7 @@ export function DashboardFallback() {
   return (
     <div className={FALLBACK_CLASS}>
       <Loader2
-        className="animate-spin text-blue-600"
+        className="animate-spin text-cafe-accent"
         size={32}
         aria-hidden="true"
       />

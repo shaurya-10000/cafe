@@ -21,7 +21,7 @@ export const OrderProgress = memo(function OrderProgress({
     <div className="hidden w-full max-w-md flex-1 px-4 xl:block">
       <div className="relative mb-6 h-1 rounded-full bg-cafe-fg/10">
         <motion.div
-          className="absolute left-0 top-0 h-full rounded-full bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.5)]"
+          className="absolute left-0 top-0 h-full rounded-full bg-cafe-accent shadow-[0_0_15px_var(--accent-ring)]"
           initial={reducedMotion ? false : { width: 0 }}
           animate={{ width: getProgressWidth(status) }}
           transition={
@@ -40,7 +40,7 @@ export const OrderProgress = memo(function OrderProgress({
                   className={cx(
                     "h-3 w-3 rounded-full border-2 transition-all duration-500",
                     reached
-                      ? "scale-125 border-blue-600 bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.8)]"
+                      ? "scale-125 border-cafe-accent bg-cafe-accent shadow-[0_0_10px_var(--accent-ring)]"
                       : "border-cafe-border bg-cafe-card",
                   )}
                 />

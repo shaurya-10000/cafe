@@ -29,9 +29,9 @@ export const TimeRangeSelector = memo(function TimeRangeSelector({
             aria-pressed={isActive}
             onClick={() => onChange(range)}
             className={cx(
-              "rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+              "rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent",
               isActive
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                ? "bg-cafe-accent text-cafe-accent-fg shadow-lg shadow-cafe-accent/20"
                 : "text-gray-500 hover:text-cafe-fg",
             )}
           >

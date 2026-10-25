@@ -5,7 +5,7 @@ export const LIST_ROOT_CLASS = "space-y-6 pb-20";
 export const LIST_CLASS = "space-y-6";
 
 export const CARD_CLASS =
-  "group flex list-none flex-col gap-6 rounded-[2.5rem] border border-cafe-border bg-cafe-card p-6 shadow-2xl transition-all hover:border-blue-500/30 lg:p-8";
+  "group flex list-none flex-col gap-6 rounded-[2.5rem] border border-cafe-border bg-cafe-card p-6 shadow-2xl transition-all hover:border-cafe-accent/30 lg:p-8";
 export const CARD_TOP_ROW_CLASS =
   "flex flex-col justify-between gap-6 lg:flex-row lg:items-center";
 
@@ -30,14 +30,14 @@ export const PROGRESS_WRAPPER_CLASS = "w-full max-w-md flex-1 px-4 py-2";
 export const PROGRESS_TRACK_CLASS =
   "relative mb-6 h-1 rounded-full bg-cafe-fg/10";
 export const PROGRESS_FILL_CLASS =
-  "absolute left-0 top-0 h-full rounded-full bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.5)]";
+  "absolute left-0 top-0 h-full rounded-full bg-cafe-accent shadow-[0_0_15px_var(--accent-ring)]";
 export const PROGRESS_DOTS_CLASS =
   "absolute top-1/2 flex w-full -translate-y-1/2 justify-between";
 
 export function buildStepDotClass(isActive: boolean): string {
   return `h-2.5 w-2.5 rounded-full border-2 transition-all duration-700 ${
     isActive
-      ? "scale-125 border-blue-600 bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]"
+      ? "scale-125 border-cafe-accent bg-cafe-accent shadow-[0_0_8px_var(--accent-ring)]"
       : "border-cafe-border bg-cafe-card"
   }`;
 }

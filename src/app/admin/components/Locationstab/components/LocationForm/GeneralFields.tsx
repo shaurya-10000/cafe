@@ -38,7 +38,7 @@ export const GeneralFields = memo(function GeneralFields({
           name="isActive"
           type="checkbox"
           defaultChecked={location?.isActive ?? true}
-          className="h-4 w-4 accent-blue-600"
+          className="h-4 w-4 accent-cafe-accent"
         />
 
         <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">

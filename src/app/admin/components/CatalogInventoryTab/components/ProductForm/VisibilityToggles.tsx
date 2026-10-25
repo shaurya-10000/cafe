@@ -18,7 +18,7 @@ export const VisibilityToggles = memo(function VisibilityToggles({
           type="checkbox"
           name="is_popular"
           defaultChecked={!!product?.is_popular}
-          className="h-4 w-4 rounded accent-blue-500"
+          className="h-4 w-4 rounded accent-cafe-accent"
         />
 
         <span className={FIELD_LABEL_CLASS}>Mark as Popular</span>

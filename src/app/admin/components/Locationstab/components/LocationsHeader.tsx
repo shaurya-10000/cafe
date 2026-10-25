@@ -21,10 +21,10 @@ export const LocationsHeader = memo(function LocationsHeader({
         </p>
       </div>
 
-      <div className="flex items-center gap-3 rounded-full border border-blue-500/10 bg-blue-500/5 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-blue-400">
+      <div className="flex items-center gap-3 rounded-full border border-cafe-accent/10 bg-cafe-accent/5 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-cafe-accent">
         <div
           aria-hidden="true"
-          className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500"
+          className="h-1.5 w-1.5 animate-pulse rounded-full bg-cafe-accent"
         />
 
         {activeCount} Active

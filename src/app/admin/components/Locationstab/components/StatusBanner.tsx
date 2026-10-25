@@ -39,7 +39,7 @@ export const StatusBanner = memo(function StatusBanner({
         type="button"
         onClick={onDismiss}
         aria-label="Dismiss message"
-        className="text-current opacity-60 transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        className="text-current opacity-60 transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent"
       >
         <X size={16} aria-hidden="true" />
       </button>

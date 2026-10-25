@@ -31,9 +31,9 @@ export const MainImageUpload = memo(function MainImageUpload({
         type="button"
         onClick={() => inputRef.current?.click()}
         className={cx(
-          "flex w-full flex-col items-center gap-2 rounded-3xl border-2 border-dashed p-6 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+          "flex w-full flex-col items-center gap-2 rounded-3xl border-2 border-dashed p-6 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent",
           file || existingUrl
-            ? "border-blue-500/40 bg-blue-500/5"
+            ? "border-cafe-accent/40 bg-cafe-accent/5"
             : "border-cafe-border hover:bg-cafe-fg/[0.02]",
         )}
       >

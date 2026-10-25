@@ -51,7 +51,7 @@ export const StatusMenu = memo(function StatusMenu({
         aria-haspopup="menu"
         aria-expanded={isOpen}
         aria-controls={menuId}
-        className="flex items-center gap-3 rounded-2xl bg-cafe-fg px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-cafe-bg shadow-2xl transition-all active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+        className="flex items-center gap-3 rounded-2xl bg-cafe-fg px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-cafe-bg shadow-2xl transition-all active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2"
       >
         Status <MoreVertical size={16} aria-hidden="true" />
       </button>
@@ -96,10 +96,10 @@ export const StatusMenu = memo(function StatusMenu({
                     className={cx(
                       "flex items-center justify-between rounded-2xl px-5 py-3 text-[9px] font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2",
                       isCurrent
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20 focus-visible:ring-blue-500"
+                        ? "bg-cafe-accent text-cafe-accent-fg shadow-lg shadow-cafe-accent/20 focus-visible:ring-cafe-accent"
                         : isDestructive
                           ? "text-red-500 hover:bg-red-500/10 focus-visible:ring-red-500"
-                          : "text-gray-500 hover:bg-cafe-fg/5 hover:text-cafe-fg focus-visible:ring-blue-500",
+                          : "text-gray-500 hover:bg-cafe-fg/5 hover:text-cafe-fg focus-visible:ring-cafe-accent",
                     )}
                   >
                     <span>{isDestructive ? "Decline Order" : status}</span>

@@ -21,22 +21,22 @@ export const MediaField = memo(function MediaField({ image }: MediaFieldProps) {
         type="button"
         onClick={() => inputRef.current?.click()}
         className={cx(
-          "flex w-full flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed p-6 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+          "flex w-full flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed p-6 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent",
           imageUrl
-            ? "border-blue-500/40 bg-blue-500/5"
+            ? "border-cafe-accent/40 bg-cafe-accent/5"
             : "border-cafe-border hover:bg-cafe-fg/[0.02]",
         )}
       >
         {isUploading ? (
           <Loader2
             size={22}
-            className="animate-spin text-blue-400"
+            className="animate-spin text-cafe-accent"
             aria-hidden="true"
           />
         ) : (
           <ImageIcon
             size={22}
-            className={imageUrl ? "text-blue-400" : "text-gray-500"}
+            className={imageUrl ? "text-cafe-accent" : "text-gray-500"}
             aria-hidden="true"
           />
         )}

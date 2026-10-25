@@ -37,13 +37,13 @@ export const RevenueChart = memo(function RevenueChart({
   return (
     <div className="rounded-[2.5rem] border border-cafe-border bg-cafe-card p-8 lg:col-span-8">
       <div className="mb-8 flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-widest text-blue-500">
+        <span className="text-[10px] font-black uppercase tracking-widest text-cafe-accent">
           Revenue Trajectory
         </span>
 
         <div
           aria-hidden="true"
-          className="h-2 w-2 animate-pulse rounded-full bg-blue-500"
+          className="h-2 w-2 animate-pulse rounded-full bg-cafe-accent"
         />
       </div>
 

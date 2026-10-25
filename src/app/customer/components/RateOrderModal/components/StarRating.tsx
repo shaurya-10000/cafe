@@ -47,7 +47,7 @@ export function StarRating({
               size={20}
               aria-hidden="true"
               fill={isFilled ? STAR_FILL_COLOR : "none"}
-              className={isFilled ? "text-blue-600" : "text-gray-400"}
+              className={isFilled ? "text-cafe-accent" : "text-gray-400"}
             />
           </button>
         );

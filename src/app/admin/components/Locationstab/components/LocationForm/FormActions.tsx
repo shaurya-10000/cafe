@@ -24,8 +24,8 @@ export const FormActions = memo(function FormActions({
         disabled={busy}
         aria-busy={isSaving}
         className={cx(
-          "flex w-full items-center justify-center gap-3 rounded-[1.2rem] py-4 font-bold transition-all active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-          isEditing ? "bg-blue-600 text-white" : "bg-cafe-fg text-cafe-bg",
+          "flex w-full items-center justify-center gap-3 rounded-[1.2rem] py-4 font-bold transition-all active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2",
+          isEditing ? "bg-cafe-accent text-cafe-accent-fg" : "bg-cafe-fg text-cafe-bg",
         )}
       >
         {isSaving ? (
@@ -48,7 +48,7 @@ export const FormActions = memo(function FormActions({
           type="button"
           onClick={onCancel}
           disabled={busy}
-          className="w-full py-2 text-center text-[9px] font-bold uppercase tracking-widest text-gray-500 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          className="w-full py-2 text-center text-[9px] font-bold uppercase tracking-widest text-gray-500 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent"
         >
           Cancel Editing
         </button>

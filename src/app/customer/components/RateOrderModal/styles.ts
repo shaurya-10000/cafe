@@ -14,7 +14,7 @@ export const HEADER_ORDER_ID_CLASS =
   "mt-1 text-[10px] font-bold uppercase tracking-widest text-gray-500";
 
 export const CLOSE_BUTTON_CLASS =
-  "rounded-full bg-cafe-fg/5 p-2.5 text-gray-500 transition-colors hover:bg-cafe-fg/10 hover:text-cafe-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2";
+  "rounded-full bg-cafe-fg/5 p-2.5 text-gray-500 transition-colors hover:bg-cafe-fg/10 hover:text-cafe-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2";
 
 export const MESSAGE_CLASS =
   "py-12 text-center text-sm font-bold text-gray-500";
@@ -38,13 +38,13 @@ export const ITEM_CARD_CLASS =
   "space-y-4 rounded-3xl border border-cafe-border bg-cafe-fg/[0.02] p-6";
 
 export const ITEM_ICON_CLASS =
-  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cafe-border bg-cafe-fg/5 text-blue-500";
+  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cafe-border bg-cafe-fg/5 text-cafe-accent";
 
 export const STAR_BUTTON_CLASS =
-  "rounded p-0.5 transition-transform active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+  "rounded p-0.5 transition-transform active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent";
 
 export const REMARK_INPUT_CLASS =
-  "w-full resize-none rounded-2xl border border-cafe-border bg-cafe-fg/5 py-3 pl-10 pr-4 text-xs text-cafe-fg outline-none focus:ring-1 focus:ring-blue-500";
+  "w-full resize-none rounded-2xl border border-cafe-border bg-cafe-fg/5 py-3 pl-10 pr-4 text-xs text-cafe-fg outline-none focus:ring-1 focus:ring-cafe-accent";
 
 export const SUBMIT_BUTTON_CLASS =
-  "flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 py-4 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-blue-500 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2";
+  "flex w-full items-center justify-center gap-3 rounded-2xl bg-cafe-accent py-4 text-xs font-black uppercase tracking-widest text-cafe-accent-fg transition-colors hover:brightness-110 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2";

@@ -14,7 +14,7 @@ export const TIME_RANGE_LABELS: Record<TimeRange, string> = {
   all: "All",
 };
 
-export const CHART_ACCENT = "#3b82f6";
+export const CHART_ACCENT = "var(--accent)";
 
 function createTheme(colors: {
   grid: string;
@@ -52,7 +52,7 @@ export const DARK_CHART_THEME: ChartTheme = createTheme({
 });
 
 export const METRIC_COLOR_CLASSES: Record<MetricColor, string> = {
-  blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+  blue: "text-cafe-accent bg-cafe-accent/10 border-cafe-accent/20",
   purple: "text-purple-500 bg-purple-500/10 border-purple-500/20",
   orange: "text-orange-500 bg-orange-500/10 border-orange-500/20",
   red: "text-red-500 bg-red-500/10 border-red-500/20",

@@ -32,7 +32,7 @@ export const GalleryUpload = memo(function GalleryUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="flex w-full flex-col gap-3 rounded-xl text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        className="flex w-full flex-col gap-3 rounded-xl text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -43,7 +43,7 @@ export const GalleryUpload = memo(function GalleryUpload({
             </span>
           </div>
 
-          <span className="font-mono text-[9px] text-blue-500">
+          <span className="font-mono text-[9px] text-cafe-accent">
             {count}/{CATALOG_MAX_GALLERY_IMAGES}
           </span>
         </div>
@@ -88,7 +88,7 @@ export const GalleryUpload = memo(function GalleryUpload({
               <img
                 src={src}
                 alt=""
-                className="h-12 w-12 rounded-xl border border-blue-400 object-cover"
+                className="h-12 w-12 rounded-xl border border-cafe-accent object-cover"
               />
 
               <button

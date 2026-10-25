@@ -39,7 +39,7 @@ export const ProductRow = memo(function ProductRow({
 
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-sm font-bold text-cafe-fg transition-colors group-hover:text-blue-400">
+            <p className="text-sm font-bold text-cafe-fg transition-colors group-hover:text-cafe-accent">
               {product.name}
             </p>
 
@@ -67,7 +67,7 @@ export const ProductRow = memo(function ProductRow({
           type="button"
           onClick={() => onEdit(product)}
           aria-label={`Edit ${product.name}`}
-          className="rounded-xl border border-cafe-border bg-cafe-fg/5 p-2.5 text-gray-500 transition-all hover:bg-cafe-fg/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          className="rounded-xl border border-cafe-border bg-cafe-fg/5 p-2.5 text-gray-500 transition-all hover:bg-cafe-fg/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent"
         >
           <Edit3 size={16} aria-hidden="true" />
         </button>

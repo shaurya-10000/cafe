@@ -11,7 +11,7 @@ export const SUCCESS_AUTO_CLOSE_MS = 1_600;
 
 export const STAR_VALUES = [1, 2, 3, 4, 5] as const;
 export const DEFAULT_RATING = 5;
-export const STAR_FILL_COLOR = "#2563eb";
+export const STAR_FILL_COLOR = "var(--accent)";
 
 /** Postgres unique_violation. */
 export const UNIQUE_VIOLATION_CODE = "23505";

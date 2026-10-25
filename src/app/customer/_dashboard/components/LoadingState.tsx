@@ -4,7 +4,7 @@ export function LoadingState() {
   return (
     <div className="flex flex-col items-center py-32">
       <Loader2
-        className="animate-spin text-blue-600"
+        className="animate-spin text-cafe-accent"
         size={40}
         aria-hidden="true"
       />

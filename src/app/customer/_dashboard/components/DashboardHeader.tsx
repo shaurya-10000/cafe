@@ -32,7 +32,7 @@ export function DashboardHeader({
         </button>
 
         <div className="flex flex-col">
-          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500">
+          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-cafe-accent">
             Customer Portal
           </span>
           <span className="text-[10px] font-bold uppercase text-gray-500">

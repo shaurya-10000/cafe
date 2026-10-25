@@ -10,7 +10,7 @@ export function LoadingState() {
   return (
     <div className={LOADING_WRAPPER_CLASS}>
       <Loader2
-        className="animate-spin text-blue-500"
+        className="animate-spin text-cafe-accent"
         size={40}
         aria-hidden="true"
       />

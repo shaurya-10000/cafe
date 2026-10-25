@@ -33,7 +33,7 @@ export const AnalyticsHeader = memo(function AnalyticsHeader({
           <button
             type="button"
             onClick={onOpenAssistant}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            className="flex items-center gap-2 rounded-xl bg-cafe-accent px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-cafe-accent-fg shadow-lg shadow-cafe-accent/20 transition-all hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent focus-visible:ring-offset-2"
           >
             <Sparkles size={14} aria-hidden="true" />
             Ask Analytics AI

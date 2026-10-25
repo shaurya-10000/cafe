@@ -20,11 +20,11 @@ export const OrderItems = memo(function OrderItems({
       {items.map((item, index) => (
         <div
           key={`${orderId}-item-${item.item_id ?? `idx-${index}`}`}
-          className="group/item flex items-center gap-3 rounded-2xl border border-cafe-border bg-cafe-fg/[0.02] px-4 py-2.5 transition-all hover:border-blue-600/30"
+          className="group/item flex items-center gap-3 rounded-2xl border border-cafe-border bg-cafe-fg/[0.02] px-4 py-2.5 transition-all hover:border-cafe-accent/30"
         >
           <Coffee
             size={14}
-            className="text-gray-500 transition-colors group-hover/item:text-blue-500"
+            className="text-gray-500 transition-colors group-hover/item:text-cafe-accent"
             aria-hidden="true"
           />
 
@@ -32,7 +32,7 @@ export const OrderItems = memo(function OrderItems({
             {resolveItemName(item)}
           </span>
 
-          <span className="min-w-[28px] rounded-lg border border-blue-600/10 bg-blue-600/10 px-2 py-0.5 text-center text-[10px] font-black text-blue-500">
+          <span className="min-w-[28px] rounded-lg border border-cafe-accent/10 bg-cafe-accent/10 px-2 py-0.5 text-center text-[10px] font-black text-cafe-accent">
             x{item.quantity ?? 1}
           </span>
         </div>
