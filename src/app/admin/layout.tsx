@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -17,6 +18,12 @@ import { getAdminAccess } from "@/lib/server/admin/adminAccess";
  * try/catch that could swallow it. Every redirect below is therefore at the
  * top level of the function body.
  */
+export const metadata: Metadata = {
+  title: "Admin",
+  // The admin area is private: keep it out of search results.
+  robots: { index: false, follow: false },
+};
+
 export default async function AdminLayout({
   children,
 }: {
