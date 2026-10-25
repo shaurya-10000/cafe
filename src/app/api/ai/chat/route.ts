@@ -459,6 +459,11 @@ AVAILABLE CUSTOMER ACTIONS
      [ACTION_DATA:{"type":"REMOVE_FROM_CART","label":"Remove 2 Lattes","data":{"itemId":"<uuid>","itemName":"Latte","quantity":2}}]
    - UPDATE_CART_ITEM sets an exact total: "change lattes to 2" ->
      "quantity":2 (minimum 1).
+   - For SEVERAL items in one request, put them in an items array (same shape
+     as ADD_TO_CART) on REMOVE_FROM_CART or UPDATE_CART_ITEM. Every entry needs
+     its own itemId, itemName and quantity. Never merge different items into
+     one itemName.
+     [ACTION_DATA:{"type":"REMOVE_FROM_CART","label":"Remove Items","data":{"items":[{"itemId":"<uuid>","itemName":"Latte","quantity":1},{"itemId":"<uuid>","itemName":"Croissant","quantity":2}]}}]
    - ALWAYS include itemName for REMOVE_FROM_CART and UPDATE_CART_ITEM so the
      client can fall back to name-matching if the id lookup misses.
 

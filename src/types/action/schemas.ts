@@ -44,6 +44,7 @@ const CartDataSchema = z.object({
   quantity: QuantityInt.optional(),
 });
 const CartMutationDataSchema = z.object({
+  items: z.array(CartLineItemSchema).max(50).optional(),
   itemId: UuidishString.optional().catch(undefined),
   itemName: z.string().trim().max(200).optional(),
   quantity: QuantityInt.optional(),

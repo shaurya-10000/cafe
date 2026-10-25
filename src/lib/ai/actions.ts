@@ -150,7 +150,7 @@ export async function dispatchChatAction(action: ActionPayload, ctx: DispatchCon
     case "REMOVE_FROM_CART":
     case "UPDATE_CART_ITEM":
     case "CLEAR_CART": {
-      dispatchCafeEvent(OPEN_CART, { type: action.type, itemId: action.data?.itemId, itemName: action.data?.itemName, quantity: action.data?.quantity });
+      dispatchCafeEvent(OPEN_CART, { type: action.type, itemId: action.data?.itemId, itemName: action.data?.itemName, items: action.data?.items, quantity: action.data?.quantity });
       break;
     }
     case "START_CHECKOUT": {

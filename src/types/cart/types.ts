@@ -11,7 +11,7 @@ export interface CartData {
   items?: CartLineItem[];
   itemId?: string; itemName?: string; itemPrice?: number; quantity?: number;
 }
-export interface CartMutationData { itemId?: string; itemName?: string; quantity?: number; }
+export interface CartMutationData { items?: CartLineItem[]; itemId?: string; itemName?: string; quantity?: number; }
 
 export type OrderType = "delivery" | "pickup";
 export type PaymentMethod = "online" | "in_person";

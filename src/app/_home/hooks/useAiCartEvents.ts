@@ -13,6 +13,14 @@ interface CartEventDetail {
   readonly itemId?: unknown;
   readonly itemName?: unknown;
   readonly quantity?: unknown;
+  readonly items?: unknown;
+}
+
+interface Target {
+  readonly itemId: string | undefined;
+  readonly itemName: string | undefined;
+  /** NaN when the action carried no usable number. */
+  readonly quantity: number;
 }
 
 interface UseAiCartEventsOptions {
@@ -37,15 +45,36 @@ function asQuantity(value: unknown): number {
   return Number.NaN;
 }
 
+/** One target per entry of `items`, or a single target from the top-level fields. */
+function readTargets(detail: CartEventDetail): Target[] {
+  const entries: unknown[] =
+    Array.isArray(detail.items) && detail.items.length > 0
+      ? detail.items
+      : [detail];
+
+  const targets: Target[] = [];
+  for (const entry of entries) {
+    if (!entry || typeof entry !== "object") continue;
+    const record = entry as Record<string, unknown>;
+    targets.push({
+      itemId: asText(record.itemId),
+      itemName: asText(record.itemName),
+      quantity: asQuantity(record.quantity),
+    });
+  }
+  return targets;
+}
+
 async function handleCartEvent(
   detail: CartEventDetail | undefined,
   options: UseAiCartEventsOptions,
 ): Promise<void> {
   const type = detail?.type;
   if (
-    type !== "REMOVE_FROM_CART" &&
-    type !== "UPDATE_CART_ITEM" &&
-    type !== "CLEAR_CART"
+    !detail ||
+    (type !== "REMOVE_FROM_CART" &&
+      type !== "UPDATE_CART_ITEM" &&
+      type !== "CLEAR_CART")
   ) {
     return;
   }
@@ -62,58 +91,83 @@ async function handleCartEvent(
     return;
   }
 
-  const line = findCartLine(
-    items,
-    asText(detail?.itemId),
-    asText(detail?.itemName),
-  );
-  if (!line) {
-    toast.error("That item isn't in your cart.");
+  const targets = readTargets(detail);
+  if (targets.length === 0) {
+    toast.error("I couldn't tell which item you meant.");
     openCart();
     return;
   }
 
-  const quantity = asQuantity(detail?.quantity);
+  // Quantities as they stand after each step, so two entries for the same
+  // item (or a remove after an update) work from current numbers, not stale ones.
+  const working = new Map(items.map((item) => [item.id, item.quantity]));
+  const done: string[] = [];
+  const problems: string[] = [];
 
-  if (type === "REMOVE_FROM_CART") {
-    // A number means "take this many out"; no number means "remove the item".
-    // The subtraction happens here because only the client knows the cart.
-    const removeCount =
-      Number.isFinite(quantity) && quantity > 0
-        ? Math.max(1, Math.trunc(quantity))
-        : null;
+  for (const target of targets) {
+    const line = findCartLine(items, target.itemId, target.itemName);
+    const current = line ? working.get(line.id) : undefined;
 
-    if (removeCount === null || removeCount >= line.quantity) {
-      await onRemoveAll(line.id);
-      toast.success(`Removed ${line.name} from your cart`);
-      openCart();
-      return;
+    if (!line || current === undefined) {
+      problems.push(`${target.itemName ?? "That item"} isn't in your cart`);
+      continue;
     }
 
-    const remaining = line.quantity - removeCount;
-    await onSetQuantity(line.id, remaining, line.quantity);
-    toast.success(`Removed ${removeCount} ${line.name} (${remaining} left)`);
-    openCart();
-    return;
+    if (type === "REMOVE_FROM_CART") {
+      // A number means "take this many out"; no number means "remove the item".
+      // The subtraction happens here because only the client knows the cart.
+      const removeCount =
+        Number.isFinite(target.quantity) && target.quantity > 0
+          ? Math.max(1, Math.trunc(target.quantity))
+          : null;
+
+      if (removeCount === null || removeCount >= current) {
+        await onRemoveAll(line.id);
+        working.delete(line.id);
+        done.push(`Removed ${line.name}`);
+      } else {
+        const remaining = current - removeCount;
+        await onSetQuantity(line.id, remaining, current);
+        working.set(line.id, remaining);
+        done.push(`${line.name} -${removeCount} (${remaining} left)`);
+      }
+      continue;
+    }
+
+    // UPDATE_CART_ITEM sets an exact total.
+    if (!Number.isFinite(target.quantity)) {
+      problems.push(`No quantity given for ${line.name}`);
+      continue;
+    }
+
+    if (target.quantity <= 0) {
+      await onRemoveAll(line.id);
+      working.delete(line.id);
+      done.push(`Removed ${line.name}`);
+      continue;
+    }
+
+    const next = Math.min(
+      CART_ITEM_MAX_QUANTITY,
+      Math.max(1, Math.trunc(target.quantity)),
+    );
+    if (next === current) {
+      done.push(`${line.name} is already ${next}`);
+      continue;
+    }
+
+    await onSetQuantity(line.id, next, current);
+    working.set(line.id, next);
+    done.push(`${line.name} set to ${next}`);
   }
 
-  // UPDATE_CART_ITEM sets an exact total.
-  if (Number.isFinite(quantity) && quantity <= 0) {
-    await onRemoveAll(line.id);
-    toast.success(`Removed ${line.name} from your cart`);
-    openCart();
-    return;
+  if (done.length === 1) {
+    toast.success(done[0]);
+  } else if (done.length > 1) {
+    toast.success("Cart updated", { description: done.join(" \u00b7 ") });
   }
+  if (problems.length > 0) toast.error(problems.join(" \u00b7 "));
 
-  if (!Number.isFinite(quantity)) {
-    toast.error("I couldn't tell what quantity you wanted.");
-    openCart();
-    return;
-  }
-
-  const target = Math.min(CART_ITEM_MAX_QUANTITY, Math.trunc(quantity));
-  await onSetQuantity(line.id, target, line.quantity);
-  toast.success(`Updated ${line.name} to ${target}`);
   openCart();
 }
 
