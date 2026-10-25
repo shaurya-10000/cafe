@@ -24,7 +24,7 @@ export const FavoritesQuickAdd = memo(function FavoritesQuickAdd({
       <div className="mb-3 flex items-center gap-2">
         <Heart
           size={12}
-          className="fill-[#C5A059] text-[#C5A059]"
+          className="fill-cafe-favorite text-cafe-favorite"
           aria-hidden="true"
         />
 

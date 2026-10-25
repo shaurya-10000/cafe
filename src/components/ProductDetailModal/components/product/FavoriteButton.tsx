@@ -42,7 +42,7 @@ export function FavoriteButton({
           size={18}
           aria-hidden="true"
           className={
-            isFavorited ? "fill-red-500 text-red-500" : "text-zinc-400"
+            isFavorited ? "fill-cafe-favorite text-cafe-favorite" : "text-zinc-400"
           }
         />
       )}

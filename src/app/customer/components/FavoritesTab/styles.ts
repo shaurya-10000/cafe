@@ -8,10 +8,10 @@ export const EMPTY_TEXT_CLASS =
   "text-[10px] font-black uppercase tracking-widest text-gray-500";
 
 export const CARD_CLASS =
-  "group flex flex-col justify-between rounded-[2rem] border border-cafe-border bg-cafe-card p-6 transition-all hover:border-cafe-fg/20";
+  "group flex flex-col justify-between rounded-[2rem] border border-cafe-border bg-cafe-card p-6 transition-all hover:border-cafe-favorite/40";
 
 export const CARD_ICON_CLASS =
-  "rounded-xl bg-cafe-fg/5 p-3 text-cafe-fg transition-colors group-hover:bg-cafe-fg group-hover:text-cafe-bg";
+  "rounded-xl bg-cafe-favorite/10 p-3 text-cafe-favorite transition-colors group-hover:bg-cafe-favorite group-hover:text-white";
 
 export const REMOVE_BUTTON_CLASS =
   "rounded-lg p-2 text-gray-500 transition-colors hover:text-red-500 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2";

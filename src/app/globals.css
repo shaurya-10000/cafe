@@ -251,3 +251,5 @@ html:has(.app-shell) body {
   scrollbar-gutter: auto;
 }
 /* <<< app-shell-scroll */
+
+@theme { --color-cafe-favorite: #ff4d8d; }

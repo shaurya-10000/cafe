@@ -10,7 +10,7 @@ export function LoadingState() {
   return (
     <div className={LOADING_WRAPPER_CLASS}>
       <Loader2
-        className="animate-spin text-cafe-accent"
+        className="animate-spin text-cafe-favorite"
         size={40}
         aria-hidden="true"
       />
@@ -24,7 +24,7 @@ export function EmptyState() {
     <div className={EMPTY_CLASS}>
       <Heart
         size={48}
-        className="mx-auto mb-4 text-gray-500/50"
+        className="mx-auto mb-4 text-cafe-favorite/50"
         strokeWidth={1}
         aria-hidden="true"
       />
