@@ -449,9 +449,15 @@ AVAILABLE CUSTOMER ACTIONS
    - quantity defaults to 1 when the user doesn't specify a number.
 
 6. REMOVE_FROM_CART / UPDATE_CART_ITEM / CLEAR_CART
-   [ACTION_DATA:{"type":"REMOVE_FROM_CART","label":"Remove Item","data":{"itemId":"<uuid>"}}]
-   [ACTION_DATA:{"type":"UPDATE_CART_ITEM","label":"Update Quantity","data":{"itemId":"<uuid>","quantity":2}}]
+   [ACTION_DATA:{"type":"REMOVE_FROM_CART","label":"Remove Item","data":{"itemId":"<uuid>","itemName":"Latte"}}]
+   [ACTION_DATA:{"type":"UPDATE_CART_ITEM","label":"Update Quantity","data":{"itemId":"<uuid>","itemName":"Latte","quantity":2}}]
    [ACTION_DATA:{"type":"CLEAR_CART","label":"Clear Cart","data":{}}]
+   - REMOVE_FROM_CART removes the item from the cart entirely.
+   - To change how many of an item are in the cart ("change lattes to 2",
+     "remove 2 lattes"), use UPDATE_CART_ITEM with the NEW TOTAL quantity
+     (minimum 1).
+   - ALWAYS include itemName for REMOVE_FROM_CART and UPDATE_CART_ITEM so the
+     client can fall back to name-matching if the id lookup misses.
 
 7. START_CHECKOUT — open the checkout flow.
    [ACTION_DATA:{"type":"START_CHECKOUT","label":"Start Checkout","data":{}}]

@@ -1,5 +1,6 @@
 "use client";
 
+import { useAiCartEvents } from "@/app/_home/hooks/useAiCartEvents";
 import React, {
   useRef,
   useState,
@@ -798,7 +799,11 @@ function HomeContent() {
   useEffect(() => {
     if (!mounted) return;
 
-    const handleOpenCart = () => {
+    const handleOpenCart = (event: Event) => {
+      // Remove / update / clear arrive on this same event. useAiCartEvents
+      // performs them and decides whether the sidebar opens.
+      const detail = (event as CustomEvent<{ type?: unknown }>).detail;
+      if (typeof detail?.type === "string") return;
       setCartOpen(true);
     };
 
@@ -995,6 +1000,43 @@ function HomeContent() {
     [supabase, user, flashSyncWarning],
   );
 
+  const setItemQuantity = useCallback(
+    async (id: string, quantity: number, previousQuantity: number) => {
+      const target = Math.min(
+        CART_ITEM_MAX_QUANTITY,
+        Math.max(1, Math.trunc(quantity)),
+      );
+
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, quantity: target } : item,
+        ),
+      );
+
+      if (!user) return;
+
+      const { error } = await supabase
+        .from("cart_items")
+        .update({ quantity: target })
+        .eq("user_id", user.id)
+        .eq("item_id", id);
+
+      if (error) {
+        console.error("Failed to sync quantity change to Supabase:", error);
+        // Restore just this line rather than a snapshot of the whole cart.
+        setCartItems((prev) =>
+          prev.map((item) =>
+            item.id === id ? { ...item, quantity: previousQuantity } : item,
+          ),
+        );
+        flashSyncWarning(
+          "That change couldn't be saved to your account, so we've undone it locally too.",
+        );
+      }
+    },
+    [supabase, user, flashSyncWarning],
+  );
+
   const clearCart = useCallback(async () => {
     let previousItems: CartItem[] = [];
 
@@ -1025,6 +1067,15 @@ function HomeContent() {
       console.error("Failed to clear cart from localStorage:", err);
     }
   }, [supabase, user, setCartOpen, flashSyncWarning]);
+
+  // AI concierge: remove / update / clear requests arrive as OPEN_CART events.
+  useAiCartEvents({
+    items: cartItems,
+    onRemoveAll: removeAllOfItem,
+    onSetQuantity: setItemQuantity,
+    onClear: clearCart,
+    openCart: () => setCartOpen(true),
+  });
 
   /* ---- Render ----------------------------------------------------------- */
 
