@@ -1,5 +1,5 @@
 import type { ChangeEvent, KeyboardEvent } from "react";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, RotateCcw, Send } from "lucide-react";
 
 import { MAX_MESSAGE_LENGTH } from "@/lib/ai/constants";
 import { FOCUS_RING } from "@/components/ai/styles";
@@ -13,11 +13,14 @@ interface ComposerProps {
   cooldownSeconds: number;
   hasPendingAction: boolean;
   slotHint: string | null;
+  /** True once a rate-limit cooldown has ended and the last prompt can be re-sent. */
+  showRetryNow: boolean;
   reducedMotion: boolean;
   accentGradientClassName: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
   onSend: () => void;
+  onRetryNow: () => void;
   onCancelPending: () => void;
 }
 
@@ -29,11 +32,13 @@ export function Composer({
   cooldownSeconds,
   hasPendingAction,
   slotHint,
+  showRetryNow,
   reducedMotion,
   accentGradientClassName,
   onChange,
   onKeyDown,
   onSend,
+  onRetryNow,
   onCancelPending,
 }: ComposerProps) {
   const hasText = input.trim().length > 0;
@@ -64,6 +69,25 @@ export function Composer({
         >
           Rate limit reached &mdash; try again in {cooldownSeconds}s
         </p>
+      )}
+
+      {cooldownSeconds === 0 && showRetryNow && (
+        <div className="mb-2 flex justify-center">
+          <button
+            type="button"
+            onClick={onRetryNow}
+            className={cn(
+              "flex min-h-10 items-center gap-1.5 rounded-full px-4 py-1.5",
+              "text-[10px] font-black uppercase tracking-widest",
+              "bg-cafe-accent/10 text-cafe-accent transition-colors",
+              "hover:bg-cafe-accent/20",
+              FOCUS_RING,
+            )}
+          >
+            <RotateCcw size={12} aria-hidden="true" />
+            <span>Retry now</span>
+          </button>
+        </div>
       )}
 
       {slotHint && (

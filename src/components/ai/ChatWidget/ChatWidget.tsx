@@ -45,6 +45,8 @@ import {
   useSpeech,
 } from "./hooks";
 import { sortSessions } from "./lib";
+import { findLastUserText } from "./lib/lastUserText";
+import { useRetryAfterCooldown } from "./hooks/useRetryAfterCooldown";
 
 /**
  * Slide-in AI assistant. This component only wires hooks to presentational
@@ -207,7 +209,31 @@ export default function ChatWidget({
     void sendMessageRef.current(text);
   }, []);
 
-  if (!mounted) return null;
+  // After a rate-limit cooldown ends, offer to re-send the last prompt.
+  const lastUserText = useMemo(
+    () => findLastUserText(activeChat?.messages),
+    [activeChat?.messages],
+  );
+  const { offerRetry, dismissRetryOffer } = useRetryAfterCooldown({
+    cooldownSeconds: rateLimit.cooldownSeconds,
+    loading,
+    resetKey: activeChatId,
+    isOpen,
+  });
+  const showRetryNow =
+    offerRetry &&
+    lastUserText !== null &&
+    !loading &&
+    rateLimit.canSend &&
+    composer.input.trim() === "" &&
+    pending.pendingState === null;
+  const handleRetryNow = useCallback(() => {
+    dismissRetryOffer();
+    if (lastUserText) void sendMessageRef.current(lastUserText);
+  }, [dismissRetryOffer, lastUserText]);
+
+  
+if (!mounted) return null;
 
   // Prefer the state-derived prompt; the transient `slotHint` covers the
   // "failed to parse" case. Both are set from the same code path.
@@ -320,7 +346,10 @@ export default function ChatWidget({
               onChange={composer.handleInputChange}
               onKeyDown={composer.handleInputKeyDown}
               onSend={() => void composer.sendMessage()}
-              onCancelPending={handleCancelPending}
+              showRetryNow={showRetryNow}
+              onRetryNow={handleRetryNow}
+              
+onCancelPending={handleCancelPending}
             />
 
             {confirmation.pending && (
