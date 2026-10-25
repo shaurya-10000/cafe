@@ -1,6 +1,10 @@
 import type { LucideIcon } from "lucide-react";
 
-export type SettingsTab = "profile" | "appearance";
+export type SettingsTab =
+  | "profile"
+  | "orders"
+  | "notifications"
+  | "appearance";
 
 export interface MenuItem {
   readonly id: SettingsTab;

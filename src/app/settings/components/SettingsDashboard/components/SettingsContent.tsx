@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import AccountSettings from "../../AccountSettings";
+import NotificationSettings from "../../NotificationSettings/NotificationSettings";
+import OrderPreferences from "../../OrderPreferences/OrderPreferences";
 import ThemeSettings from "../../ThemeSettings";
 import { getTabPanelMotion } from "../lib/motion";
 import type { SettingsTab } from "../types";
@@ -13,6 +15,10 @@ function TabView({ tab }: { readonly tab: SettingsTab }) {
   switch (tab) {
     case "profile":
       return <AccountSettings />;
+    case "orders":
+      return <OrderPreferences />;
+    case "notifications":
+      return <NotificationSettings />;
     case "appearance":
       return <ThemeSettings />;
     default:
