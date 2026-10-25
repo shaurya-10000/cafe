@@ -1,7 +1,7 @@
 -- ============================================================================
--- Business platform database v5.1.2 — COMPLETE PRODUCTION INSTALL
+-- Business platform database v5.2.0 — COMPLETE PRODUCTION INSTALL
 -- ============================================================================
--- Single-file install: migrations 0001–0026 in dependency order, then the seed.
+-- Single-file install: migrations 0001–0027 in dependency order, then the seed.
 -- Idempotent. Runs in one transaction: if anything fails, NOTHING is applied.
 --
 --   Contents:
@@ -31,6 +31,8 @@
 --     0024  world-class hardening (admin views, prod-ready assertions)
 --     0025  fresh-install ordering fixes + admin_catalog_items gate
 --     0026  ops_health() ambiguous-column fix
+--     0027  user_preferences (checkout defaults; placed in the 0006 section
+--           because 0015/0016/0024 reference it)
 --     SEED
 --
 -- BEFORE RUNNING (first deploy only): edit the SEED block at the bottom
@@ -1254,6 +1256,54 @@ create index if not exists idx_favorites_user on public.favorites(user_id,create
 create index if not exists idx_favorites_item on public.favorites(item_id);
 create index if not exists idx_cart_items_user on public.cart_items(user_id,created_at desc);
 create index if not exists idx_cart_items_item on public.cart_items(item_id);
+
+-- ----------------------------------------------------------------------------
+-- 0027 — user_preferences: per-user checkout defaults (one row per user).
+-- Owner-only RLS. Covered by 0015 (privileges), 0016 (scrub + export) and
+-- 0024 (api_surface_violations / assert_production_ready).
+-- ----------------------------------------------------------------------------
+create table if not exists public.user_preferences (
+  user_id text primary key,
+  phone text check (phone is null or char_length(phone) <= 32),
+  address text check (address is null or char_length(address) <= 500),
+  default_order_type text check (default_order_type in ('pickup','delivery')),
+  default_location_id uuid references public.business_locations(id) on delete set null,
+  kitchen_note text check (kitchen_note is null or char_length(kitchen_note) <= 300),
+  updated_at timestamptz not null default now()
+);
+
+-- Upgrade path: databases that already have the table without this column.
+alter table public.user_preferences
+  add column if not exists default_payment_method text
+  check (default_payment_method in ('online','in_person'));
+
+drop trigger if exists trg_user_preferences_updated_at on public.user_preferences;
+create trigger trg_user_preferences_updated_at
+before update on public.user_preferences
+for each row execute function public.set_updated_at();
+
+alter table public.user_preferences enable row level security;
+
+drop policy if exists user_preferences_owner_select on public.user_preferences;
+create policy user_preferences_owner_select on public.user_preferences
+for select to authenticated
+using (user_id = (select public.requesting_user_id()));
+
+drop policy if exists user_preferences_owner_insert on public.user_preferences;
+create policy user_preferences_owner_insert on public.user_preferences
+for insert to authenticated
+with check (user_id = (select public.requesting_user_id()));
+
+drop policy if exists user_preferences_owner_update on public.user_preferences;
+create policy user_preferences_owner_update on public.user_preferences
+for update to authenticated
+using (user_id = (select public.requesting_user_id()))
+with check (user_id = (select public.requesting_user_id()));
+
+revoke all on table public.user_preferences from anon, authenticated;
+grant select, insert, update on public.user_preferences to authenticated;
+-- NOTE: the 0015 privilege pass revokes everything on this table and then
+-- re-grants the same select/insert/update, so the final state is identical.
 
 create table if not exists public.reviews (
   id uuid primary key default gen_random_uuid(),
@@ -3495,7 +3545,7 @@ using (bucket_id = 'catalog-media' and (select public.is_admin_v2()));
 -- ############################################################################
 do $$
 declare
-  v_tables text[] := array['audit_log', 'bookings', 'business_locations', 'business_settings', 'cart_items', 'catalog_items', 'chat_messages', 'chats', 'clerk_user_sync_state', 'coupon_attempts', 'coupon_redemptions', 'coupons', 'favorites', 'game_plays', 'game_rewards', 'knowledge_base', 'location_closures', 'location_opening_hours', 'notification_settings', 'notifications', 'order_status_lookups', 'orders', 'profiles', 'push_delivery_log', 'push_subscriptions', 'resources', 'reviews', 'user_claimed_rewards', 'webhook_events'];
+  v_tables text[] := array['audit_log', 'bookings', 'business_locations', 'business_settings', 'cart_items', 'catalog_items', 'chat_messages', 'chats', 'clerk_user_sync_state', 'coupon_attempts', 'coupon_redemptions', 'coupons', 'favorites', 'game_plays', 'game_rewards', 'knowledge_base', 'location_closures', 'location_opening_hours', 'notification_settings', 'notifications', 'order_status_lookups', 'orders', 'profiles', 'push_delivery_log', 'push_subscriptions', 'resources', 'reviews', 'user_claimed_rewards', 'user_preferences', 'webhook_events'];
   v_views text[] := array[
     'catalog_item_review_stats','catalog_item_public_reviews','game_rewards_public',
     'business_public_settings','catalog_items_public'
@@ -3569,6 +3619,7 @@ to authenticated;
 grant insert, update, delete on public.favorites, public.cart_items to authenticated;
 grant insert, update, delete on public.chats, public.chat_messages to authenticated;
 grant insert, update on public.notification_settings to authenticated;
+grant select, insert, update on public.user_preferences to authenticated;
 grant insert, delete on public.reviews to authenticated;
 grant update (rating, remark) on public.reviews to authenticated;
 grant delete on public.notifications, public.push_subscriptions to authenticated;
@@ -3723,6 +3774,7 @@ begin
   get diagnostics n = row_count; v_deleted := v_deleted || jsonb_build_object('push_delivery_log', n);
 
   delete from public.notification_settings where user_id = p_user_id;
+  delete from public.user_preferences where user_id = p_user_id;
   delete from public.cart_items where user_id = p_user_id;
   delete from public.favorites where user_id = p_user_id;
   delete from public.game_plays where user_id = p_user_id;
@@ -3896,6 +3948,7 @@ begin
     'notifications', (select coalesce(jsonb_agg(to_jsonb(n)), '[]'::jsonb)
                         from (select * from public.notifications where user_id = uid order by created_at desc limit 1000) n),
     'notification_settings', (select to_jsonb(s) from public.notification_settings s where s.user_id = uid),
+    'user_preferences', (select to_jsonb(u) from public.user_preferences u where u.user_id = uid),
     'claimed_rewards', (select coalesce(jsonb_agg(to_jsonb(k)), '[]'::jsonb)
                           from (select * from public.user_claimed_rewards where user_id = uid limit 1000) k),
     'push_subscriptions', (select coalesce(jsonb_agg(jsonb_build_object(
@@ -5571,8 +5624,8 @@ declare
     'location_closures', 'location_opening_hours', 'notification_settings',
     'notifications', 'order_payments', 'order_status_lookups', 'orders',
     'profiles', 'push_delivery_log', 'push_subscriptions', 'resources',
-    'reviews', 'stripe_events', 'user_claimed_rewards', 'webhook_events',
-    'api_surface_exceptions',
+    'reviews', 'stripe_events', 'user_claimed_rewards', 'user_preferences',
+    'webhook_events', 'api_surface_exceptions',
     'catalog_item_review_stats', 'catalog_item_public_reviews',
     'game_rewards_public', 'business_public_settings',
     'catalog_items_public', 'admin_catalog_items'
@@ -5815,7 +5868,7 @@ begin
                'location_closures','location_opening_hours','notification_settings',
                'notifications','order_payments','order_status_lookups','orders',
                'profiles','push_delivery_log','push_subscriptions','resources',
-               'reviews','stripe_events','user_claimed_rewards','webhook_events'
+               'reviews','stripe_events','user_claimed_rewards','user_preferences','webhook_events'
              ])
              and not c.relrowsecurity
              and not exists (select 1 from pg_depend d where d.objid = c.oid and d.deptype = 'e')
