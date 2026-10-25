@@ -62,7 +62,11 @@ async function handleCartEvent(
     return;
   }
 
-  const line = findCartLine(items, asText(detail?.itemId), asText(detail?.itemName));
+  const line = findCartLine(
+    items,
+    asText(detail?.itemId),
+    asText(detail?.itemName),
+  );
   if (!line) {
     toast.error("That item isn't in your cart.");
     openCart();
@@ -71,7 +75,30 @@ async function handleCartEvent(
 
   const quantity = asQuantity(detail?.quantity);
 
-  if (type === "REMOVE_FROM_CART" || (Number.isFinite(quantity) && quantity <= 0)) {
+  if (type === "REMOVE_FROM_CART") {
+    // A number means "take this many out"; no number means "remove the item".
+    // The subtraction happens here because only the client knows the cart.
+    const removeCount =
+      Number.isFinite(quantity) && quantity > 0
+        ? Math.max(1, Math.trunc(quantity))
+        : null;
+
+    if (removeCount === null || removeCount >= line.quantity) {
+      await onRemoveAll(line.id);
+      toast.success(`Removed ${line.name} from your cart`);
+      openCart();
+      return;
+    }
+
+    const remaining = line.quantity - removeCount;
+    await onSetQuantity(line.id, remaining, line.quantity);
+    toast.success(`Removed ${removeCount} ${line.name} (${remaining} left)`);
+    openCart();
+    return;
+  }
+
+  // UPDATE_CART_ITEM sets an exact total.
+  if (Number.isFinite(quantity) && quantity <= 0) {
     await onRemoveAll(line.id);
     toast.success(`Removed ${line.name} from your cart`);
     openCart();

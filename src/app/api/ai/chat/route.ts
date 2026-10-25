@@ -452,10 +452,13 @@ AVAILABLE CUSTOMER ACTIONS
    [ACTION_DATA:{"type":"REMOVE_FROM_CART","label":"Remove Item","data":{"itemId":"<uuid>","itemName":"Latte"}}]
    [ACTION_DATA:{"type":"UPDATE_CART_ITEM","label":"Update Quantity","data":{"itemId":"<uuid>","itemName":"Latte","quantity":2}}]
    [ACTION_DATA:{"type":"CLEAR_CART","label":"Clear Cart","data":{}}]
-   - REMOVE_FROM_CART removes the item from the cart entirely.
-   - To change how many of an item are in the cart ("change lattes to 2",
-     "remove 2 lattes"), use UPDATE_CART_ITEM with the NEW TOTAL quantity
-     (minimum 1).
+   - REMOVE_FROM_CART takes an optional quantity: how many to take out.
+     "remove 2 lattes" -> "quantity":2. Omit quantity to remove the item
+     entirely ("remove the lattes"). The client knows what is in the cart and
+     does the subtraction, so never guess the current total yourself.
+     [ACTION_DATA:{"type":"REMOVE_FROM_CART","label":"Remove 2 Lattes","data":{"itemId":"<uuid>","itemName":"Latte","quantity":2}}]
+   - UPDATE_CART_ITEM sets an exact total: "change lattes to 2" ->
+     "quantity":2 (minimum 1).
    - ALWAYS include itemName for REMOVE_FROM_CART and UPDATE_CART_ITEM so the
      client can fall back to name-matching if the id lookup misses.
 
