@@ -8,6 +8,8 @@ import type {
   TimeRange,
 } from "../types";
 
+const TOP_ITEMS_LIMIT = 5;
+
 function createEmptySplit(): OrderSplit {
   return {
     deliveryOnline: 0,
@@ -20,8 +22,9 @@ function createEmptySplit(): OrderSplit {
 }
 
 /**
- * Revenue, order count, best/worst seller and the delivery/payment split for
- * every order inside the selected window. Pure: pass `now` to test it.
+ * Revenue, order count, best/worst seller, the delivery/payment split, the
+ * previous window's totals, top items and orders per hour for every order
+ * inside the selected window. Pure: pass `now` to test it.
  */
 export function computeFilteredAnalytics(
   orders: readonly OrderRow[],
@@ -33,21 +36,35 @@ export function computeFilteredAnalytics(
   const filtered: AnalyticsPoint[] = [];
   const split = createEmptySplit();
   const itemCounts = new Map<string, number>();
+  const hourly = Array.from({ length: 24 }, (_, hour) => ({ hour, orders: 0 }));
 
   let revenue = 0;
+  let previousRevenue = 0;
+  let previousCount = 0;
 
   for (const order of orders) {
     const createdAtMs = new Date(order.created_at).getTime();
 
     if (!Number.isFinite(createdAtMs)) continue;
-    if (window !== null && now - createdAtMs > window) continue;
 
     const amount: number = order.total_amount ?? order.total_price ?? 0;
+    const age = now - createdAtMs;
+
+    if (window !== null && age > window) {
+      if (age <= window * 2) {
+        previousRevenue += amount;
+        previousCount += 1;
+      }
+      continue;
+    }
 
     filtered.push({ created_at: order.created_at, total_amount: amount });
     revenue += amount;
 
     split[SPLIT_KEYS[order.order_type][order.payment_method]] += 1;
+
+    const bucket = hourly[new Date(createdAtMs).getHours()];
+    if (bucket) bucket.orders += 1;
 
     for (const line of order.items ?? []) {
       const name = line.name?.trim() || line.product_name?.trim();
@@ -68,6 +85,14 @@ export function computeFilteredAnalytics(
     topItem: sorted[0]?.[0] ?? null,
     leastItem: sorted[sorted.length - 1]?.[0] ?? null,
     split,
+    previous:
+      window === null
+        ? null
+        : { revenue: previousRevenue, count: previousCount },
+    topItems: sorted
+      .slice(0, TOP_ITEMS_LIMIT)
+      .map(([name, quantity]) => ({ name, quantity })),
+    hourly,
   };
 }
 

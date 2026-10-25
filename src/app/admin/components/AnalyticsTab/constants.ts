@@ -56,4 +56,5 @@ export const METRIC_COLOR_CLASSES: Record<MetricColor, string> = {
   purple: "text-purple-500 bg-purple-500/10 border-purple-500/20",
   orange: "text-orange-500 bg-orange-500/10 border-orange-500/20",
   red: "text-red-500 bg-red-500/10 border-red-500/20",
+  green: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
 };

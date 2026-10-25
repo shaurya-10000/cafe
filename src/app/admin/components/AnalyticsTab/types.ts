@@ -52,6 +52,10 @@ export interface FilteredAnalyticsData {
   topItem: string | null;
   leastItem: string | null;
   split?: FilteredAnalyticsSplit;
+  /** Same-length window immediately before the selected one; null for "all". */
+  previous?: PeriodTotals | null;
+  topItems?: ItemRank[];
+  hourly?: HourBucket[];
 }
 
 export interface PieDatum {
@@ -74,7 +78,23 @@ export interface AnalyticsTabProps {
   currency?: string;
 }
 
-export type MetricColor = "blue" | "purple" | "orange" | "red";
+export interface PeriodTotals {
+  revenue: number;
+  count: number;
+}
+
+export interface ItemRank {
+  name: string;
+  quantity: number;
+}
+
+export interface HourBucket {
+  /** 0-23, in the viewer's local time. */
+  hour: number;
+  orders: number;
+}
+
+export type MetricColor = "blue" | "purple" | "orange" | "red" | "green";
 
 export type CurrencyFormatter = (value: number) => string;
 

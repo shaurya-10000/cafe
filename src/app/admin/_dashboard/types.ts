@@ -1,4 +1,9 @@
-import type { TimeRange } from "@/app/admin/components/AnalyticsTab";
+import type {
+  HourBucket,
+  ItemRank,
+  PeriodTotals,
+  TimeRange,
+} from "@/app/admin/components/AnalyticsTab";
 import type {
   OrderItemLine,
   OrderRow as OrdersTabRow,
@@ -70,4 +75,7 @@ export interface FilteredAnalytics {
   topItem: string | null;
   leastItem: string | null;
   split: OrderSplit;
+  previous: PeriodTotals | null;
+  topItems: ItemRank[];
+  hourly: HourBucket[];
 }

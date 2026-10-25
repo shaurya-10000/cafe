@@ -20,15 +20,18 @@ import type {
 import { EmptyChartState } from "./EmptyChartState";
 
 interface RevenueChartProps {
+  /** One point per day, oldest first. */
   points: AnalyticsChartPoint[];
   theme: ChartTheme;
   formatMoney: CurrencyFormatter;
+  formatAxis: (value: number) => string;
 }
 
 export const RevenueChart = memo(function RevenueChart({
   points,
   theme,
   formatMoney,
+  formatAxis,
 }: RevenueChartProps) {
   // Unique per instance so two charts on a page never share a gradient.
   // Colons are not valid inside `url(#...)` references in every browser.
@@ -64,13 +67,24 @@ export const RevenueChart = memo(function RevenueChart({
                 vertical={false}
               />
 
-              <XAxis dataKey="created_at" hide />
+              <XAxis
+                dataKey="created_at"
+                stroke={theme.axisColor}
+                fontSize={10}
+                axisLine={false}
+                tickLine={false}
+                minTickGap={32}
+                interval="preserveStartEnd"
+                tickFormatter={(value) => formatChartDate(value)}
+              />
 
               <YAxis
                 stroke={theme.axisColor}
                 fontSize={10}
                 axisLine={false}
                 tickLine={false}
+                width={48}
+                tickFormatter={(value) => formatAxis(toChartNumber(value))}
               />
 
               <Tooltip

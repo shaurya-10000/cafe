@@ -5,6 +5,9 @@ export type {
   AnalyticsTabProps,
   FilteredAnalyticsData,
   FilteredAnalyticsSplit,
+  HourBucket,
+  ItemRank,
+  PeriodTotals,
   PieDatum,
   TimeRange,
 } from "./types";

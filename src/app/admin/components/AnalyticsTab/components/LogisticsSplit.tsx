@@ -35,10 +35,10 @@ export const LogisticsSplit = memo(function LogisticsSplit({
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={entries}
+                data={entries} stroke="none"
                 innerRadius={60}
                 outerRadius={80}
-                paddingAngle={8}
+                paddingAngle={entries.length > 1 ? 8 : 0}
                 dataKey="value"
               >
                 {entries.map((entry) => (
