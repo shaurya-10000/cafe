@@ -1,10 +1,9 @@
-import { Bell, Palette, ShoppingBag, User } from "lucide-react";
+import { Palette, ShoppingBag, User } from "lucide-react";
 import type { MenuItem } from "./types";
 
 export const MENU_ITEMS: readonly MenuItem[] = [
   { id: "profile", label: "Account", icon: User },
   { id: "orders", label: "Order Preferences", icon: ShoppingBag },
-  { id: "notifications", label: "Notifications", icon: Bell },
   { id: "appearance", label: "Appearance", icon: Palette },
 ];
 
