@@ -12,6 +12,8 @@ export const DASHBOARD_NAV_ID = "dashboard-navigation";
 export const TAB_PARAM = "tab";
 export const RATE_ORDER_PARAM = "rateOrder";
 export const CANCEL_BOOKING_PARAM = "cancelBooking";
+export const ADD_FAVORITE_PARAM = "addFavorite";
+export const REMOVE_FAVORITE_PARAM = "removeFavorite";
 
 export const DEFAULT_CURRENCY = "USD";
 export const FAV_ERROR_TIMEOUT_MS = 5_000;

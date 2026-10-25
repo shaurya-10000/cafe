@@ -13,6 +13,7 @@ import type {
   FavoriteItem,
   MountedRef,
 } from "../types";
+import { useFavoriteDeepLink } from "./useFavoriteDeepLink";
 
 interface UseFavoritesOptions {
   supabase: DashboardSupabaseClient;
@@ -96,6 +97,9 @@ export function useFavorites({
     },
     [supabase, userId, isMountedRef],
   );
+
+  // AI concierge deep link: /customer?tab=favorites&addFavorite=<id>
+  useFavoriteDeepLink({ supabase, userId, isMountedRef, refresh: fetchFavorites });
 
   return { favorites, favLoading, favError, fetchFavorites, removeFavorite };
 }

@@ -170,15 +170,21 @@ export async function dispatchChatAction(action: ActionPayload, ctx: DispatchCon
       if (action.data?.orderId) router.push(`/customer?tab=history&rateOrder=${encodeURIComponent(action.data.orderId)}`);
       break;
     }
-    case "VIEW_FAVORITES":
+    case "VIEW_FAVORITES": {
+      router.push("/customer?tab=favorites");
+      break;
+    }
     case "ADD_TO_FAVORITES":
     case "REMOVE_FROM_FAVORITES": {
-      const isToggle = action.type === "ADD_TO_FAVORITES" || action.type === "REMOVE_FROM_FAVORITES";
-      if (isToggle && action.data?.itemId) {
-        dispatchSectionAction(ctx, { sectionId: SECTION_IDS.MENU, actionType: action.type, dataForStash: { highlightItemId: action.data.itemId }, onPresent: () => { dispatchCafeEvent(PREFILL_MENU, { highlightItemId: action.data?.itemId }); } });
-      } else {
+      // The dashboard performs the change when it opens (the same handshake as
+      // ?cancelBooking=), so exactly one code path writes favorites.
+      const itemId = action.data?.itemId;
+      if (!itemId) {
         router.push("/customer?tab=favorites");
+        break;
       }
+      const param = action.type === "ADD_TO_FAVORITES" ? "addFavorite" : "removeFavorite";
+      router.push(`/customer?tab=favorites&${param}=${encodeURIComponent(itemId)}`);
       break;
     }
     case "VIEW_COUPONS": {
