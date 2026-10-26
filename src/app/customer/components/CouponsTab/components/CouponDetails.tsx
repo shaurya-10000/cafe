@@ -14,14 +14,17 @@ interface CouponDetailsProps {
 export function CouponDetails({ coupon, variant }: CouponDetailsProps) {
   const isActive = variant === "active";
 
-  const daysLeft =
-    isActive && coupon.expires_at ? daysUntil(coupon.expires_at) : null;
+  const daysLeft = coupon.expires_at ? daysUntil(coupon.expires_at) : null;
+  const hasExpired = daysLeft !== null && daysLeft <= 0;
   const expiringSoon =
-    daysLeft !== null && daysLeft >= 0 && daysLeft <= EXPIRING_SOON_DAYS;
+    isActive &&
+    daysLeft !== null &&
+    daysLeft > 0 &&
+    daysLeft <= EXPIRING_SOON_DAYS;
 
   const expiryLabel = !coupon.expires_at
     ? null
-    : !isActive
+    : hasExpired
       ? `Expired ${formatCouponDate(coupon.expires_at)}`
       : expiringSoon
         ? `Expires in ${daysLeft ?? 0} ${daysLeft === 1 ? "day" : "days"}`

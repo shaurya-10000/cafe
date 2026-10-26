@@ -154,7 +154,7 @@ export async function dispatchChatAction(action: ActionPayload, ctx: DispatchCon
       break;
     }
     case "START_CHECKOUT": {
-      dispatchCafeEvent(PREFILL_CHECKOUT, { orderType: action.data?.orderType, paymentMethod: action.data?.paymentMethod, name: action.data?.name, phone: action.data?.phone, address: action.data?.address });
+      dispatchCafeEvent(PREFILL_CHECKOUT, { orderType: action.data?.orderType, paymentMethod: action.data?.paymentMethod, name: action.data?.name, phone: action.data?.phone, address: action.data?.address }); dispatchCafeEvent(OPEN_CART);
       break;
     }
     case "APPLY_COUPON": {

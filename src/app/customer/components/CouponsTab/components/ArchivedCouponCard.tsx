@@ -2,7 +2,7 @@ import { Tag } from "lucide-react";
 
 import { deriveCouponStatus } from "@/lib/coupons/calculate";
 
-import { STATUS_LABEL } from "../constants";
+import { STATUS_LABEL, USED_LABEL } from "../constants";
 import { formatDiscountLabel } from "../lib/discount";
 import {
   ARCHIVED_BADGE_CLASS,
@@ -18,6 +18,10 @@ import { CouponDetails } from "./CouponDetails";
 export function ArchivedCouponCard({ coupon }: { coupon: Coupon }) {
   const status = deriveCouponStatus(coupon);
 
+  // An archived coupon that is still "active" in general can only be here
+  // because this customer can no longer redeem it.
+  const label = status === "active" ? USED_LABEL : STATUS_LABEL[status];
+
   return (
     <div className={ARCHIVED_CARD_CLASS}>
       <div className={CARD_HEADER_CLASS}>
@@ -28,9 +32,7 @@ export function ArchivedCouponCard({ coupon }: { coupon: Coupon }) {
           <div>
             <div className="mb-1 flex flex-wrap items-center gap-2">
               <span className={ARCHIVED_CODE_CLASS}>{coupon.code}</span>
-              <span className={ARCHIVED_BADGE_CLASS}>
-                {STATUS_LABEL[status]}
-              </span>
+              <span className={ARCHIVED_BADGE_CLASS}>{label}</span>
             </div>
             <p className={ARCHIVED_DISCOUNT_CLASS}>
               {formatDiscountLabel(coupon)}

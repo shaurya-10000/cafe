@@ -15,15 +15,24 @@ function expiryKey(coupon: Coupon): number {
 }
 
 /**
- * Single pass: "active" coupons vs. everything else (the archive). Active
- * ones are listed soonest-to-expire first so the urgent ones are on top.
+ * Single pass: coupons this customer can use now vs. everything else (the
+ * archive). A coupon that is live in general but that this customer can no
+ * longer redeem (for example, already used) goes to the archive too. Active
+ * ones are listed soonest-to-expire first.
  */
-export function useCouponBuckets(coupons: readonly Coupon[]): CouponBuckets {
+export function useCouponBuckets(
+  coupons: readonly Coupon[],
+  unavailableCodes: ReadonlySet<string>,
+): CouponBuckets {
   return useMemo(() => {
     const buckets: CouponBuckets = { active: [], archived: [] };
 
     for (const coupon of coupons) {
-      if (deriveCouponStatus(coupon) === "active") {
+      const isUsable =
+        deriveCouponStatus(coupon) === "active" &&
+        !unavailableCodes.has(coupon.code.toUpperCase());
+
+      if (isUsable) {
         buckets.active.push(coupon);
       } else {
         buckets.archived.push(coupon);
@@ -38,5 +47,5 @@ export function useCouponBuckets(coupons: readonly Coupon[]): CouponBuckets {
     });
 
     return buckets;
-  }, [coupons]);
+  }, [coupons, unavailableCodes]);
 }

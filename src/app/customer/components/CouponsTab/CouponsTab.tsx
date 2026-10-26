@@ -13,13 +13,13 @@ import { ROOT_CLASS } from "./styles";
 
 /**
  * Customer coupons: admin-defined coupons plus claimed game rewards, split
- * into Available and an archive of expired / used-up ones.
+ * into Available and an archive of expired / used coupons.
  */
 export function CouponsTab() {
   const { user } = useUser();
 
-  const { coupons, loading } = useCoupons(user?.id);
-  const { active, archived } = useCouponBuckets(coupons);
+  const { coupons, unavailableCodes, loading } = useCoupons(user?.id);
+  const { active, archived } = useCouponBuckets(coupons, unavailableCodes);
   const { copiedId, copy } = useCopyFeedback();
 
   if (loading) return <LoadingState />;
