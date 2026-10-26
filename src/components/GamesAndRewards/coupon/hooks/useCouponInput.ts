@@ -78,7 +78,11 @@ export function useCouponInput({ subtotal, onApply, onRemove }: Options) {
       const trimmed = fromEvent.trim().toUpperCase();
       if (!trimmed) return;
 
-      // Fill the visible input so the user sees what is being applied, then
+      // Tell the sender the code was taken (it retries until someone does).
+      event.preventDefault();
+
+      
+// Fill the visible input so the user sees what is being applied, then
       // run the actual validation.
       setCode(trimmed);
       void applyCode(trimmed);

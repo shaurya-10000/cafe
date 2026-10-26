@@ -158,7 +158,7 @@ export async function dispatchChatAction(action: ActionPayload, ctx: DispatchCon
       break;
     }
     case "APPLY_COUPON": {
-      if (action.data?.code) dispatchCafeEvent(APPLY_COUPON, { code: action.data.code });
+      if (action.data?.code) { dispatchCafeEvent(OPEN_CART); dispatchCafeEvent(APPLY_COUPON, { code: action.data.code }); }
       break;
     }
     case "VIEW_ORDERS": {
