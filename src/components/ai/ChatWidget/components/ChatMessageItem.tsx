@@ -8,6 +8,7 @@ import { ActionCard } from "./ActionCard";
 import { BotAvatar } from "./BotAvatar";
 import { MarkdownMessage } from "./MarkdownMessage";
 import { MessageToolbar } from "./MessageToolbar";
+import { MissingFieldsNote } from "./MissingFieldsNote";
 
 interface ChatMessageItemProps {
   readonly message: Message;
@@ -74,6 +75,8 @@ export const ChatMessageItem = memo(function ChatMessageItem({
             onExecute={handleExecute}
           />
         )}
+
+        {!isUser && action && <MissingFieldsNote action={action} />}
 
         {!isUser && text && (
           <MessageToolbar

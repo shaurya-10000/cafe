@@ -172,6 +172,8 @@ export function useChatStream({
       const controller = new AbortController();
       streamAbortRef.current = controller;
 
+      const partialReply: { current: Pick<Message, "text" | "action"> | null } = { current: null };
+
       try {
         const res = await fetch(apiEndpoint, {
           method: "POST",
@@ -200,11 +202,13 @@ export function useChatStream({
 
         const result = await readChatStream(body, {
           isStale: () => requestId !== requestIdRef.current,
-          onProgress: (progressText, action) =>
+          onProgress: (progressText, action) => {
+            partialReply.current = { text: progressText, action };
             updateMessageByIndex(chatId, assistantIndex, {
               text: progressText,
               action,
-            }),
+            });
+          },
         });
 
         if (result && requestId === requestIdRef.current) {
@@ -221,6 +225,18 @@ export function useChatStream({
         if (requestId !== requestIdRef.current) return;
 
         errorDev("[ChatWidget] Stream error:", error);
+
+        const received = partialReply.current;
+
+        if (received?.text) {
+          // Part of the reply already arrived: keep it, and say it was cut
+          // off, instead of replacing a useful answer with an error.
+          updateMessageByIndex(chatId, assistantIndex, {
+            text: `${received.text}\n\n_(Connection lost. This reply may be incomplete.)_`,
+            action: received.action,
+          });
+          return;
+        }
 
         updateMessageByIndex(chatId, assistantIndex, {
           text:

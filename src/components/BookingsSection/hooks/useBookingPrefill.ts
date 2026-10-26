@@ -12,6 +12,9 @@ import type {
 } from "../types";
 import { useLatestRef } from "./useLatestRef";
 
+/** Only an immediate duplicate of the same event is ignored; later re-sends apply. */
+const DUPLICATE_WINDOW_MS = 1500;
+
 interface UseBookingPrefillOptions {
   locations: readonly Location[];
   status: LocationsStatus;
@@ -35,6 +38,7 @@ export function useBookingPrefill({
   applyPatch,
 }: UseBookingPrefillOptions): { resetSignature: () => void } {
   const lastSignatureRef = useRef("");
+  const lastAppliedAtRef = useRef(0);
 
   const locationsRef = useLatestRef(locations);
   const statusRef = useLatestRef(status);
@@ -73,9 +77,20 @@ export function useBookingPrefill({
 
       const signature = prefillSignature(applied);
 
-      if (signature === lastSignatureRef.current) return;
+      // Ignore only an immediate duplicate (the same event delivered twice). The
+      // same details sent again later must apply again, e.g. after the user
+      // cleared the form.
+      const now = Date.now();
+
+      if (
+        signature === lastSignatureRef.current &&
+        now - lastAppliedAtRef.current < DUPLICATE_WINDOW_MS
+      ) {
+        return;
+      }
 
       lastSignatureRef.current = signature;
+      lastAppliedAtRef.current = now;
 
       applyPatch(applied);
 

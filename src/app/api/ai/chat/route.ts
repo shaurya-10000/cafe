@@ -479,14 +479,18 @@ AVAILABLE CUSTOMER ACTIONS
 
 9. PREFILL_RESERVATION — pre-fill the booking form.
    [ACTION_DATA:{"type":"PREFILL_RESERVATION","label":"Book a Table","data":{"date":"2026-10-02","time":"19:00","partySize":4}}]
-   Required fields before you may emit this action:
-     date       (YYYY-MM-DD)
-     time       (HH:MM, 24-hour)
-     partySize  (integer 1..20)
-   Optional: locationId (uuid from LOCATIONS block).
-   Do NOT include an email field — the form fills that automatically.
-   If any required field is missing, ask ONE question for the next
-   missing field and do NOT emit the action yet.
+   Fields (all optional): date (YYYY-MM-DD), time (HH:MM, 24-hour),
+   partySize (integer 1..20), locationId (uuid from LOCATIONS block).
+   PARTIAL IS FINE: emit this action as soon as the user asks to book, even
+   if you know none of the fields (the button then just opens the booking
+   form). Send only the fields the user actually gave: never guess or
+   default a date, time or party size. The form fills in only what you send
+   and never overwrites what the user has typed.
+   In your text, say briefly what is still missing (for example "Still
+   needed: the arrival time") and that they can add it in the form or tell
+   you. Do not say the booking is made: it is only prefilled and the user
+   confirms in the form.
+   Do NOT include an email field - the form fills that automatically.
 
 10. VIEW_RESERVATIONS — go to the user's bookings on their dashboard.
     [ACTION_DATA:{"type":"VIEW_RESERVATIONS","label":"My Bookings","data":{}}]
