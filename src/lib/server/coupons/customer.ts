@@ -2,15 +2,30 @@ import { auth } from "@clerk/nextjs/server";
 
 import { createClient } from "@/utils/supabase/server";
 
-import { calculateCouponPreview } from "./preview";
 import type { Coupon, ValidateCouponResult } from "./types";
 
+type ServerClient = Awaited<ReturnType<typeof createClient>>;
+
+/** Placeholder for fields list_my_redeemable_coupons() does not return. */
+const UNKNOWN_DATE = "1970-01-01T00:00:00.000Z";
+
+/** validate_coupon_code raises this when a customer tries too many codes. */
+const RATE_LIMIT_CODE = "23514";
+
+interface RedeemableRow {
+  id: string;
+  code: string;
+  discount_type: Coupon["discount_type"];
+  discount_value: number | string;
+  min_order_amount: number | string;
+  max_discount_amount: number | string | null;
+  expires_at: string | null;
+}
+
 /**
- * coupons_select_redeemable RLS already restricts this to active coupons
- * within their start/expiry window and under their usage limit. This just
- * runs the plain query through the caller's own authenticated client and
- * lets that policy do the filtering, rather than reimplementing the same
- * logic in JS where it could drift out of sync with the actual policy.
+ * Customers cannot read the coupons table directly (only admins can), so the
+ * list comes from list_my_redeemable_coupons(): the coupons this customer can
+ * still use right now, honoring the per-customer limit.
  */
 export async function listCustomerCoupons(): Promise<Coupon[]> {
   const { userId } = await auth();
@@ -19,10 +34,7 @@ export async function listCustomerCoupons(): Promise<Coupon[]> {
 
   const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("coupons")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const { data, error } = await supabase.rpc("list_my_redeemable_coupons");
 
   if (error) {
     console.error(
@@ -34,12 +46,54 @@ export async function listCustomerCoupons(): Promise<Coupon[]> {
     return [];
   }
 
-  return (data ?? []) as Coupon[];
+  return ((data ?? []) as RedeemableRow[]).map(
+    (row): Coupon => ({
+      id: String(row.id),
+      code: row.code,
+      discount_type: row.discount_type,
+      discount_value: Number(row.discount_value),
+      min_order_amount: Number(row.min_order_amount),
+      max_discount_amount:
+        row.max_discount_amount === null ? null : Number(row.max_discount_amount),
+      usage_limit: null,
+      used_count: 0,
+      starts_at: UNKNOWN_DATE,
+      expires_at: row.expires_at,
+      is_active: true,
+      created_at: UNKNOWN_DATE,
+      updated_at: UNKNOWN_DATE,
+    }),
+  );
+}
+
+/**
+ * validate_coupon_code() returns no row when a code cannot be used. Work out
+ * the most helpful reason from the list of coupons this customer can redeem.
+ */
+async function explainRejection(
+  supabase: ServerClient,
+  code: string,
+  subtotal: number,
+): Promise<string> {
+  const { data } = await supabase.rpc("list_my_redeemable_coupons");
+
+  const match = ((data ?? []) as RedeemableRow[]).find(
+    (row) => row.code === code,
+  );
+
+  if (match && subtotal < Number(match.min_order_amount)) {
+    return `This code requires a minimum order of $${Number(
+      match.min_order_amount,
+    ).toFixed(2)}.`;
+  }
+
+  return "This coupon is invalid, expired or already used.";
 }
 
 /**
  * Customer-facing preview only. Deliberately does NOT require admin: it is
- * called by ordinary signed-in customers from the cart.
+ * called by ordinary signed-in customers from the cart. The order trigger
+ * still recomputes and enforces the discount when the order is placed.
  */
 export async function previewCoupon(
   rawCode: string,
@@ -51,8 +105,7 @@ export async function previewCoupon(
     return { valid: false, error: "Please sign in to apply a coupon." };
   }
 
-  // Mirrors normalize_coupon_code's own upper(btrim(...)) so a lookup by
-  // "  save10 " matches the row stored as "SAVE10".
+  // Mirrors normalize_coupon_code's own upper(btrim(...)).
   const code = rawCode.trim().toUpperCase();
 
   if (!code) return { valid: false, error: "Enter a coupon code." };
@@ -63,48 +116,47 @@ export async function previewCoupon(
 
   const supabase = await createClient();
 
-  const { data: coupon, error } = await supabase
-    .from("coupons")
-    .select(
-      "id, code, discount_type, discount_value, min_order_amount, max_discount_amount",
-    )
-    .eq("code", code)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("validate_coupon_code", {
+    p_code: code,
+    p_subtotal: subtotal,
+  });
 
   if (error) {
     console.error(
-      "[couponActions] validateCoupon lookup failed",
+      "[couponActions] validateCoupon failed",
       { userId, code: error.code },
       error,
     );
 
-    return { valid: false, error: "Couldn't validate that code. Please try again." };
-  }
-
-  // coupons_select_redeemable RLS already limits what a non-admin can even
-  // see here, so a miss means the code is wrong or currently ineligible; both
-  // get the same message so this cannot be used to enumerate valid codes.
-  if (!coupon) return { valid: false, error: "Invalid or expired coupon code." };
-
-  if (subtotal < coupon.min_order_amount) {
     return {
       valid: false,
-      error: `This code requires a minimum order of $${Number(
-        coupon.min_order_amount,
-      ).toFixed(2)}.`,
+      error:
+        error.code === RATE_LIMIT_CODE
+          ? error.message
+          : "Couldn't validate that code. Please try again.",
     };
   }
 
-  const { discountAmount, finalTotal } = calculateCouponPreview(coupon, subtotal);
+  const row = Array.isArray(data) ? data[0] : data;
 
-  // `couponId` is what gets attached to the order at checkout
-  // (orders.coupon_id): the trigger looks the coupon up by this id and
-  // recomputes/enforces the discount server-side regardless of this preview.
+  if (!row) {
+    return {
+      valid: false,
+      error: await explainRejection(supabase, code, subtotal),
+    };
+  }
+
+  const discountAmount = Number(row.discount_amount);
+
+  if (!Number.isFinite(discountAmount)) {
+    return { valid: false, error: "Couldn't validate that code. Please try again." };
+  }
+
   return {
     valid: true,
-    couponId: coupon.id,
-    code: coupon.code,
+    couponId: String(row.coupon_id),
+    code,
     discountAmount,
-    finalTotal,
+    finalTotal: Math.max(0, Math.round((subtotal - discountAmount) * 100) / 100),
   };
 }

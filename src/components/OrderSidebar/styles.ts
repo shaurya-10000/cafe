@@ -13,12 +13,16 @@ export const FIELD_BASE =
 export const SCROLLBAR_CSS = `
   .sidebar-scroll::-webkit-scrollbar {
     width: 4px;
+    height: 4px;
   }
   .sidebar-scroll::-webkit-scrollbar-track {
     background: transparent;
   }
   .sidebar-scroll::-webkit-scrollbar-thumb {
-    background: #C5A059;
+    background: rgba(197, 160, 89, 0.55);
     border-radius: 10px;
+  }
+  .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: #C5A059;
   }
 `;
