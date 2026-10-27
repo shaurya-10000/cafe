@@ -16,7 +16,7 @@ export function CarouselDots({
 }: CarouselDotsProps) {
   return (
     <div
-      className="mt-8 flex justify-center gap-2 md:hidden"
+      className="mt-6 flex justify-center gap-1 md:hidden"
       aria-label="Location pagination"
     >
       {locations.map((location, index) => {
@@ -29,11 +29,18 @@ export function CarouselDots({
             aria-label={`Go to ${location.name}`}
             aria-current={isActive ? "true" : undefined}
             className={cx(
-              "h-1.5 rounded-full transition-all",
+              "flex h-8 min-w-8 items-center justify-center rounded-full px-1",
               FOCUS_RING_CLASSES,
-              isActive ? "w-6 bg-cafe-accent" : "w-1.5 bg-zinc-300 dark:bg-zinc-700",
             )}
-          />
+          >
+            <span
+              aria-hidden="true"
+              className={cx(
+                "block h-1.5 rounded-full transition-all",
+                isActive ? "w-6 bg-cafe-accent" : "w-1.5 bg-zinc-300 dark:bg-zinc-700",
+              )}
+            />
+          </button>
         );
       })}
     </div>
