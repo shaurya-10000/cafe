@@ -210,12 +210,12 @@ export async function dispatchChatAction(action: ActionPayload, ctx: DispatchCon
       break;
     }
     case "OPEN_NOTIFICATIONS": dispatchCafeEvent(OPEN_NOTIFICATIONS); break;
-    case "MUTE_ALL_NOTIFICATIONS": dispatchCafeEvent(MUTE_ALL_NOTIFICATIONS); break;
-    case "UNMUTE_ALL_NOTIFICATIONS": dispatchCafeEvent(UNMUTE_ALL_NOTIFICATIONS); break;
-    case "MUTE_NOTIFICATION_TYPE": { if (action.data?.type) dispatchCafeEvent(MUTE_NOTIFICATION_TYPE, { type: action.data.type }); break; }
-    case "UNMUTE_NOTIFICATION_TYPE": { if (action.data?.type) dispatchCafeEvent(UNMUTE_NOTIFICATION_TYPE, { type: action.data.type }); break; }
-    case "ENABLE_PUSH": dispatchCafeEvent(ENABLE_PUSH); break;
-    case "DISABLE_PUSH": dispatchCafeEvent(DISABLE_PUSH); break;
+    case "MUTE_ALL_NOTIFICATIONS": dispatchCafeEvent(MUTE_ALL_NOTIFICATIONS); dispatchCafeEvent(OPEN_NOTIFICATIONS); break;
+    case "UNMUTE_ALL_NOTIFICATIONS": dispatchCafeEvent(UNMUTE_ALL_NOTIFICATIONS); dispatchCafeEvent(OPEN_NOTIFICATIONS); break;
+    case "MUTE_NOTIFICATION_TYPE": { if (action.data?.type) { dispatchCafeEvent(MUTE_NOTIFICATION_TYPE, { type: action.data.type }); dispatchCafeEvent(OPEN_NOTIFICATIONS); } break; }
+    case "UNMUTE_NOTIFICATION_TYPE": { if (action.data?.type) { dispatchCafeEvent(UNMUTE_NOTIFICATION_TYPE, { type: action.data.type }); dispatchCafeEvent(OPEN_NOTIFICATIONS); } break; }
+    case "ENABLE_PUSH": dispatchCafeEvent(ENABLE_PUSH); dispatchCafeEvent(OPEN_NOTIFICATIONS); break;
+    case "DISABLE_PUSH": dispatchCafeEvent(DISABLE_PUSH); dispatchCafeEvent(OPEN_NOTIFICATIONS); break;
     case "SET_THEME_MODE": {
       if (action.data?.mode) {
         dispatchCafeEvent(SET_THEME_MODE, { mode: action.data.mode });
