@@ -161,6 +161,8 @@ export default function ChatWidget({
   });
 
   const endRef = useAutoScroll({
+    isOpen,
+    activeChatId,
     messages: activeChat?.messages,
     loading,
     slotHint,
@@ -170,6 +172,25 @@ export default function ChatWidget({
   /* ---- Handlers ---------------------------------------------------------- */
 
   const sortedSessions = useMemo(() => sortSessions(sessions), [sessions]);
+
+  // Deleting the open conversation lands on a fresh, working one (reusing an
+  // empty chat if there already is one) instead of a dead empty screen.
+  const handleDeleteChat = useCallback(
+    (chatId: string) => {
+      const wasActive = chatId === activeChatId;
+      const spareEmpty = sessions.find(
+        (session) => session.id !== chatId && session.messages.length === 0,
+      );
+
+      deleteChat(chatId);
+
+      if (!wasActive) return;
+
+      if (spareEmpty) setActiveChatId(spareEmpty.id);
+      else void createNewChat();
+    },
+    [activeChatId, sessions, deleteChat, setActiveChatId, createNewChat],
+  );
 
   const handleToggleSidebar = useCallback(
     () => setIsSidebarOpen((open) => !open),
@@ -372,7 +393,7 @@ onCancelPending={handleCancelPending}
                 menu.closeMenu();
               }}
               onDelete={() => {
-                deleteChat(menuSession.id);
+                handleDeleteChat(menuSession.id);
                 menu.closeMenu();
               }}
             />

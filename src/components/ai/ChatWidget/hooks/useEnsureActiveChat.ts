@@ -14,11 +14,15 @@ interface UseEnsureActiveChatOptions {
 }
 
 /**
- * When the widget opens (and history has loaded), reuse an existing empty
- * chat or create one, so the user always lands in a usable conversation.
+ * While the widget is open, make sure there is always a usable conversation.
  *
- * Runs only on `isOpen` / `dbLoaded` transitions; everything else is read
- * through a ref so a mid-session change never creates a stray chat.
+ * - The conversation the user is in is kept: reopening the widget lands back
+ *   on it, at its latest message.
+ * - With no valid active chat (first open, or the open chat was deleted), an
+ *   existing empty chat is reused, otherwise a new one is created.
+ *
+ * Reacts only to open / loaded / "has an active chat" changes; everything
+ * else is read through a ref so a mid-session change never creates a stray chat.
  */
 export function useEnsureActiveChat({
   isOpen,
@@ -28,30 +32,27 @@ export function useEnsureActiveChat({
   setActiveChatId,
   createNewChat,
 }: UseEnsureActiveChatOptions): void {
-  const latestRef = useRef({
-    sessions,
-    activeChatId,
-    setActiveChatId,
-    createNewChat,
-  });
+  const hasActiveChat =
+    activeChatId !== null && sessions.some((session) => session.id === activeChatId);
+
+  const latestRef = useRef({ sessions, setActiveChatId, createNewChat });
 
   // Declared before the main effect so it always runs first.
   useEffect(() => {
-    latestRef.current = { sessions, activeChatId, setActiveChatId, createNewChat };
+    latestRef.current = { sessions, setActiveChatId, createNewChat };
   });
 
   useEffect(() => {
-    if (!isOpen || !dbLoaded) return;
+    if (!isOpen || !dbLoaded || hasActiveChat) return;
 
-    const { sessions, activeChatId, setActiveChatId, createNewChat } =
-      latestRef.current;
+    const { sessions, setActiveChatId, createNewChat } = latestRef.current;
 
-    const existingEmpty = sessions.find((s) => s.messages.length === 0);
+    const existingEmpty = sessions.find((session) => session.messages.length === 0);
 
     if (existingEmpty) {
       setActiveChatId(existingEmpty.id);
-    } else if (sessions.length === 0 || activeChatId === null) {
+    } else {
       void createNewChat();
     }
-  }, [isOpen, dbLoaded]);
+  }, [isOpen, dbLoaded, hasActiveChat]);
 }
