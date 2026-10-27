@@ -10,8 +10,6 @@ import React, {
 } from "react";
 import CatalogGrid from "@/components/CatalogGrid";
 import CartFAB from "@/components/CartFAB";
-import OrderSidebar from "@/components/OrderSidebar";
-import Footer from "@/components/Footer";
 import LocationsSection from "@/components/LocationsSection";
 import GamesAndRewards from "@/components/GamesAndRewards";
 import ReviewsSection from "@/components/ReviewsSection";
@@ -24,6 +22,15 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { CartItem, CART_ITEM_MAX_QUANTITY } from "../types/cart";
 import type { PendingPrefill } from "@/lib/ai/actions";
+import dynamic from "next/dynamic";
+
+// Loaded after the initial hydration: neither is needed for first paint.
+// The sidebar only matters once the cart is opened, and the footer sits at
+// the bottom of the page.
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
+const OrderSidebar = dynamic(() => import("@/components/OrderSidebar"), {
+  ssr: false,
+});
 
 // Re-exported for any existing caller that imports CartItem from this page
 // module directly — new code should import from "@/types/cart" instead.
