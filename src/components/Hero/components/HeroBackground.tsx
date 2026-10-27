@@ -41,6 +41,8 @@ export const HeroBackground = memo(function HeroBackground({
         fill
         priority
         sizes="100vw"
+        quality={60}
+        fetchPriority="high"
         className={BACKGROUND_IMAGE}
       />
 

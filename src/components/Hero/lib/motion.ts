@@ -41,7 +41,7 @@ export function buildHeroMotion(reducedMotion: boolean): HeroMotionConfig {
 
   const backgroundVariants: Variants = {
     initial: {
-      opacity: 0,
+      opacity: 1,
       scale: reducedMotion ? 1 : 1.1,
     },
     animate: {
