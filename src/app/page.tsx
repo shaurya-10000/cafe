@@ -1079,7 +1079,18 @@ function HomeContent() {
 
   /* ---- Render ----------------------------------------------------------- */
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return (
+      <div className="w-full min-h-screen bg-cafe-bg transition-colors duration-300 overflow-x-hidden">
+        {null}
+        <Hero
+          scrollToMenu={scrollToMenu}
+          scrollToLocation={scrollToLocation}
+          onOpenAi={() => setIsAiOpen(true)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-cafe-bg transition-colors duration-300 overflow-x-hidden">
@@ -1163,9 +1174,24 @@ function HomeContent() {
   );
 }
 
+/**
+ * Static-HTML fallback for the Suspense boundary below. useSearchParams()
+ * makes Next serve the fallback in the prerendered HTML, so the Hero lives
+ * here to put the LCP image in the first response. Buttons are inert until
+ * HomeContent hydrates and replaces this.
+ */
+function HeroFallback() {
+  const noop = () => {};
+  return (
+    <div className="w-full min-h-screen bg-cafe-bg overflow-x-hidden">
+      <Hero scrollToMenu={noop} scrollToLocation={noop} onOpenAi={noop} />
+    </div>
+  );
+}
+
 export default function Home() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<HeroFallback />}>
       <HomeContent />
     </Suspense>
   );
