@@ -65,9 +65,9 @@ const FavoriteDataSchema = z.object({
 });
 const RewardDataSchema = z.object({ rewardKey: ShortIdString.optional() });
 const NotificationPreferencesDataSchema = z.object({ type: z.string().trim().min(1).max(80).optional() });
-const ThemeModeDataSchema = z.object({ mode: z.enum(["light", "dark", "system"]).optional() });
+const ThemeModeDataSchema = z.object({ mode: z.string().trim().toLowerCase().pipe(z.enum(["light", "dark", "system"])).optional() });
 const ColorPaletteDataSchema = z.object({
-  palette: z.enum(["espresso", "emerald", "rosewood", "champagne"]).optional(),
+  palette: z.string().trim().toLowerCase().pipe(z.enum(["espresso", "emerald", "rosewood", "champagne"])).optional(),
 });
 
 export const ACTION_TYPE_NAMES = [

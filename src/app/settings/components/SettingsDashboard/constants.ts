@@ -7,6 +7,9 @@ export const MENU_ITEMS: readonly MenuItem[] = [
   { id: "appearance", label: "Appearance", icon: Palette },
 ];
 
+/** Query param the AI concierge uses to open a settings section. */
+export const TAB_PARAM = "tab";
+
 export const SIGN_OUT_REDIRECT_URL = "/";
 
 export const SIGN_OUT_ERROR_MESSAGE =

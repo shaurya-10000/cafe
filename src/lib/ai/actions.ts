@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { Calendar, Utensils, MapPin, PhoneCall, ShoppingBag, LayoutDashboard, Star, LogIn, Gift, Bell, Palette, Tag, TrendingUp, Trash2, type LucideIcon } from "lucide-react";
 import { type ActionPayload, type ActionType, SIGNED_IN_ONLY_ACTIONS, ADMIN_ONLY_ACTIONS, DESTRUCTIVE_ACTIONS } from "@/types/action";
@@ -7,6 +8,19 @@ const SECTION_IDS = { MENU: "menu", LOCATION: "location", BOOKINGS: "bookings", 
 const RESUME_ACTION_STORAGE_KEY = "cafe_resume_action";
 const PENDING_PREFILL_STORAGE_KEY = "cafe_pending_prefill";
 const HOME_PATH = "/";
+
+/** Where theme and palette changes land, so the user sees the Appearance settings. */
+const SETTINGS_APPEARANCE_HREF = "/settings?tab=appearance";
+
+function themeModeMessage(mode: string): string {
+  return mode === "system"
+    ? "Theme now follows your device"
+    : `Switched to ${mode} mode`;
+}
+
+function paletteMessage(palette: string): string {
+  return `Switched to the ${palette.charAt(0).toUpperCase()}${palette.slice(1)} palette`;
+}
 
 export type ConfirmAction = (action: ActionPayload) => Promise<boolean>;
 
@@ -202,8 +216,22 @@ export async function dispatchChatAction(action: ActionPayload, ctx: DispatchCon
     case "UNMUTE_NOTIFICATION_TYPE": { if (action.data?.type) dispatchCafeEvent(UNMUTE_NOTIFICATION_TYPE, { type: action.data.type }); break; }
     case "ENABLE_PUSH": dispatchCafeEvent(ENABLE_PUSH); break;
     case "DISABLE_PUSH": dispatchCafeEvent(DISABLE_PUSH); break;
-    case "SET_THEME_MODE": { if (action.data?.mode) dispatchCafeEvent(SET_THEME_MODE, { mode: action.data.mode }); break; }
-    case "SET_COLOR_PALETTE": { if (action.data?.palette) dispatchCafeEvent(SET_COLOR_PALETTE, { palette: action.data.palette }); break; }
+    case "SET_THEME_MODE": {
+      if (action.data?.mode) {
+        dispatchCafeEvent(SET_THEME_MODE, { mode: action.data.mode });
+        toast.success(themeModeMessage(action.data.mode));
+        router.push(SETTINGS_APPEARANCE_HREF);
+      }
+      break;
+    }
+    case "SET_COLOR_PALETTE": {
+      if (action.data?.palette) {
+        dispatchCafeEvent(SET_COLOR_PALETTE, { palette: action.data.palette });
+        toast.success(paletteMessage(action.data.palette));
+        router.push(SETTINGS_APPEARANCE_HREF);
+      }
+      break;
+    }
     case "NAVIGATE_ADMIN": { router.push(`/admin?tab=${action.data?.tab ?? "orders"}`); break; }
     case "VIEW_REVENUE":
     case "VIEW_ORDER_STATS":

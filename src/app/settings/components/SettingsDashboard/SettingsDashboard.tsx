@@ -3,22 +3,36 @@
 import { useCallback, useEffect, useId, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 import { SettingsContent } from "./components/SettingsContent";
 import { SettingsHeader } from "./components/SettingsHeader";
 import { SettingsLoading } from "./components/SettingsLoading";
 import { SettingsSidebar } from "./components/SettingsSidebar";
 import { SidebarBackdrop } from "./components/SidebarBackdrop";
-import { MENU_ITEMS } from "./constants";
+import { MENU_ITEMS, TAB_PARAM } from "./constants";
 import { useDrawer } from "./hooks/useDrawer";
 import { useSignOut } from "./hooks/useSignOut";
 import type { SettingsTab } from "./types";
+import { parseSettingsTab } from "./lib/tabs";
 
 export default function SettingsDashboard() {
   const { isLoaded } = useUser();
   const reducedMotion = useReducedMotion() ?? false;
   const sidebarId = useId();
 
-  const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
+  const searchParams = useSearchParams();
+  const tabParam = parseSettingsTab(searchParams.get(TAB_PARAM));
+
+  const [activeTab, setActiveTab] = useState<SettingsTab>(tabParam ?? "profile");
+
+  // Follow ?tab= when it changes (the AI concierge links to
+  // /settings?tab=appearance). Adjusted during render, guarded by the last
+  // value seen, rather than from an effect.
+  const [seenTabParam, setSeenTabParam] = useState(tabParam);
+  if (seenTabParam !== tabParam) {
+    setSeenTabParam(tabParam);
+    if (tabParam) setActiveTab(tabParam);
+  }
   const { isOpen, open, close, drawerRef, triggerRef } = useDrawer();
   const { signOut, isSigningOut, error: signOutError } = useSignOut();
 

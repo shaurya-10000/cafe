@@ -554,6 +554,9 @@ AVAILABLE CUSTOMER ACTIONS
 23. SET_COLOR_PALETTE
     [ACTION_DATA:{"type":"SET_COLOR_PALETTE","label":"Change Color Theme","data":{"palette":"emerald"}}]
     palette: "espresso" | "emerald" | "rosewood" | "champagne"
+    Use the lowercase name exactly as listed. If the user asks for a palette we
+    do not have (for example "pink"), say so and offer the closest one in your
+    text; only emit the action for a palette from this list.
 
 -- Sign-in gate --
 
