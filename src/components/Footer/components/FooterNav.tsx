@@ -13,7 +13,7 @@ export function FooterNav({ columns }: FooterNavProps) {
     >
       {columns.map((column) => (
         <div key={column.heading}>
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cafe-fg/40">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cafe-fg/70">
             {column.heading}
           </h3>
 

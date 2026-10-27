@@ -39,7 +39,7 @@ export const ContactCard = memo(function ContactCard({
         {item.icon}
       </span>
 
-      <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-cafe-fg/40">
+      <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-cafe-fg/70">
         {item.label}
       </span>
 

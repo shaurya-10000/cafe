@@ -45,13 +45,13 @@ export function FooterBottomBar({
           </ul>
         </nav>
 
-        <p className="text-xs text-cafe-fg/40">
+        <p className="text-xs text-cafe-fg/70">
           {`\u00a9 ${year} ${strings.copyrightHolder}. ${strings.copyrightNotice}`}
         </p>
       </div>
 
       <div className="mt-7 flex flex-col gap-2 border-t border-cafe-border pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-cafe-fg/40">{strings.craftedWithCare}</p>
+        <p className="text-xs text-cafe-fg/70">{strings.craftedWithCare}</p>
 
         <a
           href={strings.attributionHref}
@@ -59,7 +59,7 @@ export function FooterBottomBar({
           rel="noopener noreferrer"
           className={cn(
             "inline-flex w-fit items-center gap-1.5",
-            "text-xs text-cafe-fg/40",
+            "text-xs text-cafe-fg/70",
             "transition-colors duration-200",
             "hover:text-cafe-fg",
             "motion-reduce:transition-none",

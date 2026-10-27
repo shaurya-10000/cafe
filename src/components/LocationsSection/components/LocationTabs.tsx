@@ -95,7 +95,7 @@ export function LocationTabs({
               FOCUS_RING_CLASSES,
               isActive
                 ? "border-transparent bg-zinc-900 text-white dark:bg-zinc-100 dark:text-black"
-                : "border-[#EAE9E4] bg-transparent text-zinc-500 hover:border-cafe-accent dark:border-zinc-800",
+                : "border-[#EAE9E4] bg-transparent text-zinc-600 hover:border-cafe-accent dark:border-zinc-800 dark:text-zinc-400",
             )}
           >
             {location.name}
