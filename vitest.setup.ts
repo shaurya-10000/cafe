@@ -8,21 +8,30 @@ afterEach(() => {
 });
 
 /**
- * Vitest can surface harmless animation cancellation rejections from
- * Framer Motion / browser animation APIs during component teardown.
+ * Detects the harmless animation cancellation rejections that Framer Motion /
+ * browser animation APIs can emit during component teardown.
  *
- * We intentionally ignore only the known cancellation cases.
- * Everything else is re-thrown so real application/test failures
- * are never hidden.
+ * Duck-typed on purpose: cancellations are often DOMException objects, which
+ * are not guaranteed to be `instanceof Error` in every test environment.
+ */
+function isAnimationCancellation(reason: unknown): boolean {
+  if (typeof reason !== "object" || reason === null) return false;
+
+  const { name, message } = reason as { name?: unknown; message?: unknown };
+
+  return (
+    name === "AbortError" ||
+    (typeof message === "string" &&
+      message.includes("The animation was canceled"))
+  );
+}
+
+/**
+ * Ignores only the known cancellation case. Everything else is re-thrown so
+ * real application/test failures are never hidden.
  */
 function handleUnhandledRejection(reason: unknown): void {
-  if (
-    reason instanceof Error &&
-    (reason.name === "AbortError" ||
-      reason.message.includes("The animation was canceled"))
-  ) {
-    return;
-  }
+  if (isAnimationCancellation(reason)) return;
 
   throw reason;
 }
@@ -31,5 +40,7 @@ function handleUnhandledRejection(reason: unknown): void {
  * Prevent duplicate registration when this setup module is evaluated
  * repeatedly by the test runner.
  */
-process.removeListener("unhandledRejection", handleUnhandledRejection);
-process.on("unhandledRejection", handleUnhandledRejection);
+if (typeof process !== "undefined" && typeof process.on === "function") {
+  process.removeListener("unhandledRejection", handleUnhandledRejection);
+  process.on("unhandledRejection", handleUnhandledRejection);
+}
