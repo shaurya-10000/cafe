@@ -7,12 +7,11 @@ afterEach(() => {
   cleanup();
 });
 
+const HANDLER_FLAG = Symbol.for("cafe.vitest.rejectionFilter");
+
 /**
- * Detects the harmless animation cancellation rejections that Framer Motion /
- * browser animation APIs can emit during component teardown.
- *
- * Duck-typed on purpose: cancellations are often DOMException objects, which
- * are not guaranteed to be `instanceof Error` in every test environment.
+ * Harmless animation cancellation rejections can surface during component
+ * teardown. Duck-typed because DOMException is not always `instanceof Error`.
  */
 function isAnimationCancellation(reason: unknown): boolean {
   if (typeof reason !== "object" || reason === null) return false;
@@ -27,20 +26,17 @@ function isAnimationCancellation(reason: unknown): boolean {
 }
 
 /**
- * Ignores only the known cancellation case. Everything else is re-thrown so
- * real application/test failures are never hidden.
+ * Registered once per worker. The test config uses `isolate: false`, so this
+ * file is evaluated repeatedly in the same process; a module-level function
+ * reference would differ each time and listeners would accumulate.
  */
-function handleUnhandledRejection(reason: unknown): void {
-  if (isAnimationCancellation(reason)) return;
+const registry = globalThis as Record<symbol, unknown>;
 
-  throw reason;
-}
+if (!registry[HANDLER_FLAG] && typeof process !== "undefined") {
+  registry[HANDLER_FLAG] = true;
 
-/**
- * Prevent duplicate registration when this setup module is evaluated
- * repeatedly by the test runner.
- */
-if (typeof process !== "undefined" && typeof process.on === "function") {
-  process.removeListener("unhandledRejection", handleUnhandledRejection);
-  process.on("unhandledRejection", handleUnhandledRejection);
+  process.on("unhandledRejection", (reason: unknown) => {
+    if (isAnimationCancellation(reason)) return;
+    throw reason;
+  });
 }
