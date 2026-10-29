@@ -4,27 +4,22 @@
 //
 // Responsibilities:
 //   * Establish Clerk authentication context (clerkMiddleware).
+//   * Apply an optimistic auth redirect for protected route trees.
 //   * Apply baseline HTTP security headers, including CSP.
 //   * Pass authorized requests to downstream handlers.
 //
-// Route protection is deliberately NOT done here. Clerk deprecated
-// createRouteMatcher + middleware-level auth.protect() because path-based
-// matching can diverge from how Next.js actually routes requests and leave
-// protected resources reachable. The supported pattern is to check auth()
-// inside each protected route/layout/server-action that accesses protected
-// data. This app already does that in:
-//
-//   app/settings/layout.tsx   -> await auth() + redirect
-//   app/customer/layout.tsx  -> await auth() + redirect
-//   app/admin/layout.tsx      -> await auth() + redirect (plus role check)
-//
-// Server actions and route handlers additionally rely on RLS: the Supabase
-// client is bound to the caller's Clerk session, and every mutating policy
-// is enforced server-side at the database layer, so a request that somehow
-// bypassed the route-level checks would still hit an authenticated,
-// role-scoped policy.
+// Auth model (defense in depth):
+//   1. Source of truth: every protected page, layout, server action and route
+//      handler calls auth() itself, and admin paths additionally check the
+//      role. Layouts alone are not sufficient, because App Router layouts do
+//      not re-render on client-side navigation between child routes.
+//   2. Database: the Supabase client is bound to the caller's Clerk session
+//      and every mutating policy is enforced by RLS, so a request that
+//      bypassed the app-level checks would still hit a role-scoped policy.
+//   3. This file: an optimistic redirect for /admin, /customer and /settings.
+//      It is a convenience and an extra layer, never the only guard.
 
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 /* -------------------------------------------------------------------------- */
@@ -52,6 +47,16 @@ const supabaseRealtimeUrl: string = supabaseUrl.replace(/^http/, "ws");
 // project — needed for catalog_items.media, business_locations.image_url,
 // and any other Supabase-hosted image.
 const supabaseOrigin: string = new URL(supabaseUrl).origin;
+
+/* -------------------------------------------------------------------------- */
+/* Protected routes                                                           */
+/* -------------------------------------------------------------------------- */
+
+const isProtectedRoute = createRouteMatcher([
+  "/admin(.*)",
+  "/customer(.*)",
+  "/settings(.*)",
+]);
 
 /* -------------------------------------------------------------------------- */
 /* Clerk FAPI host                                                            */
@@ -106,7 +111,9 @@ const clerkFapiHost = decodeClerkFapiHost();
  * Supabase, Unsplash, Google Maps.
  *
  * Verify after any Clerk / Next.js upgrade by loading the app with DevTools
- * open and checking the console for "Refused to ..." CSP violations.
+ * open and checking the console for "Refused to ..." CSP violations, and by
+ * reading the final Content-Security-Policy response header to confirm
+ * Clerk's defaults are present alongside these.
  */
 function buildCspDirectives(): Record<string, string[]> {
   const directives: Record<string, string[]> = {
@@ -162,7 +169,13 @@ function buildCspDirectives(): Record<string, string[]> {
 /* -------------------------------------------------------------------------- */
 
 export default clerkMiddleware(
-  async () => {
+  async (auth, req) => {
+    // Optimistic redirect for protected trees. Real enforcement still lives
+    // in each page / layout / server action / route handler (see top).
+    if (isProtectedRoute(req)) {
+      await auth.protect();
+    }
+
     const response = NextResponse.next();
 
     // Force HTTPS for a year once the browser has seen this header over
