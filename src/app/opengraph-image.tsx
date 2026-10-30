@@ -28,7 +28,7 @@ export default function OpengraphImage() {
             style={{
               display: "flex",
               fontSize: 200,
-              fontWeight: 800,
+              fontWeight: 700,
               lineHeight: 1,
               letterSpacing: -8,
             }}
