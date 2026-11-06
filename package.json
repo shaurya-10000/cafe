@@ -8,9 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test": "vitest run",
     "test:run": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:unit": "vitest run proxy.test metadata.test palette-script.test",
+    "test:component": "vitest run .component.test",
+    "test:integration": "vitest run .integration.test"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.1",
