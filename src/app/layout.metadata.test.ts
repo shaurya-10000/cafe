@@ -107,12 +107,12 @@ describe("metadataBase / NEXT_PUBLIC_SITE_URL", () => {
   it("falls back to the production URL when unset", async () => {
     const { metadata } = await loadLayout();
     expect(metadata.metadataBase).toBeInstanceOf(URL);
-    expect(metadata.metadataBase?.href).toBe(`${DEFAULT_SITE_URL}/`);
+    expect((metadata.metadataBase as URL).href).toBe(`${DEFAULT_SITE_URL}/`);
   });
 
   it("defaults to https", async () => {
     const { metadata } = await loadLayout();
-    expect(metadata.metadataBase?.protocol).toBe("https:");
+    expect((metadata.metadataBase as URL).protocol).toBe("https:");
   });
 
   it.each([
@@ -122,7 +122,7 @@ describe("metadataBase / NEXT_PUBLIC_SITE_URL", () => {
     ["http://localhost:3000", "http://localhost:3000/"],
   ])("normalizes %s", async (input, expectedHref) => {
     const { metadata } = await loadLayout(input);
-    expect(metadata.metadataBase?.href).toBe(expectedHref);
+    expect((metadata.metadataBase as URL).href).toBe(expectedHref);
   });
 
   it("resolves the relative Open Graph url against metadataBase", async () => {
