@@ -46,7 +46,9 @@ function isAbortLikeError(error: unknown): boolean {
   if (error instanceof DOMException && error.name === "AbortError") return true;
   if (error instanceof Error && error.name === "AbortError") return true;
   if (error instanceof Error && error.name === "TimeoutError") return true;
-  if (typeof error === "object" && error !== null && Object.keys(error).length === 0) return true;
+  // Error instances have no enumerable own keys, so exclude them: only a bare
+  // `{}` (what some aborted fetches reject with) counts as abort-like here.
+  if (typeof error === "object" && error !== null && !(error instanceof Error) && Object.keys(error).length === 0) return true;
   return false;
 }
 
