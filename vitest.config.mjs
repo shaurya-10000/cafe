@@ -31,5 +31,20 @@ export default defineConfig({
     unstubGlobals: true,
 
     unstubEnvs: true,
+
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "json-summary"],
+      reportsDirectory: "./coverage",
+      clean: true,
+      // Listing include means files with no tests at all show up as 0%.
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "**/*.test.{ts,tsx}",
+        "**/*.fakes.ts",
+        "**/*.d.ts",
+        "**/node_modules/**",
+      ],
+    },
   },
 });
