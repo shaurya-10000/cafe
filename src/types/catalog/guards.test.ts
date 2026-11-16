@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 
 import { isCatalogItem } from "./guards";
-import { CATALOG_NAME_MAX_LENGTH } from "./types";
+import { CATALOG_CATEGORIES, CATALOG_NAME_MAX_LENGTH, type CatalogItem } from "./types";
 
 type Raw = Record<string, unknown>;
 
@@ -312,5 +312,48 @@ describe("isCatalogItem: robustness", () => {
     const payload: unknown[] = [product(), { id: "x" }, null, service(), product({ numeric_price: 0 })];
 
     expect(payload.filter(isCatalogItem)).toHaveLength(2);
+  });
+});
+
+describe("CatalogItem stays in sync with its guard", () => {
+  // `satisfies` makes `tsc` fail when a field is added to or removed from
+  // CatalogItem, so this fixture (and then the guard) must be updated.
+  const TYPED_SHAPE = {
+    id: "item_1",
+    name: "Flat white",
+    price: "$4.50",
+    numeric_price: 4.5,
+    description: "Smooth and strong",
+    category: "Coffee",
+    item_type: "product",
+    duration_minutes: null,
+    media: ["https://example.com/a.jpg"],
+    is_popular: false,
+    is_active: true,
+    rating: 4.5,
+    created_at: "2026-01-01T00:00:00Z",
+    updated_at: "2026-01-02T00:00:00Z",
+  } satisfies CatalogItem;
+
+  it("accepts a fully typed CatalogItem", () => {
+    expect(isCatalogItem(TYPED_SHAPE)).toBe(true);
+  });
+
+  it("uses a test fixture with exactly the fields of CatalogItem", () => {
+    expect(Object.keys(product()).sort()).toEqual(Object.keys(TYPED_SHAPE).sort());
+  });
+
+  it.each([...CATALOG_CATEGORIES])("accepts the official category %s", (category) => {
+    expect(isCatalogItem(product({ category }))).toBe(true);
+  });
+
+  it("KNOWN GAP: does not restrict category to CATALOG_CATEGORIES", () => {
+    // category is typed `string`, and the guard only checks typeof. If you
+    // tighten it, flip this to expect false.
+    expect(isCatalogItem(product({ category: "Soup" }))).toBe(true);
+  });
+
+  it("keeps the name limit at 160", () => {
+    expect(CATALOG_NAME_MAX_LENGTH).toBe(160);
   });
 });
