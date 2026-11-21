@@ -1,6 +1,9 @@
 export type CatalogItemType = "product" | "service";
 
 export interface CatalogItem {
+  track_stock?: boolean;
+  stock_quantity?: number;
+  in_stock?: boolean;
   id: string;
   name: string;
   price: string;

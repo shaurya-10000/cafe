@@ -59,6 +59,8 @@ export function buildItemInput(
     is_popular: item.is_popular,
     is_active: item.is_active,
     rating: item.rating,
+    track_stock: Boolean(item.track_stock),
+    stock_quantity: Number(item.stock_quantity ?? 0),
     ...overrides,
   };
 }

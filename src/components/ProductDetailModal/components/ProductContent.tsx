@@ -37,6 +37,7 @@ export function ProductContent({
   onClose,
 }: ProductContentProps) {
   const [quantity, setQuantity] = useState(MIN_QUANTITY);
+  const isSoldOut = item.in_stock === false;
 
   const decrement = useCallback(
     () => setQuantity((q) => Math.max(MIN_QUANTITY, q - 1)),
@@ -48,9 +49,10 @@ export function ProductContent({
   );
 
   const handleAdd = useCallback(() => {
+    if (isSoldOut) return;
     onAddToCart(item, quantity);
     onClose();
-  }, [item, quantity, onAddToCart, onClose]);
+  }, [item, isSoldOut, quantity, onAddToCart, onClose]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2">
@@ -62,6 +64,28 @@ export function ProductContent({
 
       <div className="flex flex-col space-y-6 p-6 md:p-8">
         <ProductHeader item={item} titleId={titleId} currency={currency} />
+
+        {isSoldOut ? (
+          <div className="inline-flex w-fit items-center rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-red-500">
+            Sold Out — Currently Unavailable
+          </div>
+        ) : item.track_stock && typeof item.stock_quantity === "number" ? (
+          <div
+            className={`inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${
+              item.stock_quantity <= 5
+                ? "border-amber-500/20 bg-amber-500/10 text-amber-500"
+                : "border-emerald-500/20 bg-emerald-500/10 text-emerald-500"
+            }`}
+          >
+            {item.stock_quantity <= 5
+              ? `Low Stock — Only ${item.stock_quantity} Left`
+              : `In Stock (${item.stock_quantity} available)`}
+          </div>
+        ) : (
+          <div className="inline-flex w-fit items-center rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-500">
+            In Stock
+          </div>
+        )}
 
         {item.description && (
           <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -83,8 +107,17 @@ export function ProductContent({
             onToggle={() => onToggleFavorite(item.id)}
           />
         </div>
-
-        <AddToCartButton quantity={quantity} onClick={handleAdd} />
+        {isSoldOut ? (
+          <button
+            type="button"
+            disabled
+            className="w-full cursor-not-allowed rounded-2xl bg-zinc-200 py-4 text-xs font-bold uppercase tracking-widest text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+          >
+            Sold Out
+          </button>
+        ) : (
+          <AddToCartButton quantity={quantity} onClick={handleAdd} />
+        )}
 
         <ReviewsSection itemId={item.id} />
       </div>

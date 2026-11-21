@@ -39,6 +39,8 @@ export const catalogItemInputSchema = z
     is_popular: z.boolean(),
     is_active: z.boolean(),
     rating: z.number().min(0).max(5).nullable(),
+    track_stock: z.boolean().default(false),
+    stock_quantity: z.number().int().min(0).default(0),
   })
   .refine(
     (value) =>
@@ -74,5 +76,7 @@ export function toRow(parsed: CatalogItemInput) {
     is_popular: parsed.is_popular,
     is_active: parsed.is_active,
     rating: parsed.rating,
+    track_stock: parsed.track_stock,
+    stock_quantity: parsed.track_stock ? parsed.stock_quantity : 0,
   };
 }

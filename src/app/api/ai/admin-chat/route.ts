@@ -211,6 +211,8 @@ interface CatalogRow {
   is_active: boolean;
   is_popular: boolean;
   item_type: "product" | "service";
+  track_stock: boolean;
+  stock_quantity: number;
 }
 
 interface CouponRow {
@@ -424,7 +426,7 @@ async function buildBusinessContext(): Promise<BusinessContext> {
     supabaseAdmin
       .from("catalog_items")
       .select(
-        "id, name, category, numeric_price, is_active, is_popular, item_type",
+        "id, name, category, numeric_price, is_active, is_popular, item_type, track_stock, stock_quantity",
       )
       .order("name", { ascending: true }),
     supabaseAdmin
@@ -532,9 +534,24 @@ LAST 30 DAYS:
   const activeCatalog = catalog.filter((c) => c.is_active);
   const inactiveCatalog = catalog.filter((c) => !c.is_active);
 
+  const trackedCatalog = activeCatalog.filter((c) => c.track_stock);
+  const outOfStockCatalog = trackedCatalog.filter((c) => (c.stock_quantity ?? 0) <= 0);
+  const lowStockCatalog = trackedCatalog.filter(
+    (c) => (c.stock_quantity ?? 0) > 0 && (c.stock_quantity ?? 0) <= 5,
+  );
+
+  const formatStockTag = (c: CatalogRow) => {
+    if (!c.track_stock) return "";
+    const qty = Number(c.stock_quantity ?? 0);
+    return qty <= 0 ? " — SOLD OUT (0 left)" : ` — stock: ${qty}`;
+  };
+
   const catalogBlock = `
 Active items: ${activeCatalog.length} (products: ${activeCatalog.filter((c) => c.item_type === "product").length}, services: ${activeCatalog.filter((c) => c.item_type === "service").length})
 Inactive items: ${inactiveCatalog.length}
+Stock-tracked items: ${trackedCatalog.length} (out of stock: ${outOfStockCatalog.length}, low stock <=5: ${lowStockCatalog.length})
+${outOfStockCatalog.length > 0 ? `Out of stock: ${outOfStockCatalog.map((c) => c.name).join(", ")}` : ""}
+${lowStockCatalog.length > 0 ? `Low stock: ${lowStockCatalog.map((c) => `${c.name} (${c.stock_quantity})`).join(", ")}` : ""}
 
 Sample of active items (first 10):
 ${
@@ -542,7 +559,7 @@ ${
     .slice(0, 10)
     .map(
       (c) =>
-        `- ${c.name} (${c.category}) — ${formatMoney(c.numeric_price)}${c.is_popular ? " — popular" : ""} [item_id: ${c.id}]`,
+        `- ${c.name} (${c.category}) — ${formatMoney(c.numeric_price)}${c.is_popular ? " — popular" : ""}${formatStockTag(c)} [item_id: ${c.id}]`,
     )
     .join("\n") || "none"
 }

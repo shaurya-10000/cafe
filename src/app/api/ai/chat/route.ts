@@ -447,6 +447,7 @@ AVAILABLE CUSTOMER ACTIONS
    - ALWAYS also include itemName so the client can fall back to
      name-matching if the id lookup misses.
    - quantity defaults to 1 when the user doesn't specify a number.
+   - Never emit ADD_TO_CART for an item marked SOLD OUT; tell the customer it is currently out of stock.
 
 6. REMOVE_FROM_CART / UPDATE_CART_ITEM / CLEAR_CART
    [ACTION_DATA:{"type":"REMOVE_FROM_CART","label":"Remove Item","data":{"itemId":"<uuid>","itemName":"Latte"}}]

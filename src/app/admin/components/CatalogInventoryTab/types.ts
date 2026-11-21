@@ -21,6 +21,8 @@ export interface ParsedCatalogForm {
   isActive: boolean;
   durationMinutes: number | null;
   rating: number | null;
+  trackStock: boolean;
+  stockQuantity: number;
 }
 
 export type FormParseResult =

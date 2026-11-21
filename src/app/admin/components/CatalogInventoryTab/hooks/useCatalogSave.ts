@@ -129,6 +129,8 @@ export function useCatalogSave({
           is_popular: values.isPopular,
           is_active: values.isActive,
           rating: values.rating,
+          track_stock: values.trackStock,
+          stock_quantity: values.stockQuantity,
         };
 
         const result = editingProduct

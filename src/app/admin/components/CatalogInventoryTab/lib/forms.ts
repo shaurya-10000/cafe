@@ -31,6 +31,8 @@ export function parseCatalogForm(
   const isActive = form.get("is_active") === "on";
   const durationRaw = form.get("duration_minutes");
   const ratingRaw = form.get("rating");
+  const trackStock = form.get("track_stock") === "on";
+  const stockQuantityRaw = form.get("stock_quantity");
 
   if (!name || name.length > CATALOG_NAME_MAX_LENGTH) {
     return {
@@ -73,9 +75,22 @@ export function parseCatalogForm(
 
     rating = parsed;
   }
+  let stockQuantity = 0;
 
-  return {
-    ok: true,
+  if (trackStock) {
+    const parsedStock = Number(stockQuantityRaw ?? 0);
+
+    if (!Number.isFinite(parsedStock) || parsedStock < 0 || !Number.isInteger(parsedStock)) {
+      return {
+        ok: false,
+        error: "Stock quantity must be a whole number of 0 or more.",
+      };
+    }
+
+    stockQuantity = parsedStock;
+  }
+
+  return {    ok: true,
     values: {
       name,
       numericPrice,
@@ -85,6 +100,8 @@ export function parseCatalogForm(
       isActive,
       durationMinutes,
       rating,
+      trackStock,
+      stockQuantity,
     },
   };
 }

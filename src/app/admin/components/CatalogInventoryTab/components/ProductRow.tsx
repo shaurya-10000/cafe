@@ -49,10 +49,26 @@ export const ProductRow = memo(function ProductRow({
               </span>
             )}
 
-            {!product.is_active && (
+                        {!product.is_active && (
               <span className="rounded-full bg-gray-400/10 px-2 py-0.5 text-[9px] font-black uppercase text-gray-400">
                 Inactive
               </span>
+            )}
+
+            {product.track_stock && (
+              (product.stock_quantity ?? 0) <= 0 ? (
+                <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[9px] font-black uppercase text-red-500">
+                  Sold Out
+                </span>
+              ) : (product.stock_quantity ?? 0) <= 5 ? (
+                <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-black uppercase text-amber-500">
+                  Low Stock: {product.stock_quantity}
+                </span>
+              ) : (
+                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-black uppercase text-emerald-500">
+                  In Stock: {product.stock_quantity}
+                </span>
+              )
             )}
           </div>
 
