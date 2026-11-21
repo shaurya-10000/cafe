@@ -5643,7 +5643,7 @@ declare
     'ensure_my_profile', 'validate_coupon_code', 'swap_location_display_order',
     'admin_set_user_role', 'ops_health', 'export_my_data',
     'list_my_redeemable_coupons', 'admin_stripe_events',
-    'assert_production_ready'
+    'assert_production_ready', 'get_analytics_summary'
   ];
   c_protected_profile_cols text[] := array[
     'role', 'has_claimed_welcome_reward', 'full_name', 'username',
@@ -6140,3 +6140,111 @@ alter table public.newsletter_subscribers enable row level security;
 
 revoke all on table public.newsletter_subscribers from anon, authenticated;
 grant all on table public.newsletter_subscribers to service_role;
+
+-- ============================================================================
+-- Server-Side Analytics RPC (Phase 8)
+-- ============================================================================
+create or replace function public.get_analytics_summary(p_days integer default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_now timestamptz := now();
+  v_start timestamptz := case when p_days is not null and p_days > 0 then v_now - make_interval(days => p_days) else null end;
+  v_prev_start timestamptz := case when p_days is not null and p_days > 0 then v_now - make_interval(days => p_days * 2) else null end;
+  v_rev numeric := 0;
+  v_cnt integer := 0;
+  v_prev_rev numeric := 0;
+  v_prev_cnt integer := 0;
+  v_top_items jsonb := '[]'::jsonb;
+  v_least_item text := null;
+  v_hourly jsonb := '[]'::jsonb;
+  v_daily jsonb := '[]'::jsonb;
+  v_split jsonb := '{}'::jsonb;
+begin
+  if not public.is_admin_v2() then
+    raise exception 'Admin access required';
+  end if;
+
+  select coalesce(sum(total_amount), 0), count(*)
+  into v_rev, v_cnt
+  from public.orders
+  where status not in ('declined', 'refunded')
+    and (v_start is null or created_at >= v_start);
+
+  if v_prev_start is not null then
+    select coalesce(sum(total_amount), 0), count(*)
+    into v_prev_rev, v_prev_cnt
+    from public.orders
+    where status not in ('declined', 'refunded')
+      and created_at >= v_prev_start
+      and created_at < v_start;
+  end if;
+
+  with item_counts as (
+    select
+      coalesce(ci.name, x.name, 'Item') as item_name,
+      sum(greatest(coalesce(x.quantity, 1), 1))::integer as qty
+    from public.orders o,
+      lateral jsonb_to_recordset(coalesce(o.items, '[]'::jsonb)) as x(item_id uuid, quantity integer, name text)
+    left join public.catalog_items ci on ci.id = x.item_id
+    where o.status not in ('declined', 'refunded')
+      and (v_start is null or o.created_at >= v_start)
+    group by 1
+  )
+  select
+    coalesce((select jsonb_agg(jsonb_build_object('name', item_name, 'quantity', qty) order by qty desc, item_name asc) from (select * from item_counts order by qty desc, item_name asc limit 5) t), '[]'::jsonb),
+    (select item_name from item_counts order by qty asc, item_name asc limit 1)
+  into v_top_items, v_least_item;
+
+  select coalesce(jsonb_agg(jsonb_build_object('hour', h, 'orders', cnt) order by h), '[]'::jsonb)
+  into v_hourly
+  from (
+    select extract(hour from created_at)::integer as h, count(*)::integer as cnt
+    from public.orders
+    where status not in ('declined', 'refunded')
+      and (v_start is null or created_at >= v_start)
+    group by 1
+  ) hrs;
+
+  select coalesce(jsonb_agg(jsonb_build_object('created_at', day_ts, 'total_amount', day_rev) order by day_ts), '[]'::jsonb)
+  into v_daily
+  from (
+    select date_trunc('day', created_at) as day_ts, coalesce(sum(total_amount), 0) as day_rev
+    from public.orders
+    where status not in ('declined', 'refunded')
+      and (v_start is null or created_at >= v_start)
+    group by 1
+  ) days;
+
+  select jsonb_build_object(
+    'deliveryOnline', count(*) filter (where order_type = 'delivery' and payment_method = 'online'),
+    'deliveryInPerson', count(*) filter (where order_type = 'delivery' and payment_method <> 'online'),
+    'pickupOnline', count(*) filter (where order_type = 'pickup' and payment_method = 'online'),
+    'pickupInPerson', count(*) filter (where order_type = 'pickup' and payment_method <> 'online'),
+    'scheduledOnline', count(*) filter (where order_type = 'scheduled' and payment_method = 'online'),
+    'scheduledInPerson', count(*) filter (where order_type = 'scheduled' and payment_method <> 'online')
+  )
+  into v_split
+  from public.orders
+  where status not in ('declined', 'refunded')
+    and (v_start is null or created_at >= v_start);
+
+  return jsonb_build_object(
+    'revenue', v_rev,
+    'count', v_cnt,
+    'previous', case when v_prev_start is null then null else jsonb_build_object('revenue', v_prev_rev, 'count', v_prev_cnt) end,
+    'topItems', v_top_items,
+    'topItem', v_top_items->0->>'name',
+    'leastItem', v_least_item,
+    'hourly', v_hourly,
+    'filtered', v_daily,
+    'split', v_split
+  );
+end;
+$$;
+
+revoke all on function public.get_analytics_summary(integer) from public, anon;
+grant execute on function public.get_analytics_summary(integer) to authenticated, service_role;
