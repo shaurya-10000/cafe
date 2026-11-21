@@ -18,6 +18,7 @@ export type SupabaseClientLike = ReturnType<typeof useSupabaseClient>;
 export type AdminTab =
   | "inventory"
   | "orders"
+  | "kitchen"
   | "analytics"
   | "reservations"
   | "branches"

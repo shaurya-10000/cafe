@@ -1,3 +1,4 @@
+import { KitchenTab } from "@/app/admin/components/KitchenTab";
 import type { AdminLocation } from "@/app/admin/components/Locationstab";
 
 import { AdminBookingsTab } from "@/app/admin/components/AdminReservationsTab";
@@ -59,6 +60,9 @@ export function AdminTabContent({
   onOpenAssistant,
 }: AdminTabContentProps) {
   switch (activeTab) {
+    case "kitchen":
+      return <KitchenTab orders={orders} currency={currency} />;
+
     case "orders":
       return (
         <OrdersTab

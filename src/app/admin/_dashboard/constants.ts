@@ -1,6 +1,7 @@
 import {
   BarChart2,
   Calendar,
+  ChefHat,
   MapPin,
   Package,
   ShoppingCart,
@@ -34,6 +35,7 @@ export const REALTIME_CHANNEL = "admin_live";
 
 export const NAV_ITEMS = [
   { id: "orders", label: "Orders", icon: ShoppingCart },
+  { id: "kitchen", label: "Kitchen", icon: ChefHat },
   { id: "reservations", label: "Reservations", icon: Calendar },
   { id: "inventory", label: "Inventory", icon: Package },
   { id: "branches", label: "Branches", icon: MapPin },
@@ -62,6 +64,7 @@ export const ADMIN_SUGGESTED_PROMPTS = [
   {
     label: "Pending reservations",
     icon: Calendar,
+  ChefHat,
     prompt: "What reservations are booked for today?",
   },
   {
