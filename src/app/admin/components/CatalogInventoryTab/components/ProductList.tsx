@@ -9,6 +9,7 @@ import { ProductSearch } from "./ProductSearch";
 
 interface ProductListProps {
   products: CatalogItem[];
+  currency?: string;
   loading: boolean;
   searchTerm: string;
   deletingId: string | null;
@@ -19,6 +20,7 @@ interface ProductListProps {
 
 export const ProductList = memo(function ProductList({
   products,
+  currency = "USD",
   loading,
   searchTerm,
   deletingId,
@@ -54,6 +56,7 @@ export const ProductList = memo(function ProductList({
             <ProductRow
               key={product.id}
               product={product}
+              currency={currency}
               isDeleting={deletingId === product.id}
               onEdit={onEdit}
               onDelete={onDelete}

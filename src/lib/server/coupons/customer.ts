@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 
 import { createClient } from "@/utils/supabase/server";
+import { formatCurrency } from "@/lib/utils/currency";
 
 import type { Coupon, ValidateCouponResult } from "./types";
 
@@ -82,9 +83,15 @@ async function explainRejection(
   );
 
   if (match && subtotal < Number(match.min_order_amount)) {
-    return `This code requires a minimum order of $${Number(
-      match.min_order_amount,
-    ).toFixed(2)}.`;
+    const { data: settings } = await supabase
+      .from("business_public_settings")
+      .select("currency")
+      .maybeSingle();
+    const formatted = formatCurrency(
+      Number(match.min_order_amount),
+      settings?.currency ?? "USD",
+    );
+    return `This code requires a minimum order of ${formatted}.`;
   }
 
   return "This coupon is invalid, expired or already used.";

@@ -6125,3 +6125,17 @@ commit;
 -- Admin catalog:   select * from public.admin_catalog_items;   -- admin JWT only; zero rows otherwise
 -- Stripe triage:   select * from public.admin_stripe_events('failed', 50);
 -- ============================================================================
+
+-- ============================================================================
+-- Newsletter Subscribers (Phase 3)
+-- ============================================================================
+create table if not exists public.newsletter_subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  subscribed_at timestamptz not null default now()
+);
+
+alter table public.newsletter_subscribers enable row level security;
+
+revoke all on table public.newsletter_subscribers from anon, authenticated;
+grant all on table public.newsletter_subscribers to service_role;

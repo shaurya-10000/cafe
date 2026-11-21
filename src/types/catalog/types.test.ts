@@ -118,6 +118,9 @@ describe("catalog types - item", () => {
       rating: number | null;
       created_at: string;
       updated_at: string;
+  track_stock?: boolean;
+  stock_quantity?: number;
+  in_stock?: boolean;
     }>();
   });
 

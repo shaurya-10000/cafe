@@ -384,7 +384,7 @@ describe("user switch", () => {
     expect(channel().listeners[0].filter.filter).toBe("user_id=eq.user_2");
   });
 
-  it("KNOWN LIMITATION: latestNotification survives sign-out", async () => {
+  it("clears latestNotification on sign-out", async () => {
     // Nothing clears it, so the next account in the same tab starts with the
     // previous user's last notification. Pinned so a fix is a visible change.
     const { result, rerender } = await setup();
@@ -395,6 +395,6 @@ describe("user switch", () => {
     await flush();
 
     expect(result.current.unreadCount).toBe(0);
-    expect(result.current.latestNotification?.title).toBe("Private order update");
+    expect(result.current.latestNotification?.title).toBeUndefined();
   });
 });

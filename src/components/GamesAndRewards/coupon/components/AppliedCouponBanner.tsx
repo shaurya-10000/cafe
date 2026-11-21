@@ -1,13 +1,16 @@
+import { formatCurrency } from "@/lib/utils/currency";
 import { CheckCircle2, X } from "lucide-react";
 import type { AppliedCoupon } from "../types";
 
 interface AppliedCouponBannerProps {
   readonly coupon: AppliedCoupon;
+  readonly currency?: string;
   readonly onRemove: () => void;
 }
 
 export function AppliedCouponBanner({
   coupon,
+  currency = "USD",
   onRemove,
 }: AppliedCouponBannerProps) {
   return (
@@ -29,7 +32,7 @@ export function AppliedCouponBanner({
 
       <div className="flex shrink-0 items-center gap-1.5">
         <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-          {`$${coupon.discountAmount.toFixed(2)} off`}
+          {`${formatCurrency(coupon.discountAmount, currency)} off`}
         </span>
 
         <button

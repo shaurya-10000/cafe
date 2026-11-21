@@ -22,6 +22,7 @@ interface UseProductsOptions {
 
 export interface UseProductsResult {
   products: CatalogItem[];
+  currency: string;
   setProducts: Dispatch<SetStateAction<CatalogItem[]>>;
   loading: boolean;
 }
@@ -40,6 +41,7 @@ export function useProducts({ onLoadError }: UseProductsOptions): UseProductsRes
   const onLoadErrorRef = useLatestRef(onLoadError);
 
   const [products, setProducts] = useState<CatalogItem[]>([]);
+  const [currency, setCurrency] = useState("USD");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,6 +51,8 @@ export function useProducts({ onLoadError }: UseProductsOptions): UseProductsRes
       setLoading(true);
 
       const rows = await fetchProducts(supabase);
+      const { data: settings } = await supabase.from("business_public_settings").select("currency").maybeSingle();
+      if (settings?.currency && isMounted()) setCurrency(settings.currency);
 
       if (cancelled || !isMounted()) return;
 
@@ -73,6 +77,8 @@ export function useProducts({ onLoadError }: UseProductsOptions): UseProductsRes
 
     const refetch = async (): Promise<void> => {
       const rows = await fetchProducts(supabase);
+      const { data: settings } = await supabase.from("business_public_settings").select("currency").maybeSingle();
+      if (settings?.currency && isMounted()) setCurrency(settings.currency);
 
       // A failed background refresh keeps the current list on screen.
       if (rows === null || !isMounted()) return;
@@ -103,5 +109,5 @@ export function useProducts({ onLoadError }: UseProductsOptions): UseProductsRes
     };
   }, [isMounted, supabase]);
 
-  return { products, setProducts, loading };
+  return { products, currency, setProducts, loading };
 }

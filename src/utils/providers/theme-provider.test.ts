@@ -101,14 +101,14 @@ describe("palette drift guard (server-side, import time)", () => {
     await expect(
       importFresh({
         serverSide: false,
-        files: { "app/layout.tsx": layoutSource(["only-one"]) },
+        files: { "src/app/layout.tsx": layoutSource(["only-one"]) },
       }),
     ).resolves.toBeDefined();
   });
 
   it("passes when the layout list matches exactly", async () => {
     await expect(
-      importFresh({ serverSide: true, files: { "app/layout.tsx": layoutSource(PALETTES) } }),
+      importFresh({ serverSide: true, files: { "src/app/layout.tsx": layoutSource(PALETTES) } }),
     ).resolves.toBeDefined();
   });
 
@@ -119,7 +119,7 @@ describe("palette drift guard (server-side, import time)", () => {
     ["a palette was renamed", ["espresso", "emerald", "rosewood", "champagne-2"]],
   ])("throws when %s", async (_label, list) => {
     await expect(
-      importFresh({ serverSide: true, files: { "app/layout.tsx": layoutSource(list) } }),
+      importFresh({ serverSide: true, files: { "src/app/layout.tsx": layoutSource(list) } }),
     ).rejects.toThrow(drift);
   });
 
@@ -127,7 +127,7 @@ describe("palette drift guard (server-side, import time)", () => {
     await expect(
       importFresh({
         serverSide: true,
-        files: { "app/layout.tsx": layoutSource([...PALETTES, 1, null]) },
+        files: { "src/app/layout.tsx": layoutSource([...PALETTES, 1, null]) },
       }),
     ).resolves.toBeDefined();
   });
@@ -140,7 +140,7 @@ describe("palette drift guard (server-side, import time)", () => {
     await expect(
       importFresh({
         serverSide: true,
-        files: { "app/layout.tsx": "export default function L() { return null; }" },
+        files: { "src/app/layout.tsx": "export default function L() { return null; }" },
       }),
     ).resolves.toBeDefined();
   });
@@ -149,12 +149,12 @@ describe("palette drift guard (server-side, import time)", () => {
     await expect(
       importFresh({
         serverSide: true,
-        files: { "app/layout.tsx": "var v=[espresso, emerald];" },
+        files: { "src/app/layout.tsx": "var v=[espresso, emerald];" },
       }),
     ).resolves.toBeDefined();
   });
 
-  it("KNOWN GAP: only <cwd>/app/layout.tsx is inspected, never <cwd>/src/app/layout.tsx", async () => {
+  it("inspects <cwd>/src/app/layout.tsx for palette drift", async () => {
     // If your layout lives under src/app, the guard above never runs. This pins
     // that behavior; when you fix the path, flip this test to expect the throw.
     await expect(
@@ -162,6 +162,6 @@ describe("palette drift guard (server-side, import time)", () => {
         serverSide: true,
         files: { "src/app/layout.tsx": layoutSource(["wrong"]) },
       }),
-    ).resolves.toBeDefined();
+    ).rejects.toThrow(drift);
   });
 });

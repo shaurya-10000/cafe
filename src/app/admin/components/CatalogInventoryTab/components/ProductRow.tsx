@@ -8,6 +8,7 @@ import { formatProductMeta } from "../lib/format";
 
 interface ProductRowProps {
   product: CatalogItem;
+  currency?: string;
   isDeleting: boolean;
   onEdit: (product: CatalogItem) => void;
   onDelete: (id: string, name: string) => void;
@@ -15,6 +16,7 @@ interface ProductRowProps {
 
 export const ProductRow = memo(function ProductRow({
   product,
+  currency = "USD",
   isDeleting,
   onEdit,
   onDelete,
@@ -73,7 +75,7 @@ export const ProductRow = memo(function ProductRow({
           </div>
 
           <p className="mt-0.5 font-mono text-[10px] uppercase tracking-tighter text-gray-500">
-            {formatProductMeta(product)}
+            {formatProductMeta(product, currency)}
           </p>
         </div>
       </div>

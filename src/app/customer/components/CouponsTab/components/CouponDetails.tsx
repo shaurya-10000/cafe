@@ -1,3 +1,4 @@
+import { formatCurrency } from "@/lib/utils/currency";
 import { AlertTriangle, Clock } from "lucide-react";
 
 import { daysUntil, formatCouponDate } from "../lib/format";
@@ -9,9 +10,10 @@ const EXPIRING_SOON_DAYS = 3;
 interface CouponDetailsProps {
   coupon: Coupon;
   variant: CouponVariant;
+  currency?: string;
 }
 
-export function CouponDetails({ coupon, variant }: CouponDetailsProps) {
+export function CouponDetails({ coupon, variant, currency = "USD" }: CouponDetailsProps) {
   const isActive = variant === "active";
 
   const daysLeft = coupon.expires_at ? daysUntil(coupon.expires_at) : null;
@@ -33,11 +35,11 @@ export function CouponDetails({ coupon, variant }: CouponDetailsProps) {
   return (
     <div className={DETAILS_CLASS}>
       {coupon.min_order_amount > 0 && (
-        <span>Min order ${coupon.min_order_amount}</span>
+        <span>Min order {formatCurrency(coupon.min_order_amount, currency)}</span>
       )}
 
       {!!coupon.max_discount_amount && (
-        <span>Max discount ${coupon.max_discount_amount}</span>
+        <span>Max discount {formatCurrency(coupon.max_discount_amount, currency)}</span>
       )}
 
       {expiryLabel && (

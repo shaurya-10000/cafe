@@ -18,7 +18,7 @@ import { filterProducts } from "./lib/products";
 export function CatalogInventoryTab() {
   const banner = useBanner();
 
-  const { products, setProducts, loading } = useProducts({
+  const { products, currency, setProducts, loading } = useProducts({
     onLoadError: banner.showError,
   });
 
@@ -54,6 +54,7 @@ export function CatalogInventoryTab() {
         <div className="order-2 space-y-4 lg:order-1 lg:col-span-7 xl:col-span-8">
           <ProductList
             products={filteredProducts}
+            currency={currency}
             loading={loading}
             searchTerm={searchTerm}
             deletingId={deletingId}

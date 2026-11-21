@@ -17,7 +17,7 @@ import type {
 
 export const DEFAULT_BRAND: FooterBrandConfig = {
   name: "Cafe",
-  initial: "Z",
+  initial: "C",
   href: "/",
 };
 
@@ -47,7 +47,7 @@ export const DEFAULT_CONTACT_ITEMS: readonly FooterContactItem[] = [
   {
     icon: <Mail aria-hidden="true" size={18} />,
     label: "Email",
-    value: "hello@cafecafe.com",
+    value: "hello@cafe.example",
     href: "mailto:hello@cafe.example",
   },
   {

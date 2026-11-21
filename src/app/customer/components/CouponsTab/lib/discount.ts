@@ -1,3 +1,4 @@
+import { formatCurrency } from "@/lib/utils/currency";
 import type { Coupon, DisplayDiscount } from "../types";
 
 /**
@@ -23,8 +24,11 @@ export function parseDisplayDiscount(raw: string): DisplayDiscount | null {
  * the active and archived cards so they can never disagree about how a $5
  * coupon renders.
  */
-export function formatDiscountLabel(coupon: Coupon): string {
+export function formatDiscountLabel(
+  coupon: Coupon,
+  currency: string = "USD",
+): string {
   return coupon.discount_type === "percentage"
     ? `${coupon.discount_value}% OFF`
-    : `$${coupon.discount_value} OFF`;
+    : `${formatCurrency(coupon.discount_value, currency)} OFF`;
 }
