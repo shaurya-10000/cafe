@@ -97,7 +97,7 @@ export function useBookingForm({
     const sanitized =
       field === "partySize" ? value.replace(/[^\d]/g, "").slice(0, 3) : value;
 
-    setValues((previous) => ({ ...previous, [field]: sanitized }));
+    setValues((previous) => field === "locationId" ? { ...previous, locationId: sanitized, resourceId: "" } : { ...previous, [field]: sanitized });
 
     setErrors((previous) => {
       if (!previous[field]) return previous;

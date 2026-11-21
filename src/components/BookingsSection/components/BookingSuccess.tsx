@@ -59,6 +59,12 @@ export function BookingSuccess({
           {snapshot?.locationName} &bull; {snapshot?.date} at {snapshot?.time}
         </p>
 
+        {(snapshot?.serviceName || snapshot?.resourceName) && (
+          <p className="text-[10px] font-bold uppercase tracking-widest text-cafe-accent">
+            {[snapshot?.serviceName, snapshot?.resourceName].filter(Boolean).join(" • ")}
+          </p>
+        )}
+
         <p className="text-[10px] uppercase tracking-wider text-zinc-400">
           We&apos;ll send a confirmation to {snapshot?.email}
         </p>

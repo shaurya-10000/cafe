@@ -46,6 +46,8 @@ export const DEFAULT_BOOKING_FORM_DATA: Readonly<BookingFormData> =
     email: "",
     locationId: "",
     specialRequests: "",
+    catalogItemId: "",
+    resourceId: "",
   });
 
 export const DEFAULT_BUSINESS_SETTINGS: Readonly<BusinessSettings> =

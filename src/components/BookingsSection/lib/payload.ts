@@ -34,5 +34,7 @@ export function buildBookingPayload(
     special_requests:
       values.specialRequests.trim().slice(0, SPECIAL_REQUESTS_MAX_LENGTH) ||
       null,
+    catalog_item_id: values.catalogItemId.trim() || null,
+    resource_id: values.resourceId.trim() || null,
   };
 }

@@ -4,15 +4,18 @@ import { useSupabaseClient } from "@/utils/supabase/client";
 
 import { fetchActiveLocations } from "../api/locations";
 import { fetchBusinessSettings } from "../api/settings";
+import { fetchActiveResources, fetchActiveServices } from "../api/options";
 import {
   DEFAULT_BUSINESS_SETTINGS,
   LOCATIONS_RETRY_DELAY_MS,
 } from "../constants";
-import type { BusinessSettings, Location, LocationsStatus } from "../types";
+import type { BusinessSettings, Location, LocationsStatus, ResourceOption, ServiceOption } from "../types";
 import { useIsMounted } from "./useIsMounted";
 
 export interface UseBookingLocationsResult {
   locations: Location[];
+  services: ServiceOption[];
+  resources: ResourceOption[];
   status: LocationsStatus;
   settings: BusinessSettings;
   retry: () => void;
@@ -24,6 +27,8 @@ export function useBookingLocations(): UseBookingLocationsResult {
   const isMounted = useIsMounted();
 
   const [locations, setLocations] = useState<Location[]>([]);
+  const [services, setServices] = useState<ServiceOption[]>([]);
+  const [resources, setResources] = useState<ResourceOption[]>([]);
   const [status, setStatus] = useState<LocationsStatus>("loading");
   const [settings, setSettings] = useState<BusinessSettings>(
     DEFAULT_BUSINESS_SETTINGS,
@@ -38,7 +43,7 @@ export function useBookingLocations(): UseBookingLocationsResult {
       setStatus("loading");
 
       try {
-        const [locationsData, settingsData] = await Promise.all([
+        const [locationsData, settingsData, servicesData, resourcesData] = await Promise.all([
           fetchActiveLocations(supabase),
           fetchBusinessSettings(supabase).catch((error: unknown) => {
             // Settings are non-fatal: log and fall back to defaults.
@@ -49,12 +54,16 @@ export function useBookingLocations(): UseBookingLocationsResult {
 
             return DEFAULT_BUSINESS_SETTINGS;
           }),
+          fetchActiveServices(supabase).catch(() => [] as ServiceOption[]),
+          fetchActiveResources(supabase).catch(() => [] as ResourceOption[]),
         ]);
 
         if (cancelled || !isMounted()) return;
 
         setSettings(settingsData);
         setLocations(locationsData);
+        setServices(servicesData);
+        setResources(resourcesData);
         setStatus(locationsData.length > 0 ? "ready" : "empty");
       } catch (error) {
         console.error("[bookings] fetch failed", {
@@ -87,5 +96,5 @@ export function useBookingLocations(): UseBookingLocationsResult {
     setReloadToken((value) => value + 1);
   }, []);
 
-  return { locations, status, settings, retry };
+  return { locations, services, resources, status, settings, retry };
 }

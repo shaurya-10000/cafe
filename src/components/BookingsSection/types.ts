@@ -7,6 +7,19 @@ export interface Location {
   name: string;
 }
 
+export interface ServiceOption {
+  id: string;
+  name: string;
+  duration_minutes: number | null;
+  numeric_price: number;
+}
+
+export interface ResourceOption {
+  id: string;
+  name: string;
+  location_id: string;
+}
+
 export interface BookingFormData {
   date: string;
   time: string;
@@ -14,6 +27,8 @@ export interface BookingFormData {
   email: string;
   locationId: string;
   specialRequests: string;
+  catalogItemId: string;
+  resourceId: string;
 }
 
 export type BookingFormField = keyof BookingFormData;
@@ -57,6 +72,8 @@ export interface ConfirmedSnapshot {
   date: string;
   time: string;
   email: string;
+  serviceName?: string;
+  resourceName?: string;
 }
 
 export interface BusinessSettings {
@@ -83,6 +100,8 @@ export interface BookingInsertPayload {
   party_size: number;
   location_id: string;
   special_requests: string | null;
+  catalog_item_id: string | null;
+  resource_id: string | null;
 }
 
 export type FieldElement =

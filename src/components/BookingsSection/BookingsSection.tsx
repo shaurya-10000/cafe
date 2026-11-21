@@ -31,7 +31,7 @@ export default function BookingsSection() {
 
   /* ---- Data -------------------------------------------------------------- */
 
-  const { locations, status, settings, retry } = useBookingLocations();
+  const { locations, services, resources, status, settings, retry } = useBookingLocations();
 
   const sessionEmail = user?.primaryEmailAddress?.emailAddress?.trim();
 
@@ -64,6 +64,8 @@ export default function BookingsSection() {
     isUserLoaded,
     values: form.values,
     locations,
+    services,
+    resources,
     locationsStatus: status,
     maxPartySize: settings.maxPartySize,
     setErrors: form.setErrors,
@@ -130,6 +132,8 @@ export default function BookingsSection() {
                 isSignedOut={isUserLoaded && !user}
                 isAuthBlocked={!isUserLoaded || !user}
                 locations={locations}
+                services={services}
+                resources={resources}
                 locationsStatus={status}
                 maxPartySize={settings.maxPartySize}
                 todayDate={today}

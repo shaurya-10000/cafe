@@ -9,11 +9,14 @@ import type {
   FormErrors,
   Location,
   LocationsStatus,
+  ResourceOption,
+  ServiceOption,
 } from "../types";
 import { DateField } from "./DateField";
 import { EmailField } from "./EmailField";
 import { LocationField } from "./LocationField";
 import { PartySizeField } from "./PartySizeField";
+import { ServiceResourceFields } from "./ServiceResourceFields";
 import { SignInNotice } from "./SignInNotice";
 import { SpecialRequestsField } from "./SpecialRequestsField";
 import { SubmitButton } from "./SubmitButton";
@@ -32,6 +35,8 @@ interface BookingFormProps {
   /** Session still loading, or nobody signed in. */
   isAuthBlocked: boolean;
   locations: readonly Location[];
+  services?: readonly ServiceOption[];
+  resources?: readonly ResourceOption[];
   locationsStatus: LocationsStatus;
   maxPartySize: number;
   todayDate: string;
@@ -53,6 +58,8 @@ export function BookingForm({
   isAuthBlocked,
   locations,
   locationsStatus,
+  services = [],
+  resources = [],
   maxPartySize,
   todayDate,
   onChange,
@@ -119,6 +126,16 @@ export function BookingForm({
           <EmailField
             value={values.email}
             error={errors.email}
+            onChange={onChange}
+            onBlur={onBlur}
+          />
+
+          <ServiceResourceFields
+            locationId={values.locationId}
+            catalogItemId={values.catalogItemId}
+            resourceId={values.resourceId}
+            services={services}
+            resources={resources}
             onChange={onChange}
             onBlur={onBlur}
           />

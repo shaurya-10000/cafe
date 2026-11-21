@@ -23,6 +23,8 @@ import type {
   FormErrors,
   Location,
   LocationsStatus,
+  ResourceOption,
+  ServiceOption,
 } from "../types";
 import { useIsMounted } from "./useIsMounted";
 
@@ -31,6 +33,8 @@ interface UseBookingSubmitOptions {
   isUserLoaded: boolean;
   values: BookingFormData;
   locations: readonly Location[];
+  services?: readonly ServiceOption[];
+  resources?: readonly ResourceOption[];
   locationsStatus: LocationsStatus;
   maxPartySize: number;
   setErrors: Dispatch<SetStateAction<FormErrors>>;
@@ -57,6 +61,8 @@ export function useBookingSubmit({
   values,
   locations,
   locationsStatus,
+  services = [],
+  resources = [],
   maxPartySize,
   setErrors,
   onRequireSignin,
@@ -195,11 +201,16 @@ export function useBookingSubmit({
 
         if (!isMounted()) return;
 
+        const selectedService = services.find((s) => s.id === values.catalogItemId);
+        const selectedResource = resources.find((r) => r.id === values.resourceId);
+
         setConfirmedSnapshot({
           locationName: verified.name,
           date: values.date,
           time: values.time,
           email: values.email.trim(),
+          serviceName: selectedService?.name,
+          resourceName: selectedResource?.name,
         });
 
         setErrors({});
@@ -228,6 +239,8 @@ export function useBookingSubmit({
       isUserLoaded,
       locations,
       locationsStatus,
+  services = [],
+  resources = [],
       maxPartySize,
       onRequireSignin,
       setErrors,
