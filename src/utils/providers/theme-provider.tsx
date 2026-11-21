@@ -32,7 +32,7 @@ function assertPaletteListMatchesLayout(): void {
     const fs = require("fs") as typeof import("fs");
     const path = require("path") as typeof import("path");
     /* eslint-enable @typescript-eslint/no-require-imports */
-    const layoutPath = path.resolve(process.cwd(), "app", "layout.tsx");
+    const layoutPath = path.resolve(process.cwd(), "src", "app", "layout.tsx");
     if (!fs.existsSync(layoutPath)) return;
     const source = fs.readFileSync(layoutPath, "utf8");
     const match = source.match(/var v=(\[[^\]]*\])/);

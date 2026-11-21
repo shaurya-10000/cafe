@@ -8,7 +8,7 @@
 [![Demo Video](https://img.shields.io/badge/Demo_Video-Watch-red?style=for-the-badge&logo=youtube&logoColor=white)](https://YOUR_VIDEO_URL)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](./LICENSE)
 
-[![Next.js](https://img.shields.io/badge/Next.js-15+-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Supabase](https://img.shields.io/badge/Supabase-Postgres_+_RLS-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
 [![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?style=flat-square&logo=clerk&logoColor=white)](https://clerk.com)
@@ -425,7 +425,7 @@ Views exposed to the browser:
 
 | Layer | Choice |
 | :--- | :--- |
-| Framework | Next.js 15+ (App Router, Server Actions, RSC) |
+| Framework | Next.js 16 (App Router, Server Actions, RSC) |
 | UI | React 19, Tailwind CSS v4, Framer Motion, Lucide |
 | Language | TypeScript (strict) |
 | Database | Supabase (Postgres 15+, RLS, Realtime, Storage) |
@@ -513,7 +513,7 @@ npm run typecheck && npm run lint && npm run test:run && npm run build
 
 ```text
 .
-├── app/
+├── src/app/
 │   ├── layout.tsx                    # Root layout: palette anti-flash, fonts, providers
 │   ├── page.tsx                      # Storefront: hero, menu, locations, booking, rewards
 │   ├── admin/
@@ -530,21 +530,21 @@ npm run typecheck && npm run lint && npm run test:run && npm run build
 │       ├── ai/admin-chat/route.ts    # Admin AI (admin-only, streaming)
 │       ├── ai/title/route.ts         # Chat title generation
 │       └── webhooks/                 # Stripe, Clerk, push
-├── components/
+├── src/components/
 │   ├── Hero/, CatalogGrid/, …
 │   ├── ai/                           # ChatWidget and its hooks
 │   ├── OrderSidebar/                 # Cart, checkout, coupon input
 │   ├── BookingsSection/              # Reservation form with prefill
 │   └── NotificationsSidebar/         # Inbox, preferences, push
-├── lib/
+├── src/lib/
 │   ├── ai/                           # Action types, Zod schemas, slot-filling, rate limit
 │   ├── server/                       # Service-role helpers, admin guards, Stripe
 │   ├── coupons/, locations/, catalog/
 │   └── utils/                        # cn, format, ids
-├── utils/
+├── src/utils/
 │   ├── supabase/{client,server}.ts   # Clerk-bound Supabase clients
 │   └── providers/                    # AppContext, ThemeProvider
-├── types/                            # Shared client-side types
+├── src/types/                            # Shared client-side types
 ├── docs/assets/                      # README screenshots, GIFs, video thumbnail
 ├── sql.sql                           # Single-file, idempotent schema + seed
 └── proxy.ts                          # Clerk middleware, security headers, CSP
@@ -679,13 +679,16 @@ To report a vulnerability, open a **private** security advisory on the [reposito
 
 - [ ] Move analytics aggregation to SQL views
 - [ ] End-to-end tests (Playwright) for checkout and booking flows
-- [ ] CI pipeline running typecheck, lint, tests and build on every PR
+- [x] CI pipeline running typecheck, lint, tests and build on every PR
 - [ ] Localization (i18n) for the storefront and AI concierge
 - [ ] Multi-tenant mode for running several businesses on one deployment
 - [ ] Order printing and kitchen display view
 
-## Contributing
+### Completed phases
 
+- **Phase 1 — Critical Bug Fixes & Dead-Link Cleanup:** Fixed admin Clerk redirect parameter (`redirect_url`) and `/customer` fallback, corrected `ThemeProvider` palette drift guard path (`src/app/layout.tsx`), cleaned up `Footer` placeholders and section anchors (`/#bookings`, `/#faq`), aligned AI concierge and `NotificationsSidebar` types with `sql.sql` constraints (`booking_*`, `welcome_reward`), cleared `latestNotification` on sign-out, and guarded `useUserPreferences.save()` against stale cross-user writes.
+
+## Contributing
 Contributions are welcome.
 
 1. Fork the repo and create a branch: `git checkout -b feat/your-change`.

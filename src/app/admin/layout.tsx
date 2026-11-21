@@ -32,7 +32,7 @@ export default async function AdminLayout({
   const { userId } = await auth();
 
   if (!userId) {
-    redirect("/sign-in?redirect_to=/admin");
+    redirect("/sign-in?redirect_url=%2Fadmin");
   }
 
   const access = await getAdminAccess(userId);
@@ -50,11 +50,11 @@ export default async function AdminLayout({
       access.cause,
     );
 
-    redirect("/dashboard");
+    redirect("/customer");
   }
 
   if (access.status !== "admin") {
-    redirect("/dashboard");
+    redirect("/customer");
   }
 
   return <>{children}</>;

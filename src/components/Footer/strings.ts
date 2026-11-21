@@ -2,9 +2,9 @@ import type { FooterStrings } from "./types";
 
 export const DEFAULT_STRINGS: FooterStrings = {
   brandName: "Cafe",
-  brandInitial: "Z",
-  brandHomeLabel: "Cafe Cafe home",
-  footerHeading: "Cafe Cafe footer",
+  brandInitial: "C",
+  brandHomeLabel: "Cafe home",
+  footerHeading: "Cafe footer",
 
   newsletterEyebrow: "Stay in the loop",
   newsletterHeadlineLine1: "Good coffee.",
@@ -25,7 +25,7 @@ export const DEFAULT_STRINGS: FooterStrings = {
 
   craftedWithCare: "Crafted with care for better coffee experiences.",
 
-  copyrightHolder: "Cafe Cafe",
+  copyrightHolder: "Cafe",
   copyrightNotice: "All rights reserved.",
 
   attributionPrefix: "Developed by",

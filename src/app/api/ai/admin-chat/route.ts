@@ -697,7 +697,7 @@ AVAILABLE ADMIN ACTIONS
 -- Game reward config --
 
 11. UPDATE_GAME_REWARD — update the singleton scratch-card reward:
-    [ACTION_DATA:{"type":"UPDATE_GAME_REWARD","label":"Update Reward","data":{"rewardKey":"scratch_card","title":"Free Coffee","promoCode":"SCRATCH10","discountValue":"10%","isActive":true}}]
+    [ACTION_DATA:{"type":"UPDATE_GAME_REWARD","label":"Update Reward","data":{"rewardKey":"welcome_reward","title":"Free Coffee","promoCode":"SCRATCH10","discountValue":"10%","isActive":true}}]
 
 ═══════════════════════════════════════════════════════════════════════════
 ACTION RULES

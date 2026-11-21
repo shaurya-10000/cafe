@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {  useCallback, useEffect, useState , useRef } from "react";
 import { useSupabaseClient } from "@/utils/supabase/client";
 
 export type PreferredOrderType = "pickup" | "delivery";
@@ -57,6 +57,8 @@ interface PreferencesResult {
  * failed load resolves to empty preferences so callers never wait forever.
  */
 export function useUserPreferences(userId: string | null) {
+  const activeUserIdRef = useRef(userId);
+  activeUserIdRef.current = userId;
   const supabase = useSupabaseClient();
   const [result, setResult] = useState<PreferencesResult | null>(null);
 

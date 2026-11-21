@@ -113,7 +113,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => { userIdRef.current = userId; }, [userId]);
 
   const refreshCounts = useCallback(async () => {
-    if (!userId) { setCartCount(0); setFavCount(0); return; }
+    if (!userId) {
+      setLatestNotification(null); setCartCount(0); setFavCount(0); return; }
     try {
       const [cartResult, favResult] = await Promise.all([
         withJwtRetry(() => supabase.from("cart_items").select("quantity").eq("user_id", userId).abortSignal(timeoutSignal())),
@@ -128,7 +129,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [supabase, userId]);
 
   const refreshUnreadCount = useCallback(async () => {
-    if (!userId) { setUnreadCount(0); return; }
+    if (!userId) {
+      setLatestNotification(null); setUnreadCount(0); return; }
     try {
       const { count, error } = await withJwtRetry(() => supabase.from("notifications").select("*", { count: "exact", head: true }).eq("user_id", userId).eq("is_read", false).abortSignal(timeoutSignal()));
       if (userIdRef.current !== userId) return;
@@ -151,7 +153,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const decrementUnreadCount = useCallback(() => { setUnreadCount((prev) => Math.max(0, prev - 1)); }, []);
 
   const loadMutedSetting = useCallback(async () => {
-    if (!userId) { setNotificationsMuted(false); setMutedTypes([]); return; }
+    if (!userId) {
+      setLatestNotification(null); setNotificationsMuted(false); setMutedTypes([]); return; }
     try {
       const { data, error } = await withJwtRetry(() => supabase.from("notification_settings").select("muted, muted_types").eq("user_id", userId).abortSignal(timeoutSignal()).maybeSingle());
       if (userIdRef.current !== userId) return;

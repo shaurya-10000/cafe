@@ -539,7 +539,7 @@ AVAILABLE CUSTOMER ACTIONS
 
 20. MUTE_NOTIFICATION_TYPE / UNMUTE_NOTIFICATION_TYPE
     [ACTION_DATA:{"type":"MUTE_NOTIFICATION_TYPE","label":"Mute Review Prompts","data":{"type":"review_prompt"}}]
-    Valid types: review_prompt, order_status, order_placed, reservation_status, payment_status, reservation_reminder, payment_failed
+    Valid types: review_prompt, order_status, order_placed, info, new_order, order_placed, order_status, review_prompt, new_booking, booking_status, booking_reminder, refund_required
 
 21. ENABLE_PUSH / DISABLE_PUSH
     [ACTION_DATA:{"type":"ENABLE_PUSH","label":"Enable Push","data":{}}]
