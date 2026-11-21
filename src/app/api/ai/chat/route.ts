@@ -262,6 +262,7 @@ function normalizeCurrency(raw: unknown): string {
 
 interface CustomerContext {
   nowBlock: string;
+  storeStatusBlock: string;
   locationsBlock: string;
   catalogBlock: string;
   couponsBlock: string;
@@ -289,7 +290,7 @@ async function buildCustomerContext(): Promise<CustomerContext> {
           .eq("is_active", true)
           .order("created_at", { ascending: false })
       : Promise.resolve({ data: [] as CouponRow[], error: null }),
-    supabase.from("business_public_settings").select("currency").maybeSingle(),
+    supabase.from("business_public_settings").select("currency, is_open").maybeSingle(),
   ]);
 
   for (const [label, res] of [
@@ -312,6 +313,11 @@ async function buildCustomerContext(): Promise<CustomerContext> {
   const formatMoney = createMoneyFormatter(
     normalizeCurrency(settingsRes.data?.currency),
   );
+
+  const isStoreOpen = settingsRes.data?.is_open !== false;
+  const storeStatusBlock = isStoreOpen
+    ? "STORE STATUS: OPEN (accepting orders and table reservations)."
+    : "STORE STATUS: CLOSED (the cafe is currently closed and NOT accepting orders or table reservations; politely inform the customer and do NOT emit START_CHECKOUT or PREFILL_RESERVATION).";
 
   const now = new Date();
   const nowBlock = `Current date/time (UTC): ${now.toISOString().slice(0, 16).replace("T", " ")}`;
@@ -350,7 +356,7 @@ ${services.map(renderItem).join("\n") || "none"}
         .join("\n")
     : "No coupons are currently available.";
 
-  return { nowBlock, locationsBlock, catalogBlock, couponsBlock };
+  return { nowBlock, storeStatusBlock, locationsBlock, catalogBlock, couponsBlock };
 }
 
 function buildSystemInstruction(ctx: CustomerContext): string {
@@ -360,6 +366,8 @@ You are the Cafe Cafe Concierge — a warm, concise assistant for customers visi
 CURRENT CONTEXT
 ═══════════════════════════════════════════════════════════════════════════
 ${ctx.nowBlock}
+
+${ctx.storeStatusBlock}
 
 LOCATIONS:
 ${ctx.locationsBlock}

@@ -14,7 +14,7 @@ export async function fetchBusinessSettings(
 ): Promise<BusinessSettings> {
   const { data, error } = await supabase
     .from("business_public_settings")
-    .select("business_name, max_party_size")
+    .select("business_name, max_party_size, is_open")
     .maybeSingle();
 
   if (error) throw error;
@@ -22,12 +22,14 @@ export async function fetchBusinessSettings(
   const raw = (data ?? {}) as {
     business_name?: string | null;
     max_party_size?: number | null;
+    is_open?: boolean | null;
   };
 
   const parsedMax = Number(raw.max_party_size);
 
   return {
     businessName: raw.business_name ?? null,
+    isOpen: raw.is_open !== false,
     maxPartySize:
       Number.isFinite(parsedMax) && parsedMax >= MIN_PARTY_SIZE
         ? Math.min(Math.floor(parsedMax), HARD_MAX_PARTY_SIZE)

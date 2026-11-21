@@ -9,6 +9,7 @@ import { cancelOrderIfUnpaid } from "@/lib/server/orders/cancel";
 import { processCheckout as runCheckout } from "@/lib/server/orders/checkout/processCheckout";
 import { setOrderPaymentState } from "@/lib/server/orders/payment";
 import { setOrderStatus } from "@/lib/server/orders/status";
+import { updateStoreOpenState, type SetStoreOpenResult } from "@/lib/server/store/status";
 import type {
   ActionOutcome,
   CancelPendingOrderResult,
@@ -41,4 +42,9 @@ export async function cancelPendingOrder(
   orderId: string,
 ): Promise<CancelPendingOrderResult> {
   return cancelOrderIfUnpaid(orderId);
+}
+export async function setStoreOpen(
+  isOpen: boolean,
+): Promise<SetStoreOpenResult> {
+  return updateStoreOpenState(isOpen);
 }

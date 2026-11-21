@@ -39,6 +39,7 @@ interface BookingFormProps {
   resources?: readonly ResourceOption[];
   locationsStatus: LocationsStatus;
   maxPartySize: number;
+  isStoreOpen?: boolean;
   todayDate: string;
   onChange: FieldChangeHandler;
   onBlur: FieldBlurHandler;
@@ -61,6 +62,7 @@ export function BookingForm({
   services = [],
   resources = [],
   maxPartySize,
+  isStoreOpen = true,
   todayDate,
   onChange,
   onBlur,
@@ -68,7 +70,7 @@ export function BookingForm({
   onRetryLocations,
   onSubmit,
 }: BookingFormProps) {
-  const submitDisabled = isSubmitting || locationsStatus !== "ready";
+  const submitDisabled = isSubmitting || locationsStatus !== "ready" || !isStoreOpen;
 
   return (
     <motion.form
@@ -84,6 +86,15 @@ export function BookingForm({
       </h3>
 
       {submitError && <SubmitErrorAlert message={submitError} />}
+
+      {!isStoreOpen && (
+        <div
+          role="status"
+          className="rounded-2xl border border-red-500/30 bg-red-500/5 px-5 py-4 text-xs font-bold text-red-500"
+        >
+          The cafe is currently closed — reservations are paused until we reopen.
+        </div>
+      )}
 
       {isSignedOut && <SignInNotice />}
 

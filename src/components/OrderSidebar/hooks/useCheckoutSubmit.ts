@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { processCheckout } from "@/app/admin/actions";
 import type { CartItem } from "@/types/cart";
+import { useSupabaseClient } from "@/utils/supabase/client";
 
 import { CHECKOUT_FAILURE_MESSAGE } from "../constants";
 import { handleCheckoutResult } from "../lib/checkoutResult";
@@ -28,6 +29,7 @@ export function useCheckoutSubmit({
   couponCode,
 }: UseCheckoutSubmitOptions): UseCheckoutSubmitResult {
   const isMounted = useIsMounted();
+  const supabase = useSupabaseClient();
 
   const [loading, setLoading] = useState(false);
 
@@ -41,6 +43,16 @@ export function useCheckoutSubmit({
 
     if (validationError) {
       toast.error(validationError);
+      return;
+    }
+
+    const { data: storeSettings } = await supabase
+      .from("business_public_settings")
+      .select("is_open")
+      .maybeSingle();
+
+    if (storeSettings?.is_open === false) {
+      toast.error("The cafe is currently closed and not accepting orders.");
       return;
     }
 
@@ -75,7 +87,7 @@ export function useCheckoutSubmit({
 
       if (isMounted()) setLoading(false);
     }
-  }, [couponCode, isMounted, items, values]);
+  }, [couponCode, isMounted, items, supabase, values]);
 
   return { loading, submit };
 }

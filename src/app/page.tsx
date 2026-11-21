@@ -1,5 +1,7 @@
 "use client";
 
+import { StoreClosedBanner } from "@/components/StoreClosedBanner";
+
 import { useAiCartEvents } from "@/app/_home/hooks/useAiCartEvents";
 import React, {
   useRef,
@@ -1089,6 +1091,7 @@ function HomeContent() {
   if (!mounted) {
     return (
       <div className="w-full min-h-screen bg-cafe-bg transition-colors duration-300 overflow-x-hidden">
+      <StoreClosedBanner />
         {null}
         <Hero
           scrollToMenu={scrollToMenu}
@@ -1101,6 +1104,7 @@ function HomeContent() {
 
   return (
     <div className="w-full min-h-screen bg-cafe-bg transition-colors duration-300 overflow-x-hidden">
+      <StoreClosedBanner />
       {syncWarning && (
         <div
           role="alert"
@@ -1191,6 +1195,7 @@ function HeroFallback() {
   const noop = () => {};
   return (
     <div className="w-full min-h-screen bg-cafe-bg overflow-x-hidden">
+      <StoreClosedBanner />
       <Hero scrollToMenu={noop} scrollToLocation={noop} onOpenAi={noop} />
     </div>
   );

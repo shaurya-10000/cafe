@@ -265,6 +265,7 @@ create table if not exists public.business_settings (
 
 alter table public.business_settings add column if not exists support_email text;
 alter table public.business_settings add column if not exists support_phone text;
+alter table public.business_settings add column if not exists is_open boolean not null default true;
 alter table public.business_settings add column if not exists updated_at timestamptz not null default now();
 alter table public.business_settings add column if not exists tax_rate_percent numeric(5,2) not null default 0 check (tax_rate_percent between 0 and 100);
 alter table public.business_settings add column if not exists tax_inclusive boolean not null default false;
@@ -3212,7 +3213,7 @@ where is_active;
 create or replace view public.business_public_settings as
 select business_name, business_type, currency, support_email, support_phone,
        tax_rate_percent, tax_inclusive, delivery_fee, free_delivery_threshold,
-       max_tip_percent, max_party_size, updated_at
+       max_tip_percent, max_party_size, updated_at, is_open
 from public.business_settings;
 
 create or replace view public.catalog_items_public as

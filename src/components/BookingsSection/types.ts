@@ -79,6 +79,7 @@ export interface ConfirmedSnapshot {
 export interface BusinessSettings {
   maxPartySize: number;
   businessName: string | null;
+  isOpen: boolean;
 }
 
 export type SupabaseClientLike = ReturnType<typeof useSupabaseClient>;

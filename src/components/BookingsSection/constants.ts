@@ -54,6 +54,7 @@ export const DEFAULT_BUSINESS_SETTINGS: Readonly<BusinessSettings> =
   Object.freeze({
     maxPartySize: MAX_PARTY_SIZE,
     businessName: null,
+    isOpen: true,
   });
 
 export const COPY = {

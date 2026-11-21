@@ -136,6 +136,7 @@ export default function BookingsSection() {
                 resources={resources}
                 locationsStatus={status}
                 maxPartySize={settings.maxPartySize}
+                isStoreOpen={settings.isOpen}
                 todayDate={today}
                 onChange={handleFieldChange}
                 onBlur={form.handleBlur}

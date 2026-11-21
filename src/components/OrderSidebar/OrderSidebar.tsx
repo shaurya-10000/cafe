@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { createPortal } from "react-dom";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { useUser } from "@clerk/nextjs";
+import { useSupabaseClient } from "@/utils/supabase/client";
 
 import { CartView } from "./components/CartView";
 import { OptionsView } from "./components/OptionsView";
@@ -51,6 +52,25 @@ export default function OrderSidebar({
   /* ---- Data -------------------------------------------------------------- */
 
   const currency = useBusinessCurrency(isOpen);
+  const supabase = useSupabaseClient();
+  const [isStoreOpen, setIsStoreOpen] = useState(true);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    supabase
+      .from("business_public_settings")
+      .select("is_open")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data && typeof data.is_open === "boolean") {
+          setIsStoreOpen(data.is_open);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, supabase]);
 
   const formatPrice = useMemo(
     () => createPriceFormatter(currency),
@@ -211,6 +231,7 @@ export default function OrderSidebar({
               couponCode={coupon.appliedCoupon?.code}
               total={coupon.displayTotal}
               canSubmit={items.length > 0}
+              isStoreOpen={isStoreOpen}
               loading={checkout.loading}
               formatPrice={formatPrice}
               onPrimaryAction={handlePrimaryAction}
