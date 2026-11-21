@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from "react";
+import { useSupabaseClient } from "@/utils/supabase/client";
 import type { FormEventHandler } from "react";
 
 import { motion } from "framer-motion";
@@ -70,7 +72,62 @@ export function BookingForm({
   onRetryLocations,
   onSubmit,
 }: BookingFormProps) {
-  const submitDisabled = isSubmitting || locationsStatus !== "ready" || !isStoreOpen;
+    const supabase = useSupabaseClient();
+  const [closures, setClosures] = useState<Array<{ closed_on: string; reason: string | null }>>([]);
+  const [openingHours, setOpeningHours] = useState<Array<{ day_of_week: number; open_time: string; close_time: string; is_closed: boolean }>>([]);
+
+  useEffect(() => {
+    if (!values.locationId) return;
+    let cancelled = false;
+    Promise.all([
+      supabase
+        .from("location_closures")
+        .select("closed_on, reason")
+        .eq("location_id", values.locationId),
+      supabase
+        .from("location_opening_hours")
+        .select("day_of_week, open_time, close_time, is_closed")
+        .eq("location_id", values.locationId),
+    ]).then(([cRes, hRes]) => {
+      if (cancelled) return;
+      setClosures(Array.isArray(cRes.data) ? cRes.data : []);
+      setOpeningHours(Array.isArray(hRes.data) ? hRes.data : []);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase, values.locationId]);
+
+  const scheduleNotice = useMemo(() => {
+    if (!values.date) return null;
+    const closure = closures.find((c) => c.closed_on === values.date);
+    if (closure) {
+      return {
+        closed: true,
+        text: closure.reason
+          ? `This location is closed on ${values.date}: ${closure.reason}`
+          : `This location is closed on ${values.date}.`,
+      };
+    }
+    const day = new Date(`${values.date}T00:00:00`).getDay();
+    const hours = openingHours.find((h) => h.day_of_week === day);
+    if (hours?.is_closed) {
+      return {
+        closed: true,
+        text: "This location is closed on the selected day of the week.",
+      };
+    }
+    if (hours) {
+      return {
+        closed: false,
+        text: `Branch hours for ${values.date}: ${hours.open_time.slice(0, 5)} – ${hours.close_time.slice(0, 5)}`,
+      };
+    }
+    return null;
+  }, [closures, openingHours, values.date]);
+
+  const submitDisabled =
+    isSubmitting || locationsStatus !== "ready" || !isStoreOpen || Boolean(scheduleNotice?.closed);
 
   return (
     <motion.form
@@ -86,6 +143,19 @@ export function BookingForm({
       </h3>
 
       {submitError && <SubmitErrorAlert message={submitError} />}
+
+      {scheduleNotice && (
+        <div
+          role="status"
+          className={`rounded-2xl border px-5 py-3 text-xs font-bold ${
+            scheduleNotice.closed
+              ? "border-red-500/30 bg-red-500/5 text-red-500"
+              : "border-cafe-border bg-cafe-fg/5 text-zinc-500 dark:text-zinc-400"
+          }`}
+        >
+          {scheduleNotice.text}
+        </div>
+      )}
 
       {!isStoreOpen && (
         <div
