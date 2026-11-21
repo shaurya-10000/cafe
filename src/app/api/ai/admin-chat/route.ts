@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/core/rateLimit";
+import { CircuitOpenError, getBreaker } from "@/lib/core/circuitBreaker";
 import { auth } from "@clerk/nextjs/server";
 import {
   findOwnedChat,
@@ -866,7 +867,7 @@ export async function POST(req: Request) {
 
     let responseStream;
     try {
-      responseStream = await withUpstreamRetry(
+      responseStream = await getBreaker("admin").guard(() => withUpstreamRetry(
         () =>
           ai.models.generateContentStream({
             model: GEMINI_MODEL,
@@ -877,7 +878,7 @@ export async function POST(req: Request) {
             },
           }),
         requestDeadline,
-      );
+      ), isRetryableUpstreamError);
     } catch (upstreamErr) {
       aiLog.finish({
         promptChars,
@@ -885,6 +886,18 @@ export async function POST(req: Request) {
         outcome: "upstream_error",
       });
 
+      if (upstreamErr instanceof CircuitOpenError) {
+        return new Response(
+          "The assistant is temporarily unavailable. Please try again shortly.",
+          {
+            status: 503,
+            headers: {
+              "Retry-After": String(upstreamErr.retryAfterSeconds),
+              "Content-Type": "text/plain; charset=utf-8",
+            },
+          },
+        );
+      }
       const upstreamStatus = getUpstreamStatus(upstreamErr);
       if (upstreamStatus === 429) {
         console.warn("[chat] upstream rate limited (429) after retries");

@@ -21,6 +21,8 @@ import {
   Loader2,
   AlertTriangle,
   SearchX,
+  Printer,
+  X,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useSupabaseClient } from "@/utils/supabase/client";
@@ -112,6 +114,7 @@ function SuccessContent() {
   // setting state from an effect.
   const phase: Phase = hasValidOrderId ? fetchedPhase : "not_found";
   const [orderStatus, setOrderStatus] = useState<OrderStatus | null>(null);
+  const [showReceipt, setShowReceipt] = useState(false);
 
   const hasCelebratedRef = useRef(false);
   const hasClearedCartRef = useRef(false);
@@ -483,20 +486,83 @@ function SuccessContent() {
             />
           </button>
 
-          {/* No per-order receipt view exists yet — a live-but-dead button
-              is worse than an honestly disabled one. */}
           <button
             type="button"
-            disabled
-            aria-disabled="true"
-            title="Coming soon"
-            className="flex cursor-not-allowed items-center justify-center gap-2 rounded-full p-5 text-xs font-black uppercase tracking-widest text-gray-300 dark:text-gray-700"
+            onClick={() => setShowReceipt(true)}
+            className="flex items-center justify-center gap-2 rounded-full border border-cafe-border bg-cafe-card p-5 text-xs font-black uppercase tracking-widest text-cafe-fg transition-all hover:bg-cafe-fg/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-cafe-accent"
           >
             <Receipt size={16} aria-hidden="true" />
-            View Full Receipt — Coming Soon
+            View Receipt Summary
           </button>
         </div>
       </motion.div>
+
+      {showReceipt && orderStatus && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Order receipt summary"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+        >
+          <div className="w-full max-w-md space-y-5 rounded-3xl border border-cafe-border bg-cafe-card p-6 text-left shadow-2xl">
+            <div className="flex items-center justify-between border-b border-cafe-border pb-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                  Order Receipt
+                </p>
+                <p className="font-mono text-xs font-bold text-cafe-fg">
+                  #{orderId}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowReceipt(false)}
+                aria-label="Close receipt"
+                className="rounded-xl p-2 text-gray-400 hover:bg-cafe-fg/5 hover:text-cafe-fg"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Order Status</span>
+                <span className="font-bold text-cafe-fg">{statusLabel}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Payment Method</span>
+                <span className="font-bold uppercase text-cafe-fg">
+                  {orderStatus.paymentMethod.replace("_", " ")}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Payment Status</span>
+                <span className="font-bold text-cafe-fg">
+                  {orderStatus.isPaid ? "Paid" : "Pending / Pay In Person"}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-cafe-fg py-3 text-xs font-black uppercase tracking-widest text-cafe-bg"
+              >
+                <Printer size={15} aria-hidden="true" />
+                Print
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/customer?tab=orders")}
+                className="flex flex-1 items-center justify-center rounded-2xl border border-cafe-border py-3 text-xs font-black uppercase tracking-widest text-cafe-fg hover:bg-cafe-fg/5"
+              >
+                My Orders
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {

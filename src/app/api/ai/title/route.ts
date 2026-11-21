@@ -2,6 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { checkRateLimit } from "@/lib/core/rateLimit";
+import { CircuitOpenError, getBreaker } from "@/lib/core/circuitBreaker";
 import { startAiRequest } from "@/lib/ai/aiLogger";
 
 /* -------------------------------------------------------------------------- */
@@ -183,7 +184,7 @@ export async function POST(req: Request) {
     const deadline = Date.now() + UPSTREAM_TOTAL_TIMEOUT_MS;
 
     try {
-      const response = await withUpstreamRetry(
+      const response = await getBreaker("title").guard(() => withUpstreamRetry(
         () =>
           ai.models.generateContent({
             model: GEMINI_MODEL,
@@ -191,7 +192,7 @@ export async function POST(req: Request) {
             config: { temperature: 0.5 },
           }),
         deadline,
-      );
+      ), isRetryableUpstreamError);
 
       const raw = response.text?.trim() ?? "";
       const title = sanitizeTitle(raw) || FALLBACK_TITLE;
@@ -204,6 +205,9 @@ export async function POST(req: Request) {
 
       return NextResponse.json({ title });
     } catch (err) {
+      if (err instanceof CircuitOpenError) {
+        console.warn("[title] circuit open", { requestId: clientRequestId });
+      }
       const isUpstreamUnavailable = isRetryableUpstreamError(err);
 
       if (isUpstreamUnavailable) {

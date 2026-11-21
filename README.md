@@ -690,6 +690,7 @@ To report a vulnerability, open a **private** security advisory on the [reposito
 - **Phase 1 — Critical Bug Fixes & Dead-Link Cleanup:** Fixed admin Clerk redirect parameter (`redirect_url`) and `/customer` fallback, corrected `ThemeProvider` palette drift guard path (`src/app/layout.tsx`), cleaned up `Footer` placeholders and section anchors (`/#bookings`, `/#faq`), aligned AI concierge and `NotificationsSidebar` types with `sql.sql` constraints (`booking_*`, `welcome_reward`), cleared `latestNotification` on sign-out, and guarded `useUserPreferences.save()` against stale cross-user writes.
 - **Phase 2 — Real Stock Tracking & Sold-Out UX:** Exposed `track_stock` and `stock_quantity` in the admin inventory form, schema, and product rows; surfaced **Sold Out** badges and disabled add-to-cart in the storefront grid and product detail modal; and added stock awareness to both customer and admin AI assistants.
 - **Phase 3 — Newsletter Backend & Currency Consistency:** Implemented `POST /api/newsletter` with Zod validation, rate limiting, and `newsletter_subscribers` persistence in Supabase; replaced hardcoded `<div align="center">
+- **Phase 4 — Order Receipts, AI Circuit Breaker & Expo Cleanup:** Replaced disabled receipt stubs on `/success` and customer `OrdersTab` with printable receipt modals; wired `CircuitBreaker` (`getBreaker`) into `/api/ai/chat`, `/api/ai/admin-chat`, and `/api/ai/title`; and removed unused Expo dependencies from `package.json` and `tsconfig.json`.
 
 # ☕ Cafe
 
