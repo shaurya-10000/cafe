@@ -1,5 +1,7 @@
 "use client";
 
+import { AutoTranslator } from "@/components/AutoTranslator";
+
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore } from "react";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { ThemeProvider as NextThemesProvider, useTheme as useNextTheme } from "next-themes";
@@ -138,7 +140,8 @@ function ThemeBridge({ children }: { children: React.ReactNode }) {
     mounted,
   }), [colorPalette, setColorPalette, mounted, theme, setMode]);
 
-  return <CafeThemeContext.Provider value={contextValue}>{children}</CafeThemeContext.Provider>;
+  return <CafeThemeContext.Provider value={contextValue}><AutoTranslator />
+        {children}</CafeThemeContext.Provider>;
 }
 
 export function useCafeTheme(): CafeThemeContextType {

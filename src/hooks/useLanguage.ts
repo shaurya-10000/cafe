@@ -9,6 +9,7 @@ import {
 import { useSupabaseClient } from "@/utils/supabase/client";
 
 const STORAGE_KEY = "cafe-language";
+const STORE_LANG_KEY = "cafe-store-language";
 const LANGUAGE_EVENT = "cafe_language_change";
 
 function isSupportedLanguage(value: unknown): value is SupportedLanguage {
@@ -56,6 +57,10 @@ export function useLanguage() {
       .then(({ data }) => {
         if (!cancelled && data && isSupportedLanguage(data.default_language)) {
           setStoreDefault(data.default_language);
+          try {
+            window.localStorage.setItem(STORE_LANG_KEY, data.default_language);
+            window.dispatchEvent(new Event(LANGUAGE_EVENT));
+          } catch {}
         }
       });
     return () => {
