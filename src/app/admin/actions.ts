@@ -10,6 +10,7 @@ import { processCheckout as runCheckout } from "@/lib/server/orders/checkout/pro
 import { setOrderPaymentState } from "@/lib/server/orders/payment";
 import { setOrderStatus } from "@/lib/server/orders/status";
 import { updateStoreOpenState, type SetStoreOpenResult } from "@/lib/server/store/status";
+import { updateStoreCurrencyState, type SetStoreCurrencyResult } from "@/lib/server/store/currency";
 import type {
   ActionOutcome,
   CancelPendingOrderResult,
@@ -47,4 +48,9 @@ export async function setStoreOpen(
   isOpen: boolean,
 ): Promise<SetStoreOpenResult> {
   return updateStoreOpenState(isOpen);
+}
+export async function setStoreCurrency(
+  currency: string,
+): Promise<SetStoreCurrencyResult> {
+  return updateStoreCurrencyState(currency);
 }

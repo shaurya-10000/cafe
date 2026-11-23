@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import AccountSettings from "../../AccountSettings";
 import OrderPreferences from "../../OrderPreferences/OrderPreferences";
 import ThemeSettings from "../../ThemeSettings";
+import RegionalSettings from "../../RegionalSettings/RegionalSettings";
 import { getTabPanelMotion } from "../lib/motion";
 import type { SettingsTab } from "../types";
 
@@ -18,6 +19,8 @@ function TabView({ tab }: { readonly tab: SettingsTab }) {
       return <OrderPreferences />;
     case "appearance":
       return <ThemeSettings />;
+    case "regional":
+      return <RegionalSettings />;
     default:
       return null;
   }

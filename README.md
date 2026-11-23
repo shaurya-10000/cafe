@@ -520,7 +520,7 @@ npm run typecheck && npm run lint && npm run test:run && npm run build
 │   │   ├── actions/                  # Domain actions: catalog, coupons, locations, reservations
 │   │   └── components/               # Admin tabs: orders, kitchen, reservations, inventory, …
 │   ├── customer/                     # Customer dashboard (orders, bookings, favorites, coupons)
-│   ├── settings/                     # Profile, appearance, security
+│   ├── settings/                     # Profile, appearance, order defaults, language & currency
 │   ├── sign-in/, sign-up/            # Clerk-hosted auth
 │   ├── success/                      # Order confirmation and receipt, polls `get_order_status`
 │   └── api/

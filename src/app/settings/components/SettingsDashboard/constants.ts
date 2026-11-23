@@ -1,10 +1,11 @@
-import { Palette, ShoppingBag, User } from "lucide-react";
+import { Globe, Palette, ShoppingBag, User } from "lucide-react";
 import type { MenuItem } from "./types";
 
 export const MENU_ITEMS: readonly MenuItem[] = [
   { id: "profile", label: "Account", icon: User },
   { id: "orders", label: "Order Preferences", icon: ShoppingBag },
   { id: "appearance", label: "Appearance", icon: Palette },
+  { id: "regional", label: "Language & Currency", icon: Globe },
 ];
 
 /** Query param the AI concierge uses to open a settings section. */
