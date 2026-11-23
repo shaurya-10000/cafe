@@ -5,6 +5,9 @@ import { MoonStar } from "lucide-react";
 
 import { useSupabaseClient } from "@/utils/supabase/client";
 
+const STORE_LANG_KEY = "cafe-store-language";
+const LANGUAGE_EVENT = "cafe_language_change";
+
 export function StoreClosedBanner() {
   const supabase = useSupabaseClient();
   const [isOpen, setIsOpen] = useState(true);
@@ -14,10 +17,24 @@ export function StoreClosedBanner() {
     const load = async () => {
       const { data } = await supabase
         .from("business_public_settings")
-        .select("is_open")
+        .select("is_open, default_language")
         .maybeSingle();
-      if (!cancelled && data && typeof data.is_open === "boolean") {
+      if (cancelled || !data) return;
+
+      if (typeof data.is_open === "boolean") {
         setIsOpen(data.is_open);
+      }
+
+      if (typeof data.default_language === "string") {
+        try {
+          const prev = window.localStorage.getItem(STORE_LANG_KEY);
+          if (prev !== data.default_language) {
+            window.localStorage.setItem(STORE_LANG_KEY, data.default_language);
+            window.dispatchEvent(new Event(LANGUAGE_EVENT));
+          }
+        } catch {
+          // Ignore storage access errors
+        }
       }
     };
     void load();

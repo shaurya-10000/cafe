@@ -60,7 +60,9 @@ export function useLanguage() {
           try {
             window.localStorage.setItem(STORE_LANG_KEY, data.default_language);
             window.dispatchEvent(new Event(LANGUAGE_EVENT));
-          } catch {}
+          } catch {
+            // Ignore storage errors
+          }
         }
       });
     return () => {
@@ -74,19 +76,25 @@ export function useLanguage() {
     document.documentElement.lang = language;
   }, [language]);
 
-  const setLanguage = useCallback((next: SupportedLanguage) => {
+  const setLanguage = useCallback((next: SupportedLanguage | null) => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, next);
+      if (next === null) {
+        window.localStorage.removeItem(STORAGE_KEY);
+      } else {
+        window.localStorage.setItem(STORAGE_KEY, next);
+      }
     } catch {
       // Ignore storage access failures
     }
     window.dispatchEvent(
-      new CustomEvent<SupportedLanguage>(LANGUAGE_EVENT, { detail: next }),
+      new CustomEvent<SupportedLanguage | null>(LANGUAGE_EVENT, { detail: next }),
     );
   }, []);
 
   return {
     language,
+    hasUserOverride: override !== null,
+    storeDefault,
     setLanguage,
     t: TRANSLATIONS[language],
   };
