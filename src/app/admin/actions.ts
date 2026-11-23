@@ -11,6 +11,7 @@ import { setOrderPaymentState } from "@/lib/server/orders/payment";
 import { setOrderStatus } from "@/lib/server/orders/status";
 import { updateStoreOpenState, type SetStoreOpenResult } from "@/lib/server/store/status";
 import { updateStoreCurrencyState, type SetStoreCurrencyResult } from "@/lib/server/store/currency";
+import { updateStoreLanguageState, type SetStoreLanguageResult } from "@/lib/server/store/language";
 import type {
   ActionOutcome,
   CancelPendingOrderResult,
@@ -53,4 +54,9 @@ export async function setStoreCurrency(
   currency: string,
 ): Promise<SetStoreCurrencyResult> {
   return updateStoreCurrencyState(currency);
+}
+export async function setStoreLanguage(
+  language: string,
+): Promise<SetStoreLanguageResult> {
+  return updateStoreLanguageState(language);
 }

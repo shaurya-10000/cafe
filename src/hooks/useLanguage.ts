@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import {
   SUPPORTED_LANGUAGES,
   TRANSLATIONS,
   type SupportedLanguage,
 } from "@/lib/i18n/translations";
+import { useSupabaseClient } from "@/utils/supabase/client";
 
 const STORAGE_KEY = "cafe-language";
 const LANGUAGE_EVENT = "cafe_language_change";
@@ -14,17 +15,17 @@ function isSupportedLanguage(value: unknown): value is SupportedLanguage {
   return SUPPORTED_LANGUAGES.some((lang) => lang.code === value);
 }
 
-function getSnapshot(): SupportedLanguage {
+function getOverrideSnapshot(): SupportedLanguage | null {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    return isSupportedLanguage(saved) ? saved : "en";
+    return isSupportedLanguage(saved) ? saved : null;
   } catch {
-    return "en";
+    return null;
   }
 }
 
-function getServerSnapshot(): SupportedLanguage {
-  return "en";
+function getServerSnapshot(): SupportedLanguage | null {
+  return null;
 }
 
 function subscribe(callback: () => void): () => void {
@@ -38,11 +39,31 @@ function subscribe(callback: () => void): () => void {
 }
 
 export function useLanguage() {
-  const language = useSyncExternalStore(
+  const supabase = useSupabaseClient();
+  const override = useSyncExternalStore(
     subscribe,
-    getSnapshot,
+    getOverrideSnapshot,
     getServerSnapshot,
   );
+  const [storeDefault, setStoreDefault] = useState<SupportedLanguage>("en");
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("business_public_settings")
+      .select("default_language")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data && isSupportedLanguage(data.default_language)) {
+          setStoreDefault(data.default_language);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
+
+  const language: SupportedLanguage = override ?? storeDefault;
 
   useEffect(() => {
     document.documentElement.lang = language;

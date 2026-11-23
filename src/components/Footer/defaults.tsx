@@ -32,6 +32,7 @@ export const DEFAULT_NAV_COLUMNS: readonly FooterNavColumn[] = [
   {
     heading: "Company",
     links: [
+      { label: "About", href: "/about" },
       { label: "Contact", href: "/#contact" },
     ],
   },
@@ -93,4 +94,6 @@ export const DEFAULT_SOCIAL_ITEMS: readonly FooterSocialItem[] = [
 ];
 
 export const DEFAULT_LEGAL_LINKS: readonly FooterNavLink[] = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
 ];

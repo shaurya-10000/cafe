@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 import type { useSupabaseClient } from "@/utils/supabase/client";
 import type { UseChatPersistenceResult } from "@/components/ai/hooks/useChatPersistence";
@@ -61,6 +62,7 @@ export function useChatStream({
   updateMessageByIndex,
 }: UseChatStreamOptions) {
   const [loading, setLoading] = useState(false);
+  const { language } = useLanguage();
 
   const requestIdRef = useRef(0);
   const streamAbortRef = useRef<AbortController | null>(null);
@@ -180,6 +182,7 @@ export function useChatStream({
           headers: buildRequestHeaders(clientRequestId),
           body: JSON.stringify({
             messages: historyPayload(updatedMessages),
+            language,
             // Lets the API store the assistant reply in this chat. Signed-in
             // users only: guest history lives in localStorage.
             ...(userId ? { chatId } : {}),
@@ -256,6 +259,7 @@ export function useChatStream({
     },
     [
       apiEndpoint,
+      language,
       userId,
       persistUserMessage,
       updateSession,

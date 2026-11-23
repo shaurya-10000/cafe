@@ -677,7 +677,7 @@ To report a vulnerability, open a **private** security advisory on the [reposito
 ## Roadmap
 
 - [ ] End-to-end tests (Playwright) for checkout and booking flows
-- [ ] Localization (i18n) for the storefront and AI concierge
+- [x] Localization (i18n) for the storefront and AI concierge
 - [ ] Multi-tenant mode for running several businesses on one deployment
 
 ## Contributing

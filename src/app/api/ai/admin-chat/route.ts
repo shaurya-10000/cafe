@@ -380,6 +380,8 @@ function formatCount(value: number | null | undefined): string {
 
 interface BusinessContext {
   todayBlock: string;
+  defaultLanguage: string;
+  currencyCode: string;
   weekBlock: string;
   monthBlock: string;
   recentOrdersBlock: string;
@@ -436,9 +438,7 @@ async function buildBusinessContext(): Promise<BusinessContext> {
         "id, code, discount_type, discount_value, used_count, usage_limit, is_active, expires_at",
       )
       .order("created_at", { ascending: false }),
-    supabaseAdmin
-      .from("business_settings")
-      .select("currency")
+    supabaseAdmin.from("business_settings").select("currency, default_language")
       .eq("id", true)
       .maybeSingle(),
   ]);
@@ -453,6 +453,8 @@ async function buildBusinessContext(): Promise<BusinessContext> {
   const formatMoney = createMoneyFormatter(
     normalizeCurrency(settingsRes.data?.currency),
   );
+  const currencyCode = normalizeCurrency(settingsRes.data?.currency);
+  const defaultLanguage = typeof settingsRes.data?.default_language === "string" ? settingsRes.data.default_language : "en";
   const ordersNote = monthOrdersResult.incomplete
     ? `NOTE: order figures may be incomplete (more than ${MAX_ORDER_ROWS.toLocaleString("en-US")} orders in 30 days, or a read failed). Say so if the user relies on these numbers.`
     : "";
@@ -576,6 +578,8 @@ ${
     : "No coupons configured.";
 
   return {
+    defaultLanguage,
+    currencyCode,
     todayBlock: withOrdersNote(todayBlock),
     weekBlock: withOrdersNote(weekBlock),
     monthBlock: withOrdersNote(monthBlock),
@@ -587,7 +591,16 @@ ${
   };
 }
 
-function buildSystemInstruction(admin: VerifiedAdmin, ctx: BusinessContext): string {
+const LANGUAGE_LABELS: Record<string, string> = {
+  en: "English",
+  hi: "Hindi",
+  es: "Spanish",
+  fr: "French",
+};
+
+function buildSystemInstruction(admin: VerifiedAdmin, ctx: BusinessContext, preferredLanguage?: string): string {
+  const langCode = preferredLanguage && LANGUAGE_LABELS[preferredLanguage] ? preferredLanguage : (LANGUAGE_LABELS[ctx.defaultLanguage] ? ctx.defaultLanguage : "en");
+  const langName = LANGUAGE_LABELS[langCode] ?? "English";
   return `
 You are the Cafe Admin Assistant — an internal tool for signed-in cafe staff and owners. You are never used by customers.
 
@@ -596,6 +609,9 @@ VERIFIED IDENTITY: This request has been cryptographically confirmed as a signed
 ═══════════════════════════════════════════════════════════════════════════
 LIVE BUSINESS SNAPSHOT (pulled from the database at request time)
 ═══════════════════════════════════════════════════════════════════════════
+PREFERRED LANGUAGE: ${langName} (${langCode}).
+STORE CURRENCY: ${ctx.currencyCode}.
+
 ${ctx.todayBlock}
 
 ${ctx.weekBlock}
@@ -628,6 +644,7 @@ PRIVACY BOUNDARY (still applies to admins in this chat):
 
 HOW TO ANSWER:
 - Be direct and factual. Lead with the number.
+- Reply in ${langName} unless the admin asks for another language. Keep [ACTION_DATA:{...}] JSON keys and enum values in English, and format all amounts in ${ctx.currencyCode}.
 - If a question is outside cafe operations, politely decline.
 - If you're not sure, say so. Don't estimate.
 
@@ -742,7 +759,7 @@ ACTION RULES
 
 export async function POST(req: Request) {
   try {
-    let body: { messages?: unknown; message?: unknown; chatId?: unknown };
+    let body: { messages?: unknown; message?: unknown; chatId?: unknown; language?: unknown };
     try {
       body = (await req.json()) as typeof body;
     } catch {
@@ -829,7 +846,8 @@ export async function POST(req: Request) {
         : Promise.resolve<string | null>(null),
     ]);
 
-    const systemInstruction = buildSystemInstruction(admin, ctx);
+    const requestedLanguage = typeof body?.language === "string" ? body.language.trim().toLowerCase() : undefined;
+    const systemInstruction = buildSystemInstruction(admin, ctx, requestedLanguage);
 
     if (!ai) {
       startAiRequest({

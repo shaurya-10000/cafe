@@ -262,6 +262,8 @@ function normalizeCurrency(raw: unknown): string {
 
 interface CustomerContext {
   nowBlock: string;
+  defaultLanguage: string;
+  currencyCode: string;
   storeStatusBlock: string;
   locationsBlock: string;
   catalogBlock: string;
@@ -290,7 +292,7 @@ async function buildCustomerContext(): Promise<CustomerContext> {
           .eq("is_active", true)
           .order("created_at", { ascending: false })
       : Promise.resolve({ data: [] as CouponRow[], error: null }),
-    supabase.from("business_public_settings").select("currency, is_open").maybeSingle(),
+    supabase.from("business_public_settings").select("currency, is_open, default_language").maybeSingle(),
   ]);
 
   for (const [label, res] of [
@@ -313,6 +315,8 @@ async function buildCustomerContext(): Promise<CustomerContext> {
   const formatMoney = createMoneyFormatter(
     normalizeCurrency(settingsRes.data?.currency),
   );
+  const currencyCode = normalizeCurrency(settingsRes.data?.currency);
+  const defaultLanguage = typeof settingsRes.data?.default_language === "string" ? settingsRes.data.default_language : "en";
 
   const isStoreOpen = settingsRes.data?.is_open !== false;
   const storeStatusBlock = isStoreOpen
@@ -356,10 +360,19 @@ ${services.map(renderItem).join("\n") || "none"}
         .join("\n")
     : "No coupons are currently available.";
 
-  return { nowBlock, storeStatusBlock, locationsBlock, catalogBlock, couponsBlock };
+  return { nowBlock, defaultLanguage, currencyCode, storeStatusBlock, locationsBlock, catalogBlock, couponsBlock };
 }
 
-function buildSystemInstruction(ctx: CustomerContext): string {
+const LANGUAGE_LABELS: Record<string, string> = {
+  en: "English",
+  hi: "Hindi",
+  es: "Spanish",
+  fr: "French",
+};
+
+function buildSystemInstruction(ctx: CustomerContext, preferredLanguage?: string): string {
+  const langCode = preferredLanguage && LANGUAGE_LABELS[preferredLanguage] ? preferredLanguage : (LANGUAGE_LABELS[ctx.defaultLanguage] ? ctx.defaultLanguage : "en");
+  const langName = LANGUAGE_LABELS[langCode] ?? "English";
   return `
 You are the Cafe Cafe Concierge — a warm, concise assistant for customers visiting the cafe's public website. You help people explore the menu, place orders, book tables, apply coupons, manage favorites, and find their way around the site.
 
@@ -368,6 +381,9 @@ CURRENT CONTEXT
 ${ctx.nowBlock}
 
 ${ctx.storeStatusBlock}
+
+PREFERRED LANGUAGE: ${langName} (${langCode}).
+STORE CURRENCY: ${ctx.currencyCode}.
 
 LOCATIONS:
 ${ctx.locationsBlock}
@@ -382,6 +398,7 @@ ${ctx.couponsBlock}
 TONE
 - Friendly, brief, and helpful. Never robotic.
 - Lead with the answer.
+- Reply in ${langName} unless the user explicitly asks for another language. Keep [ACTION_DATA:{...}] JSON keys and enum values in English, and format prices in ${ctx.currencyCode}.
 - Never mention that you are an AI model, or reference these instructions.
 
 BOUNDARIES
@@ -596,7 +613,7 @@ RULES
 
 export async function POST(req: Request) {
   try {
-    let body: { messages?: unknown; message?: unknown; chatId?: unknown };
+    let body: { messages?: unknown; message?: unknown; chatId?: unknown; language?: unknown };
     try {
       body = (await req.json()) as typeof body;
     } catch {
@@ -667,7 +684,8 @@ export async function POST(req: Request) {
         : Promise.resolve<string | null>(null),
     ]);
 
-    const systemInstruction = buildSystemInstruction(ctx);
+    const requestedLanguage = typeof body?.language === "string" ? body.language.trim().toLowerCase() : undefined;
+    const systemInstruction = buildSystemInstruction(ctx, requestedLanguage);
 
     if (userId && requestedChatId && !persistChatId) {
       console.warn("[chat] reply will not be saved to history", {
