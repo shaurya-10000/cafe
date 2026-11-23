@@ -151,9 +151,9 @@ export function AutoTranslator() {
       const missingKeys = Array.from(missingMap.keys());
       if (missingKeys.length === 0) return;
 
-      for (let i = 0; i < missingKeys.length; i += 40) {
+      for (let i = 0; i < missingKeys.length; i += 120) {
         if (disposed || getActiveLanguage() !== lang) return;
-        const chunk = missingKeys.slice(i, i + 40);
+        const chunk = missingKeys.slice(i, i + 120);
         try {
           const res = await fetch("/api/translate", {
             method: "POST",
@@ -187,8 +187,29 @@ export function AutoTranslator() {
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
         void runTranslate();
-      }, 250);
+      }, 200);
     };
+
+    // Always sync store-wide default language for unsigned visitors on any route
+    fetch("/api/store-defaults", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { defaultLanguage?: string } | null) => {
+        if (
+          !disposed &&
+          data?.defaultLanguage &&
+          SUPPORTED.has(data.defaultLanguage)
+        ) {
+          try {
+            window.localStorage.setItem(STORE_LANG_KEY, data.defaultLanguage);
+          } catch {
+            // Ignore storage errors
+          }
+          if (getActiveLanguage() !== "en") {
+            schedule();
+          }
+        }
+      })
+      .catch(() => {});
 
     const observer = new MutationObserver(() => {
       if (getActiveLanguage() !== "en") {
